@@ -1,10 +1,9 @@
 class Vertex
-	constructor: (@name, @content, @children=[[]], @showings=1) ->
+	constructor: (@name, @content, @children=[[]], @remain_after_click=false ) ->
 		@tree_edge
 		@forward_edge
 		@back_edge
 		@cross_edge
-
 
 
 prepareVerticies= (key) ->

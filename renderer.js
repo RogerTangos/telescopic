@@ -2,11 +2,11 @@
 var Vertex, prepareVerticies;
 
 Vertex = (function() {
-  function Vertex(name, content, children, showings) {
+  function Vertex(name, content, children, remain_after_click) {
     this.name = name;
     this.content = content;
     this.children = children != null ? children : [[]];
-    this.showings = showings != null ? showings : 1;
+    this.remain_after_click = remain_after_click != null ? remain_after_click : false;
     this.tree_edge;
     this.forward_edge;
     this.back_edge;
