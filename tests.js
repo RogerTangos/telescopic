@@ -5,9 +5,12 @@ test('Vertex Basics', function() {
   vertex_C = new Vertex('C', 'c', null, null);
   vertex_A = new Vertex('A', 'a', null, null);
   vertex_A.children = [[vertex_B], [vertex_C]];
+  notEqual(vertex_B.children, null);
+  equal(vertex_B.children.length, 1);
+  equal(vertex_B.children[0][0], null);
   equal(vertex_A.name, 'A');
   equal(vertex_A.content, 'a');
-  equal(vertex_A.repeatability, 1);
+  equal(vertex_A.showings, 1);
   equal(vertex_A.children.length, 2);
   equal(vertex_A.children[0][0], vertex_B);
   equal(vertex_A.children[1][0], vertex_C);

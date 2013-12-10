@@ -2,11 +2,11 @@
 var Vertex;
 
 Vertex = (function() {
-  function Vertex(name, content, children, repeatability) {
+  function Vertex(name, content, children, showings) {
     this.name = name;
     this.content = content;
-    this.children = children;
-    this.repeatability = repeatability != null ? repeatability : 1;
+    this.children = children != null ? children : [[]];
+    this.showings = showings != null ? showings : 1;
     this.tree_edge;
     this.forward_edge;
     this.back_edge;
