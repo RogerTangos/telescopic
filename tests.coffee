@@ -20,7 +20,9 @@ test 'Vertex Class Basics', ->
 	equal(vertex_A.back_edge, null)
 	equal(vertex_A.cross_edge, null)
 
-test 'Vertex Matching'
+test 'Prepare JSON Verticies', ->
+	do prepare_verticies('A')
+
 	equal(verticies['A'].children[0][0], verticies['C'])
 	equal(verticies['A'].children[0][1], verticies['B'])
 
