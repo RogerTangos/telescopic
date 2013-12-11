@@ -6,7 +6,9 @@ class Vertex
 		@cross_edge
 
 	unlink: ->
-		console.log 'unlink called'
+		# careful with this function. If you unlink a node, you also make
+		# its edges unavailable to the user... so its children may never
+		# be reached.
 		current_previous = @.previous
 		current_next = @.next
 
@@ -18,6 +20,9 @@ class Vertex
 			
 		@.next = null
 		@.previous = null
+
+	link: (after, before)->
+
 
 
 setVertexChildReferences= (key) ->

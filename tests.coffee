@@ -1,4 +1,4 @@
-test 'Vertex Attribute Basics', ->
+test 'Vertex Attributes', ->
 	vertex_B = new Vertex('B', 'b', null, true, 'D')
 	vertex_C = new Vertex('C', 'c', null, null, 'G')
 	vertex_A = new Vertex('A', 'a', null, null, 'B')
@@ -26,6 +26,7 @@ test 'Vertex Attribute Basics', ->
 	equal(vertex_C.next, 'G')
 
 test 'Modify JSON verticies\' children so that they are pointers', ->
+	makeTestVerticies()
 	setVertexChildReferences('A')
 
 	equal(verticies['A'].children[0][0], verticies['C'])
@@ -35,6 +36,7 @@ test 'Modify JSON verticies\' children so that they are pointers', ->
 	notEqual(verticies['A'].children[0][1], 'B')
 
 test 'Modify all JSON verticies so that they form a linked list', ->
+	makeTestVerticies()
 	makeVerticiesIntoLinkedList('A')
 
 	equal(verticies['A'].next, verticies['B'])
@@ -48,12 +50,16 @@ test 'Modify all JSON verticies so that they form a linked list', ->
 	while current_vertex? 
 		navigation_order = navigation_order.concat(current_vertex.content)
 		current_vertex = current_vertex.next
+
 	equal(navigation_order, 'abdgcehfivjuklmnopqrst')
 
 
 test 'Verticies can be unlinked', ->
+	makeTestVerticies()
+	makeVerticiesIntoLinkedList('A')
+
 	verticies['A'].unlink()
-	
+
 	equal(verticies['A'].next, null)
 	equal(verticies['A'].previous, null)
 
@@ -65,8 +71,27 @@ test 'Verticies can be unlinked', ->
 	equal(verticies['H'].previous, verticies['C'])
 	equal(verticies['E'].next, null)
 	equal(verticies['E'].previous, null)
+	
+test 'Verticies can be linked', ->
+	makeTestVerticies()
+	makeVerticiesIntoLinkedList('A')
+	# need to call verticies can be unlinked before this works.
+	verticies['A'] = new Vertex('A', 'a', [['C','B']], 1, 'B')
+	verticies['A'].link()
+	equal(verticies['A'].next, verticies['B'])
+	equal(verticies['A'].previous, null)
+	equal(verticies['B'].next, verticies['D'])
+	equal(verticies['B'].previous, verticies['A'])
 
-# test 'Verticies can be linked', ->
+	verticies['E'] = new Vertex('E', 'e', [['F', 'J', 'I', 'H'], ['Q']], 1, 'H');
+	verticies['E'].link
+	equal(verticies['E'].next, verticies['H'])
+	equal(verticies['E'].previous, verticies['C'])
+	equal(verticies['C'].next, verticies['E'])
+	equal(verticies['H'].previous, verticies['E'])
+
+
+
 	# true
 
 # test 'TText Method Basics', ->
