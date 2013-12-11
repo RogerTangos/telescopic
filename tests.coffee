@@ -1,7 +1,7 @@
-test 'Vertex Class Basics', ->
-	vertex_B = new Vertex('B', 'b', null, true)
-	vertex_C = new Vertex('C', 'c', null, null)
-	vertex_A = new Vertex('A', 'a', null, null)
+test 'Vertex Attribute Basics', ->
+	vertex_B = new Vertex('B', 'b', null, true, 'D')
+	vertex_C = new Vertex('C', 'c', null, null, 'G')
+	vertex_A = new Vertex('A', 'a', null, null, 'B')
 	vertex_A.children = [[vertex_B], [vertex_C]]
 
 	notEqual(vertex_B.children, null)
@@ -21,11 +21,56 @@ test 'Vertex Class Basics', ->
 	equal(vertex_A.back_edge, null)
 	equal(vertex_A.cross_edge, null)
 
-test 'Prepare JSON Verticies', ->
-	prepareVerticies('A')
+	equal(vertex_A.next, 'B')
+	equal(vertex_B.next, 'D')
+	equal(vertex_C.next, 'G')
+
+test 'Modify JSON verticies\' children so that they are pointers', ->
+	setVertexChildReferences('A')
 
 	equal(verticies['A'].children[0][0], verticies['C'])
 	equal(verticies['A'].children[0][1], verticies['B'])
 
 	notEqual(verticies['A'].children[0][0], 'C')
 	notEqual(verticies['A'].children[0][1], 'B')
+
+test 'Modify all JSON verticies so that they form a linked list', ->
+	makeVerticiesIntoLinkedList('A')
+
+	equal(verticies['A'].next, verticies['B'])
+	equal(verticies['B'].next, verticies['D'])
+	
+	equal(verticies['A'].previous, null)
+	equal(verticies['B'].previous, verticies['A'])
+
+	navigation_order = ''
+	current_vertex = verticies['A'] 
+	while current_vertex? 
+		navigation_order = navigation_order.concat(current_vertex.content)
+		current_vertex = current_vertex.next
+	equal(navigation_order, 'abdgcehfivjuklmnopqrst')
+
+
+test 'Verticies can be unlinked', ->
+	verticies['A'].unlink()
+	
+	equal(verticies['A'].next, null)
+	equal(verticies['A'].previous, null)
+
+	equal(verticies['B'].previous, null)
+	equal(verticies['B'].next, verticies['D'])
+
+	verticies['E'].unlink
+	equal(verticies['C'].next, verticies['H'])
+	equal(verticies['H'].previous, verticies['C'])
+	equal(verticies['E'].next, null)
+	equal(verticies['E'].previous, null)
+
+# test 'Verticies can be linked', ->
+	# true
+
+# test 'TText Method Basics', ->
+	# shouldhave
+
+	# reveal text
+	# hide text
