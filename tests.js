@@ -18,7 +18,9 @@ test('Verticies have the correct attributes', function() {
   equal(name_vertex.children[1][0], 'bar');
   equal(name_vertex.getRemainAfterClick(), true);
   equal(name_vertex.getNext(), 'next');
-  return equal(name_vertex.getGraph().getName(), 'newGraphName');
+  equal(name_vertex.getGraph().getName(), 'newGraphName');
+  telescopicText.graphs = {};
+  return new telescopicText.Graph('telescopicDefaultID');
 });
 
 test('Verticies create the new relevant graph and insert themselves', function() {
@@ -28,7 +30,9 @@ test('Verticies create the new relevant graph and insert themselves', function()
   equal(telescopicText.graphs['telescopicDefaultID'].getNode('foo'), foo);
   bar = new telescopicText.Vertex("bar", null, null, true, null, 'myGraph');
   equal(telescopicText.graphs['myGraph'].getName(), 'myGraph');
-  return equal(telescopicText.graphs['myGraph'].getNode('bar'), bar);
+  equal(telescopicText.graphs['myGraph'].getNode('bar'), bar);
+  telescopicText.graphs = {};
+  return new telescopicText.Graph('telescopicDefaultID');
 });
 
 test('Vertex.setChildReferences references correct graph, and verticies', function() {
@@ -41,5 +45,22 @@ test('Vertex.setChildReferences references correct graph, and verticies', functi
   equal(vertex_A.children[0][0], vertex_D);
   equal(vertex_A.children[1][0], vertex_B);
   equal(vertex_A.children[1][1], vertex_C);
-  return equal(vertex_A.children[1][2], void 0);
+  equal(vertex_A.children[1][2], void 0);
+  telescopicText.graphs = {};
+  return new telescopicText.Graph('telescopicDefaultID');
+});
+
+test('telescopicText.Graph makeLinkedList', function() {
+  var vertex_A, vertex_B, vertex_C;
+  vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'B', null);
+  vertex_B = new telescopicText.Vertex('B', 'b', null, true, 'C', null);
+  vertex_C = new telescopicText.Vertex('C', 'c', null, null, null, null);
+  telescopicText.graphs['telescopicDefaultID'].makeLinkedList(vertex_A);
+  equal(vertex_A.getNext(), vertex_B);
+  equal(vertex_B.getNext(), vertex_C);
+  equal(vertex_C.getNext(), null);
+  equal(vertex_A.getPrevious(), null);
+  equal(vertex_B.getPrevious(), vertex_A);
+  equal(vertex_C.getPrevious(), vertex_B);
+  return equal('foo', foo);
 });

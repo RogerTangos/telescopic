@@ -26,16 +26,41 @@ class telescopicText.Graph
 
 
 		### class method###
-		# @.makeLinkedList= (startVertex) ->
-		# 	if !startVertex
-		# 		for (key, value in @)
+		@makeLinkedList= (startVertex) ->
+			if !startVertex
+				for key, value of nodes
+					console.log 'key: ' + key  + 'bar'
 
-		# 	console.log 'foo' 
+			current_vertex = startVertex
+			if !startVertex.getNext()
+				console.log 'Warning: This graph only has one vertex linked'
+
+			while current_vertex.getNext()
+				next_key = current_vertex.getNext()
+				next_vertex = @.getNode(next_key)
+				current_vertex.setNext(next_vertex)
+				current_vertex = next_vertex
+
+			
+	
+	# current_vertex = verticies[start_key]
+
+	# while next_vertex_available
+	# 	next_key = current_vertex.next
+	# 	if next_key?
+	# 		current_vertex.next = verticies[next_key]
+	# 		current_vertex.previous = previous_vertex
+
+	# 		previous_vertex = current_vertex
+	# 		current_vertex = verticies[next_key]
+	# 	else
+	# 		next_vertex_available = false
+
 
 
 
 class telescopicText.Vertex
-	constructor: (name, @content, @children=[[]], remain_after_click=false, next, graph="telescopicDefaultID") ->
+	constructor: (name, @content, @children=[[]], remain_after_click=false, next=null, graph="telescopicDefaultID") ->
 		# The @symbol makes attributes public. Omitting the @ makes them private.
 		
 		# Make the graph, if it doesn't already exist
@@ -52,10 +77,21 @@ class telescopicText.Vertex
 		@back_edge
 		@cross_edge
 
+		#private
+		previous = null
+
 		### getters, setters ###
 		@getName = -> name
 		@getGraph = -> graph
+
 		@getNext = -> next
+		@setNext = (newNext) -> 
+			next = newNext
+		
+		@getPrevious = -> previous
+
+
+
 		@getRemainAfterClick = -> remain_after_click
 
 		@setChildrenReferences= ->

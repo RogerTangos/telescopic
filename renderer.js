@@ -25,6 +25,27 @@ telescopicText.Graph = (function() {
     };
     /* class method*/
 
+    this.makeLinkedList = function(startVertex) {
+      var current_vertex, key, next_key, next_vertex, value, _results;
+      if (!startVertex) {
+        for (key in nodes) {
+          value = nodes[key];
+          console.log('key: ' + key + 'bar');
+        }
+      }
+      current_vertex = startVertex;
+      if (!startVertex.getNext()) {
+        console.log('Warning: This graph only has one vertex linked');
+      }
+      _results = [];
+      while (current_vertex.getNext()) {
+        next_key = current_vertex.getNext();
+        next_vertex = this.getNode(next_key);
+        current_vertex.setNext(next_vertex);
+        _results.push(current_vertex = next_vertex);
+      }
+      return _results;
+    };
   }
 
   return Graph;
@@ -33,10 +54,14 @@ telescopicText.Graph = (function() {
 
 telescopicText.Vertex = (function() {
   function Vertex(name, content, children, remain_after_click, next, graph) {
+    var previous;
     this.content = content;
     this.children = children != null ? children : [[]];
     if (remain_after_click == null) {
       remain_after_click = false;
+    }
+    if (next == null) {
+      next = null;
     }
     if (graph == null) {
       graph = "telescopicDefaultID";
@@ -50,6 +75,7 @@ telescopicText.Vertex = (function() {
     this.forward_edge;
     this.back_edge;
     this.cross_edge;
+    previous = null;
     /* getters, setters*/
 
     this.getName = function() {
@@ -60,6 +86,12 @@ telescopicText.Vertex = (function() {
     };
     this.getNext = function() {
       return next;
+    };
+    this.setNext = function(newNext) {
+      return next = newNext;
+    };
+    this.getPrevious = function() {
+      return previous;
     };
     this.getRemainAfterClick = function() {
       return remain_after_click;

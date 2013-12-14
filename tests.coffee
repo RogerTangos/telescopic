@@ -22,6 +22,10 @@ test 'Verticies have the correct attributes', ->
 	equal(name_vertex.getNext(),'next')
 	equal(name_vertex.getGraph().getName(),'newGraphName')
 
+	# clear graph
+	telescopicText.graphs = {}
+	new telescopicText.Graph('telescopicDefaultID')
+
 
 test 'Verticies create the new relevant graph and insert themselves', ->
 	# default graph case
@@ -37,6 +41,10 @@ test 'Verticies create the new relevant graph and insert themselves', ->
 		'myGraph')
 	equal(telescopicText.graphs['myGraph'].getNode('bar'),
 		bar)
+
+	# clear graph
+	telescopicText.graphs = {}
+	new telescopicText.Graph('telescopicDefaultID')
 
 
 test 'Vertex.setChildReferences references correct graph, and verticies', ->
@@ -54,9 +62,36 @@ test 'Vertex.setChildReferences references correct graph, and verticies', ->
 	# sad path
 	equal(vertex_A.children[1][2], undefined)
 
+	# clear graph
+	telescopicText.graphs = {}
+	new telescopicText.Graph('telescopicDefaultID')
 
-# test 'Modify all JSON verticies so that they form a linked list', ->
-	# telescopicText.graphs['telescopicDefaultID'].makeLinkedListStartingAt()
+
+test 'telescopicText.Graph makeLinkedList', ->
+	vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'B', null)
+	vertex_B = new telescopicText.Vertex('B', 'b', null, true, 'C', null)
+	vertex_C = new telescopicText.Vertex('C', 'c', null, null, null, null)
+
+	telescopicText.graphs['telescopicDefaultID'].makeLinkedList(vertex_A)
+
+	# happy path (one starting node supplied)
+	equal(vertex_A.getNext(),vertex_B)
+	equal(vertex_B.getNext(),vertex_C)
+	equal(vertex_C.getNext(),null)
+	
+	equal(vertex_A.getPrevious(),null)
+	equal(vertex_B.getPrevious(),vertex_A)
+	equal(vertex_C.getPrevious(),vertex_B)
+
+
+
+	# happy path (no starting node supplied, but one is evident)
+
+	# confused path (no starting node supplied, multiple starting nodes evident)
+
+	# sad path (no starting node supplied, no starting node)
+
+	equal('foo', foo)
 
 
 # 	makeVerticiesIntoLinkedList('A')
