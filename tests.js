@@ -25,10 +25,10 @@ test('Verticies create the new relevant graph and insert themselves', function()
   var bar, foo;
   foo = new telescopicText.Vertex("foo", null, null, true, null, null);
   equal(telescopicText.graphs['telescopicDefaultID'].getName(), 'telescopicDefaultID');
-  equal(telescopicText.graphs['telescopicDefaultID']['foo'], foo);
+  equal(telescopicText.graphs['telescopicDefaultID'].getNode('foo'), foo);
   bar = new telescopicText.Vertex("bar", null, null, true, null, 'myGraph');
   equal(telescopicText.graphs['myGraph'].getName(), 'myGraph');
-  return equal(telescopicText.graphs['myGraph']['bar'], bar);
+  return equal(telescopicText.graphs['myGraph'].getNode('bar'), bar);
 });
 
 test('Vertex.setChildReferences references correct graph, and verticies', function() {

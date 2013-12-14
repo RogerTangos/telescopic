@@ -11,10 +11,19 @@ telescopicText.graphs = {}	#place to store all graphs
 class telescopicText.Graph
 	constructor: (name) ->
 		telescopicText.graphs[name] = @
-		@nodes = {}
 
 		### private ###
+		nodes = {}
+
+		###getters, setters###
 		@getName = -> name
+
+		@getNode = (key) ->
+			nodes[key]
+
+		@setNode = (key, value) ->
+			nodes[key] = value
+
 
 		### class method###
 		# @.makeLinkedList= (startVertex) ->
@@ -36,18 +45,17 @@ class telescopicText.Vertex
 			new telescopicText.Graph(graph)
 		# take graph as string, turn it into a reference to the graph.  
 		graph = telescopicText.graphs[graph]
-		graph[name] = @
+		graph.setNode(name, @)
 	
 		@tree_edge
 		@forward_edge
 		@back_edge
 		@cross_edge
 
-		### private ###
+		### getters, setters ###
 		@getName = -> name
 		@getGraph = -> graph
 		@getNext = -> next
-
 		@getRemainAfterClick = -> remain_after_click
 
 		@setChildrenReferences= ->
@@ -57,13 +65,13 @@ class telescopicText.Vertex
 				while child_index < @.children[set_index].length
 					child = @.children[set_index][child_index]
 
-					if !graph[child]
+					if !graph.getNode(child)
 						missing_child = @.children[set_index][child_index]
 						console.log 'Vertex ' + @.name + ' in graph "' + graph.getName() + '" is missing a child, "' + missing_child + '". It will be removed from the vertex children.'
 						@.children[set_index].splice(child_index,1)
 
 					else
-						@.children[set_index][child_index] = graph[child]
+						@.children[set_index][child_index] = graph.getNode(child)
 						child_index +=1
 					
 				set_index += 1

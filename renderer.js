@@ -7,12 +7,21 @@ telescopicText.graphs = {};
 
 telescopicText.Graph = (function() {
   function Graph(name) {
+    var nodes;
     telescopicText.graphs[name] = this;
-    this.nodes = {};
     /* private*/
+
+    nodes = {};
+    /*getters, setters*/
 
     this.getName = function() {
       return name;
+    };
+    this.getNode = function(key) {
+      return nodes[key];
+    };
+    this.setNode = function(key, value) {
+      return nodes[key] = value;
     };
     /* class method*/
 
@@ -36,12 +45,12 @@ telescopicText.Vertex = (function() {
       new telescopicText.Graph(graph);
     }
     graph = telescopicText.graphs[graph];
-    graph[name] = this;
+    graph.setNode(name, this);
     this.tree_edge;
     this.forward_edge;
     this.back_edge;
     this.cross_edge;
-    /* private*/
+    /* getters, setters*/
 
     this.getName = function() {
       return name;
@@ -63,12 +72,12 @@ telescopicText.Vertex = (function() {
         child_index = 0;
         while (child_index < this.children[set_index].length) {
           child = this.children[set_index][child_index];
-          if (!graph[child]) {
+          if (!graph.getNode(child)) {
             missing_child = this.children[set_index][child_index];
             console.log('Vertex ' + this.name + ' in graph "' + graph.getName() + '" is missing a child, "' + missing_child + '". It will be removed from the vertex children.');
             this.children[set_index].splice(child_index, 1);
           } else {
-            this.children[set_index][child_index] = graph[child];
+            this.children[set_index][child_index] = graph.getNode(child);
             child_index += 1;
           }
         }

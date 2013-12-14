@@ -28,14 +28,14 @@ test 'Verticies create the new relevant graph and insert themselves', ->
 	foo = new telescopicText.Vertex("foo", null, null, true, null, null)
 	equal(telescopicText.graphs['telescopicDefaultID'].getName(),
 		'telescopicDefaultID') 
-	equal(telescopicText.graphs['telescopicDefaultID']['foo'],
+	equal(telescopicText.graphs['telescopicDefaultID'].getNode('foo'),
 		foo)
 
 	# named graph case
 	bar = new telescopicText.Vertex("bar", null, null, true, null, 'myGraph')
 	equal(telescopicText.graphs['myGraph'].getName(),
 		'myGraph')
-	equal(telescopicText.graphs['myGraph']['bar'],
+	equal(telescopicText.graphs['myGraph'].getNode('bar'),
 		bar)
 
 
