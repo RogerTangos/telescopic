@@ -32,30 +32,20 @@ class telescopicText.Graph
 					console.log 'key: ' + key  + 'bar'
 
 			current_vertex = startVertex
+			previous_vertex = null
+
 			if !startVertex.getNext()
 				console.log 'Warning: This graph only has one vertex linked'
 
-			while current_vertex.getNext()
+			while current_vertex
+				current_vertex.setPrevious(previous_vertex)
+
 				next_key = current_vertex.getNext()
 				next_vertex = @.getNode(next_key)
 				current_vertex.setNext(next_vertex)
+
+				previous_vertex = current_vertex
 				current_vertex = next_vertex
-
-			
-	
-	# current_vertex = verticies[start_key]
-
-	# while next_vertex_available
-	# 	next_key = current_vertex.next
-	# 	if next_key?
-	# 		current_vertex.next = verticies[next_key]
-	# 		current_vertex.previous = previous_vertex
-
-	# 		previous_vertex = current_vertex
-	# 		current_vertex = verticies[next_key]
-	# 	else
-	# 		next_vertex_available = false
-
 
 
 
@@ -89,6 +79,8 @@ class telescopicText.Vertex
 			next = newNext
 		
 		@getPrevious = -> previous
+		@setPrevious= (newPrevious) ->
+			previous = newPrevious
 
 
 

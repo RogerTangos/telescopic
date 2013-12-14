@@ -26,7 +26,7 @@ telescopicText.Graph = (function() {
     /* class method*/
 
     this.makeLinkedList = function(startVertex) {
-      var current_vertex, key, next_key, next_vertex, value, _results;
+      var current_vertex, key, next_key, next_vertex, previous_vertex, value, _results;
       if (!startVertex) {
         for (key in nodes) {
           value = nodes[key];
@@ -34,14 +34,17 @@ telescopicText.Graph = (function() {
         }
       }
       current_vertex = startVertex;
+      previous_vertex = null;
       if (!startVertex.getNext()) {
         console.log('Warning: This graph only has one vertex linked');
       }
       _results = [];
-      while (current_vertex.getNext()) {
+      while (current_vertex) {
+        current_vertex.setPrevious(previous_vertex);
         next_key = current_vertex.getNext();
         next_vertex = this.getNode(next_key);
         current_vertex.setNext(next_vertex);
+        previous_vertex = current_vertex;
         _results.push(current_vertex = next_vertex);
       }
       return _results;
@@ -92,6 +95,9 @@ telescopicText.Vertex = (function() {
     };
     this.getPrevious = function() {
       return previous;
+    };
+    this.setPrevious = function(newPrevious) {
+      return previous = newPrevious;
     };
     this.getRemainAfterClick = function() {
       return remain_after_click;

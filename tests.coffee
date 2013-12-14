@@ -83,9 +83,7 @@ test 'telescopicText.Graph makeLinkedList', ->
 	equal(vertex_B.getPrevious(),vertex_A)
 	equal(vertex_C.getPrevious(),vertex_B)
 
-
-
-	# happy path (no starting node supplied, but one is evident)
+	# happy path (no starting node supplied, but one and only one is evident)
 
 	# confused path (no starting node supplied, multiple starting nodes evident)
 
