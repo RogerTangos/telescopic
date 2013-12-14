@@ -8,6 +8,10 @@ telescopicText = {}
 
 telescopicText.graphs = {}	#place to store all graphs
 
+telescopicText.reset= ->
+	telescopicText.graphs = {}
+	new telescopicText.Graph('telescopicDefaultID')
+
 class telescopicText.Graph
 	constructor: (name) ->
 		telescopicText.graphs[name] = @
@@ -25,17 +29,13 @@ class telescopicText.Graph
 			nodes[key] = value
 
 
-		### class method###
-		@makeLinkedList= (startVertex) ->
-			if !startVertex
-				for key, value of nodes
-					console.log 'key: ' + key  + 'bar'
-
-			current_vertex = startVertex
+		### object method###
+		@makeLinkedList= (start_vertex) ->
+			current_vertex = start_vertex
 			previous_vertex = null
 
-			if !startVertex.getNext()
-				console.log 'Warning: This graph only has one vertex linked'
+			if !start_vertex.getNext()
+				console.log 'Warning: This graph only has one vertex linked.'
 
 			while current_vertex
 				current_vertex.setPrevious(previous_vertex)
@@ -43,9 +43,18 @@ class telescopicText.Graph
 				next_key = current_vertex.getNext()
 				next_vertex = @.getNode(next_key)
 				current_vertex.setNext(next_vertex)
+				
+
+				if next_vertex == start_vertex
+					current_vertex.setNext(null)
+					console.log "Your linked list is cyclical when it should be linear. " + 
+					"Did not link the start and end nodes."
+					return
 
 				previous_vertex = current_vertex
 				current_vertex = next_vertex
+
+
 
 
 
@@ -105,7 +114,7 @@ class telescopicText.Vertex
 				set_index += 1
 
 # create the default graph
-new telescopicText.Graph('telescopicDefaultID')
+telescopicText.reset()
 
 
 	# unlink: ->

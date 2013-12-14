@@ -31,8 +31,7 @@ test('Verticies create the new relevant graph and insert themselves', function()
   bar = new telescopicText.Vertex("bar", null, null, true, null, 'myGraph');
   equal(telescopicText.graphs['myGraph'].getName(), 'myGraph');
   equal(telescopicText.graphs['myGraph'].getNode('bar'), bar);
-  telescopicText.graphs = {};
-  return new telescopicText.Graph('telescopicDefaultID');
+  return telescopicText.reset();
 });
 
 test('Vertex.setChildReferences references correct graph, and verticies', function() {
@@ -46,8 +45,7 @@ test('Vertex.setChildReferences references correct graph, and verticies', functi
   equal(vertex_A.children[1][0], vertex_B);
   equal(vertex_A.children[1][1], vertex_C);
   equal(vertex_A.children[1][2], void 0);
-  telescopicText.graphs = {};
-  return new telescopicText.Graph('telescopicDefaultID');
+  return telescopicText.reset();
 });
 
 test('telescopicText.Graph makeLinkedList', function() {
@@ -62,5 +60,18 @@ test('telescopicText.Graph makeLinkedList', function() {
   equal(vertex_A.getPrevious(), null);
   equal(vertex_B.getPrevious(), vertex_A);
   equal(vertex_C.getPrevious(), vertex_B);
-  return equal('foo', foo);
+  vertex_A = null;
+  vertex_B = null;
+  vertex_C = null;
+  telescopicText.reset();
+  vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'A', null);
+  telescopicText.graphs['telescopicDefaultID'].makeLinkedList(vertex_A);
+  equal(vertex_A.getNext(), null);
+  telescopicText.reset();
+  vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'B', null);
+  vertex_B = new telescopicText.Vertex('B', 'b', null, true, 'C', null);
+  vertex_C = new telescopicText.Vertex('C', 'c', null, null, 'A', null);
+  telescopicText.graphs['telescopicDefaultID'].makeLinkedList(vertex_A);
+  equal(vertex_C.getNext(), null);
+  return equal(vertex_A.getNext(), vertex_B);
 });

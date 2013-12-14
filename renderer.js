@@ -5,6 +5,11 @@ telescopicText = {};
 
 telescopicText.graphs = {};
 
+telescopicText.reset = function() {
+  telescopicText.graphs = {};
+  return new telescopicText.Graph('telescopicDefaultID');
+};
+
 telescopicText.Graph = (function() {
   function Graph(name) {
     var nodes;
@@ -23,31 +28,28 @@ telescopicText.Graph = (function() {
     this.setNode = function(key, value) {
       return nodes[key] = value;
     };
-    /* class method*/
+    /* object method*/
 
-    this.makeLinkedList = function(startVertex) {
-      var current_vertex, key, next_key, next_vertex, previous_vertex, value, _results;
-      if (!startVertex) {
-        for (key in nodes) {
-          value = nodes[key];
-          console.log('key: ' + key + 'bar');
-        }
-      }
-      current_vertex = startVertex;
+    this.makeLinkedList = function(start_vertex) {
+      var current_vertex, next_key, next_vertex, previous_vertex;
+      current_vertex = start_vertex;
       previous_vertex = null;
-      if (!startVertex.getNext()) {
-        console.log('Warning: This graph only has one vertex linked');
+      if (!start_vertex.getNext()) {
+        console.log('Warning: This graph only has one vertex linked.');
       }
-      _results = [];
       while (current_vertex) {
         current_vertex.setPrevious(previous_vertex);
         next_key = current_vertex.getNext();
         next_vertex = this.getNode(next_key);
         current_vertex.setNext(next_vertex);
+        if (next_vertex === start_vertex) {
+          current_vertex.setNext(null);
+          console.log("Your linked list is cyclical when it should be linear. " + "Did not link the start and end nodes.");
+          return;
+        }
         previous_vertex = current_vertex;
-        _results.push(current_vertex = next_vertex);
+        current_vertex = next_vertex;
       }
-      return _results;
     };
   }
 
@@ -129,4 +131,4 @@ telescopicText.Vertex = (function() {
 
 })();
 
-new telescopicText.Graph('telescopicDefaultID');
+telescopicText.reset();
