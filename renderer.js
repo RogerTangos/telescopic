@@ -27,6 +27,7 @@ telescopicText.Graph = (function() {
       node = nodes[key];
       if (node === void 0) {
         console.log('Graph "' + this.getName() + '" is missing a child, with key "' + key + '."');
+        null;
       }
       return node;
     };
@@ -44,6 +45,7 @@ telescopicText.Graph = (function() {
     };
     this.makeLinkedList = function(start_vertex) {
       var current_vertex, next_vertex, _results;
+      start_vertex = this.returnVertexFromKeyOrObject(start_vertex);
       current_vertex = start_vertex;
       next_vertex = this.returnVertexFromKeyOrObject(current_vertex.getNext());
       if (!start_vertex.getNext()) {
@@ -62,6 +64,15 @@ telescopicText.Graph = (function() {
           current_vertex = next_vertex;
           _results.push(next_vertex = this.returnVertexFromKeyOrObject(current_vertex.getNext()));
         }
+      }
+      return _results;
+    };
+    this.setReferencesForChildrenThroughoutGraph = function() {
+      var key, value, _results;
+      _results = [];
+      for (key in nodes) {
+        value = nodes[key];
+        _results.push(value.setChildrenReferences());
       }
       return _results;
     };
@@ -108,8 +119,8 @@ telescopicText.Graph = (function() {
 })();
 
 telescopicText.Vertex = (function() {
-  function Vertex(name, content, children, remain_after_click, next, graph) {
-    var previous;
+  function Vertex(name, content, children, remain_after_click, next, graph, starter) {
+    var click_count, previous;
     this.content = content;
     this.children = children != null ? children : [[]];
     if (remain_after_click == null) {
@@ -121,18 +132,25 @@ telescopicText.Vertex = (function() {
     if (graph == null) {
       graph = "telescopicDefaultID";
     }
+    if (starter == null) {
+      starter = false;
+    }
     if (!telescopicText.graphs[graph]) {
       new telescopicText.Graph(graph);
     }
     graph = telescopicText.graphs[graph];
     graph.setNode(name, this);
-    this.tree_edge;
-    this.forward_edge;
-    this.back_edge;
-    this.cross_edge;
+    this.incoming_tree = false;
+    this.incoming_forward = false;
+    this.incoming_back = false;
+    this.incoming_cross = false;
     previous = null;
+    click_count = 0;
     /* getters, setters*/
 
+    this.getStarter = function() {
+      return starter;
+    };
     this.getName = function() {
       return name;
     };
@@ -153,6 +171,29 @@ telescopicText.Vertex = (function() {
     };
     this.getRemainAfterClick = function() {
       return remain_after_click;
+    };
+    this.findClicksRemaining = function() {
+      return this.children.length - click_count;
+    };
+    this.shouldBeVisible = function() {
+      /* starter case*/
+
+      if (this.getStarter() && this.findClicksRemaining() > 0) {
+        return true;
+      } else if (this.getStarter() && this.getRemainAfterClick()) {
+        return true;
+        /* not a starter node*/
+
+      } else if (this.findClicksRemaining() > 0 && this.incoming_tree) {
+        return true;
+      } else if (this.incoming_tree && this.getRemainAfterClick()) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+    this.forward_click = function() {
+      return click_count += 1;
     };
     this.setChildrenReferences = function() {
       var child, child_index, child_key, set_index, _results;

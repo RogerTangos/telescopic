@@ -1,9 +1,3 @@
-# todo:
-# Make Vertex part of the class verticies, to allow duplicate texts
-# stub out tests
-# integrate setVertexChildReferences into Vertex prototype
-# integrate makeVerticiesIntoLinkedList into verticies
-
 telescopicText = {}
 
 telescopicText.graphs = {}	#place to store all graphs
@@ -24,9 +18,9 @@ class telescopicText.Graph
 
 		@getNode = (key) ->
 			node = nodes[key]
-
 			if node == undefined
 				console.log 'Graph "' + @.getName() + '" is missing a child, with key "' + key + '."'
+				null
 			node
 
 		@setNode = (key, value) ->
@@ -34,7 +28,6 @@ class telescopicText.Graph
 
 
 		### object-level methods ###
-
 		@returnVertexFromKeyOrObject= (key_or_object) ->
 			if key_or_object !instanceof telescopicText.Vertex
 				key_or_object = @.getNode(key_or_object)
@@ -43,6 +36,7 @@ class telescopicText.Graph
 
 
 		@makeLinkedList= (start_vertex) ->
+			start_vertex = @.returnVertexFromKeyOrObject(start_vertex)
 			current_vertex = start_vertex
 			next_vertex = @.returnVertexFromKeyOrObject(current_vertex.getNext())
 
@@ -62,6 +56,9 @@ class telescopicText.Graph
 					current_vertex = next_vertex
 					next_vertex = @.returnVertexFromKeyOrObject(current_vertex.getNext())
 
+		@setReferencesForChildrenThroughoutGraph= () ->
+			for key, value of nodes
+				value.setChildrenReferences()
 
 	### class method ###
 	@link= (from_vertex, to_vertex) -> 
@@ -99,7 +96,7 @@ class telescopicText.Graph
 
 
 class telescopicText.Vertex
-	constructor: (name, @content, @children=[[]], remain_after_click=false, next=null, graph="telescopicDefaultID") ->
+	constructor: (name, @content, @children=[[]], remain_after_click=false, next=null, graph="telescopicDefaultID", starter=false) ->
 		# The @symbol makes attributes public. Omitting the @ makes them private.
 		
 		# Make the graph, if it doesn't already exist
@@ -111,29 +108,45 @@ class telescopicText.Vertex
 		graph = telescopicText.graphs[graph]
 		graph.setNode(name, @)
 	
-		@tree_edge
-		@forward_edge
-		@back_edge
-		@cross_edge
+		@incoming_tree = false
+		@incoming_forward = false
+		@incoming_back = false
+		@incoming_cross = false
 
 		#private
 		previous = null
+		click_count = 0
 
 		### getters, setters ###
+		@getStarter = -> starter #intentionally, no setter method.
 		@getName = -> name
 		@getGraph = -> graph
-
 		@getNext = -> 
 				next
-
 		@setNext = (newNext) -> 
 			next = newNext
-		
 		@getPrevious = -> previous
 		@setPrevious= (newPrevious) ->
 			previous = newPrevious
-
 		@getRemainAfterClick = -> remain_after_click
+		@findClicksRemaining = -> 
+			@.children.length - click_count
+		@shouldBeVisible = ->
+			### starter case ###
+			if @.getStarter() && @.findClicksRemaining() > 0
+				true
+			else if @.getStarter() && @.getRemainAfterClick()
+				true
+				### not a starter node ###
+			else if @.findClicksRemaining() > 0 && @.incoming_tree
+				true
+			else if @.incoming_tree && @.getRemainAfterClick()
+				true
+			else
+				false			
+
+		@forward_click= ->
+			click_count +=1
 
 		@setChildrenReferences= ->
 			# can use returnVertexFromKeyOrObject, but at some later point

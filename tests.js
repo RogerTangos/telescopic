@@ -2,7 +2,7 @@
 test('Verticies have the correct attributes', function() {
   var name_vertex;
   telescopicText.reset();
-  name_vertex = new telescopicText.Vertex('myName', 'myContent', null, null, null, null);
+  name_vertex = new telescopicText.Vertex('myName', 'myContent', null, null, null, null, null);
   equal(name_vertex.getName(), 'myName');
   equal(name_vertex.content, 'myContent');
   ok(name_vertex.children instanceof Array && name_vertex.children[0] instanceof Array);
@@ -10,17 +10,22 @@ test('Verticies have the correct attributes', function() {
   equal(name_vertex.getRemainAfterClick(), false);
   equal(name_vertex.getNext(), null);
   equal(name_vertex.getGraph().getName(), 'telescopicDefaultID');
-  equal(name_vertex.tree_edge, null);
-  equal(name_vertex.forward_edge, null);
-  equal(name_vertex.back_edge, null);
-  equal(name_vertex.cross_edge, null);
+  equal(name_vertex.findClicksRemaining(), 1);
+  equal(name_vertex.incoming_tree, false);
+  equal(name_vertex.incoming_forward, false);
+  equal(name_vertex.incoming_back, false);
+  equal(name_vertex.incoming_cross, false);
+  equal(name_vertex.getStarter(), false);
+  equal(name_vertex.shouldBeVisible(), true);
   telescopicText.reset();
-  name_vertex = new telescopicText.Vertex('myName', 'myContent', [['foo'], ['bar']], true, 'next', 'newGraphName');
+  name_vertex = new telescopicText.Vertex('myName', 'myContent', [['foo'], ['bar']], true, 'next', 'newGraphName', true);
   equal(name_vertex.children[0][0], 'foo');
   equal(name_vertex.children[1][0], 'bar');
   equal(name_vertex.getRemainAfterClick(), true);
   equal(name_vertex.getNext(), 'next');
-  return equal(name_vertex.getGraph().getName(), 'newGraphName');
+  equal(name_vertex.getGraph().getName(), 'newGraphName');
+  equal(name_vertex.getStarter(), true);
+  return equal(name_vertex.shouldBeVisible(), true);
 });
 
 test('Verticies create the new relevant graph and insert themselves', function() {
@@ -55,6 +60,20 @@ test('Vertex.setChildReferences references correct graph, and verticies', functi
   equal(vertex_A.children[1][0], vertex_B);
   equal(vertex_A.children[1][1], vertex_C);
   return equal(vertex_A.children[1][2], void 0);
+});
+
+test('Graph.graph1.setReferencesForChildrenThroughoutGraph sets all child references', function() {
+  var vertex_A, vertex_B, vertex_C, vertex_D;
+  telescopicText.reset();
+  vertex_A = new telescopicText.Vertex('A', 'a', [['D'], ['B']], null, 'B', null);
+  vertex_B = new telescopicText.Vertex('B', 'b', [['C']], true, null, null);
+  vertex_C = new telescopicText.Vertex('C', 'c', [['D']], null, null, null);
+  vertex_D = new telescopicText.Vertex('D', 'd', null, null, null, null);
+  telescopicText.graphs['telescopicDefaultID'].setReferencesForChildrenThroughoutGraph();
+  equal(vertex_A.children[0][0], vertex_D);
+  equal(vertex_A.children[1][0], vertex_B);
+  equal(vertex_B.children[0][0], vertex_C);
+  return equal(vertex_C.children[0][0], vertex_D);
 });
 
 test('telescopicText.Graph link', function() {
