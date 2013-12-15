@@ -64,7 +64,7 @@ test 'Vertex.setChildReferences references correct graph, and verticies', ->
 	equal(vertex_A.children[1][0], vertex_B)
 	equal(vertex_A.children[1][1], vertex_C)
 
-	# sad path
+	# sad path where vertex isn't found
 	equal(vertex_A.children[1][2], undefined)
 
 
@@ -205,7 +205,7 @@ test 'telescopicText.Graph makeLinkedList', ->
 
 # test 'create a tree edge', ->
 
-	
+
 
 # attempting to make a stub:
 # Had trouble assigning a prototype method to an object.

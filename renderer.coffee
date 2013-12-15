@@ -23,7 +23,11 @@ class telescopicText.Graph
 		@getName = -> name
 
 		@getNode = (key) ->
-			nodes[key]
+			node = nodes[key]
+
+			if node == undefined
+				console.log 'Graph "' + @.getName() + '" is missing a child, with key "' + key + '."'
+			node
 
 		@setNode = (key, value) ->
 			nodes[key] = value
@@ -36,6 +40,7 @@ class telescopicText.Graph
 				key_or_object = @.getNode(key_or_object)
 			else
 				key_or_object
+
 
 		@makeLinkedList= (start_vertex) ->
 			current_vertex = start_vertex
@@ -136,15 +141,15 @@ class telescopicText.Vertex
 			while set_index < @.children.length
 				child_index = 0
 				while child_index < @.children[set_index].length
-					child = @.children[set_index][child_index]
+					child_key = @.children[set_index][child_index]
+					child = graph.returnVertexFromKeyOrObject(child_key)  
 
-					if !graph.getNode(child)
-						missing_child = @.children[set_index][child_index]
-						console.log 'Vertex ' + @.name + ' in graph "' + graph.getName() + '" is missing a child, "' + missing_child + '". It will be removed from the vertex children.'
+					if child !instanceof telescopicText.Vertex
+						console.log 'The key, "'+ child_key+ '", will be removed from vertex\'s child array.'
 						@.children[set_index].splice(child_index,1)
 
 					else
-						@.children[set_index][child_index] = graph.getNode(child)
+						@.children[set_index][child_index] = child
 						child_index +=1
 					
 				set_index += 1
