@@ -122,7 +122,7 @@ telescopicText.Vertex = (function() {
   function Vertex(name, content, children, remain_after_click, next, graph, starter) {
     var click_count, previous;
     this.content = content;
-    this.children = children != null ? children : [[]];
+    this.children = children != null ? children : [];
     if (remain_after_click == null) {
       remain_after_click = false;
     }
@@ -178,7 +178,9 @@ telescopicText.Vertex = (function() {
     this.shouldBeVisible = function() {
       /* starter case*/
 
-      if (this.getStarter() && this.findClicksRemaining() > 0) {
+      if (this.children.length === 0) {
+        return true;
+      } else if (this.getStarter() && this.findClicksRemaining() > 0) {
         return true;
       } else if (this.getStarter() && this.getRemainAfterClick()) {
         return true;
@@ -194,6 +196,11 @@ telescopicText.Vertex = (function() {
     };
     this.forward_click = function() {
       return click_count += 1;
+    };
+    this.receive_forward_click = function(incoming_vertex) {
+      if (!incoming_tree) {
+        return this.incoming_tree = incoming_vertex;
+      }
     };
     this.setChildrenReferences = function() {
       var child, child_index, child_key, set_index, _results;

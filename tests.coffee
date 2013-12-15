@@ -1,15 +1,15 @@
-test 'Verticies have the correct attributes', ->
+test 'Verticies have the correct default attributes', ->
 	# testing name and default attributes
 	telescopicText.reset()
 	name_vertex = new telescopicText.Vertex('myName', 'myContent', null, null, null, null, null)
 	equal(name_vertex.getName(), 'myName')
 	equal(name_vertex.content, 'myContent')
-	ok(name_vertex.children instanceof Array && name_vertex.children[0] instanceof Array)
-	ok(name_vertex.children[0][0] == undefined)
+	ok(name_vertex.children instanceof Array)
+	ok(name_vertex.children[0] == undefined)
 	equal(name_vertex.getRemainAfterClick(),false)
 	equal(name_vertex.getNext(),null)
 	equal(name_vertex.getGraph().getName(),'telescopicDefaultID')
-	equal(name_vertex.findClicksRemaining(), 1)
+	equal(name_vertex.findClicksRemaining(), 0)
 
 	equal(name_vertex.incoming_tree, false)
 	equal(name_vertex.incoming_forward, false)
@@ -18,7 +18,7 @@ test 'Verticies have the correct attributes', ->
 	equal(name_vertex.getStarter(), false)
 	equal(name_vertex.shouldBeVisible(), true)
 
-
+test 'Verticies have correct non-default attributes', ->
 	# testing non-default attributes
 	telescopicText.reset()
 	name_vertex = new telescopicText.Vertex('myName', 'myContent', [['foo'],['bar']], true, 'next', 'newGraphName', true)

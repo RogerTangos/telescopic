@@ -96,7 +96,7 @@ class telescopicText.Graph
 
 
 class telescopicText.Vertex
-	constructor: (name, @content, @children=[[]], remain_after_click=false, next=null, graph="telescopicDefaultID", starter=false) ->
+	constructor: (name, @content, @children=[], remain_after_click=false, next=null, graph="telescopicDefaultID", starter=false) ->
 		# The @symbol makes attributes public. Omitting the @ makes them private.
 		
 		# Make the graph, if it doesn't already exist
@@ -133,7 +133,9 @@ class telescopicText.Vertex
 			@.children.length - click_count
 		@shouldBeVisible = ->
 			### starter case ###
-			if @.getStarter() && @.findClicksRemaining() > 0
+			if @.children.length == 0
+				true
+			else if @.getStarter() && @.findClicksRemaining() > 0
 				true
 			else if @.getStarter() && @.getRemainAfterClick()
 				true
@@ -147,6 +149,11 @@ class telescopicText.Vertex
 
 		@forward_click= ->
 			click_count +=1
+
+		@receive_forward_click = (incoming_vertex) ->
+			if !incoming_tree
+				@.incoming_tree = incoming_vertex
+
 
 		@setChildrenReferences= ->
 			# can use returnVertexFromKeyOrObject, but at some later point
