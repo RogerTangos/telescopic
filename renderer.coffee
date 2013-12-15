@@ -58,26 +58,6 @@ class telescopicText.Graph
 					next_vertex = @.returnVertexFromKeyOrObject(current_vertex.getNext())
 
 
-
-
-
-
-				# current_vertex.setPrevious(previous_vertex)
-
-				# next_key = current_vertex.getNext()
-				# next_vertex = @.getNode(next_key)
-				# # current_vertex.setNext(next_vertex)
-				# @.link(current_vertex, next_vertex)
-				
-				# ### check for cycles and break them ###
-				# if next_vertex == start_vertex
-
-
-				# previous_vertex = current_vertex
-				# current_vertex = next_vertex
-
-
-
 	### class method ###
 	@link= (from_vertex, to_vertex) -> 
 	#link two vertexes. needs to be passed vertex objects, not just their keys
@@ -171,23 +151,4 @@ class telescopicText.Vertex
 
 # create the default graph
 telescopicText.reset()
-
-
-	# unlink: ->
-	# 	# careful with this function. If you unlink a node, you also make
-	# 	# its edges unavailable to the user... so its children may never
-	# 	# be reached.
-	# 	current_previous = @.previous
-	# 	current_next = @.next
-
-	# 	if @.previous?
-	# 		current_previous.next = @.current_next
-
-	# 	if @.next?
-	# 		current_next.previous = @.current_previous
-			
-	# 	@.next = null
-	# 	@.previous = null
-
-	# link: (after, before)->
 

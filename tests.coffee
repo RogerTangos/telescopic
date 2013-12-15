@@ -186,7 +186,7 @@ test 'telescopicText.Graph makeLinkedList', ->
 	equal(vertex_C.getPrevious(),vertex_B)
 
 
-# 	# Sad path - infinite unary loop
+	# Sad path - infinite unary loop
 	telescopicText.reset()
 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'A', null)
 	telescopicText.graphs['telescopicDefaultID'].makeLinkedList(vertex_A)
@@ -203,6 +203,9 @@ test 'telescopicText.Graph makeLinkedList', ->
 	equal(vertex_C.getNext(),null)
 	equal(vertex_A.getNext(),vertex_B)
 
+# test 'create a tree edge', ->
+
+	
 
 # attempting to make a stub:
 # Had trouble assigning a prototype method to an object.
