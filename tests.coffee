@@ -1,5 +1,6 @@
 test 'Verticies have the correct attributes', ->
 	# testing name and default attributes
+	telescopicText.reset()
 	name_vertex = new telescopicText.Vertex('myName', 'myContent', null, null, null, null)
 	equal(name_vertex.getName(), 'myName')
 	equal(name_vertex.content, 'myContent')
@@ -15,6 +16,7 @@ test 'Verticies have the correct attributes', ->
 	equal(name_vertex.cross_edge, null)
 
 	# testing non-default attributes
+	telescopicText.reset()
 	name_vertex = new telescopicText.Vertex('myName', 'myContent', [['foo'],['bar']], true, 'next', 'newGraphName')
 	equal(name_vertex.children[0][0],'foo')
 	equal(name_vertex.children[1][0],'bar')
@@ -22,13 +24,10 @@ test 'Verticies have the correct attributes', ->
 	equal(name_vertex.getNext(),'next')
 	equal(name_vertex.getGraph().getName(),'newGraphName')
 
-	# clear graph
-	telescopicText.graphs = {}
-	new telescopicText.Graph('telescopicDefaultID')
-
 
 test 'Verticies create the new relevant graph and insert themselves', ->
 	# default graph case
+	telescopicText.reset()
 	foo = new telescopicText.Vertex("foo", null, null, true, null, null)
 	equal(telescopicText.graphs['telescopicDefaultID'].getName(),
 		'telescopicDefaultID') 
@@ -36,16 +35,24 @@ test 'Verticies create the new relevant graph and insert themselves', ->
 		foo)
 
 	# named graph case
+	telescopicText.reset()
 	bar = new telescopicText.Vertex("bar", null, null, true, null, 'myGraph')
 	equal(telescopicText.graphs['myGraph'].getName(),
 		'myGraph')
 	equal(telescopicText.graphs['myGraph'].getNode('bar'),
 		bar)
 
+	
+test 'vertex.object returnVertexFromKeyOrObject', ->
 	telescopicText.reset()
+	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
+	
+	equal(vertex_A.getGraph().returnVertexFromKeyOrObject('A'), vertex_A)
+	equal(vertex_A.getGraph().returnVertexFromKeyOrObject(vertex_A), vertex_A)
 
 
 test 'Vertex.setChildReferences references correct graph, and verticies', ->
+	telescopicText.reset()
 	vertex_A = new telescopicText.Vertex('A', 'a', [['D'],['B', 'C','nope']], null, 'B', null)
 	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
 	vertex_C = new telescopicText.Vertex('C', 'c', null, null, null, null)
@@ -60,13 +67,112 @@ test 'Vertex.setChildReferences references correct graph, and verticies', ->
 	# sad path
 	equal(vertex_A.children[1][2], undefined)
 
-	# clear graph
-	telescopicText.reset()
 
+test 'telescopicText.Graph link', ->
+	telescopicText.reset()
+	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
+	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
+	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
+
+
+	telescopicText.Graph.link(vertex_A, vertex_B)
+	equal(vertex_A.getNext(),vertex_B)
+	equal(vertex_B.getPrevious(),vertex_A)
+
+	telescopicText.Graph.link(vertex_B, vertex_C)
+	equal(vertex_B.getNext(),vertex_C)
+	equal(vertex_C.getPrevious(),vertex_B)
+
+test 'telescopicText.Graph dangerousUnlink', ->
+	telescopicText.reset()
+	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
+	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
+	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
+	telescopicText.Graph.link(vertex_A, vertex_B)
+	telescopicText.Graph.link(vertex_B, vertex_C)
+
+	### unlink between nodes ###
+	telescopicText.Graph.dangerousUnlink(vertex_B)
+	equal(vertex_B.getNext(), null)
+	equal(vertex_B.getPrevious(), null)
+	equal(vertex_A.getNext(), null)
+	equal(vertex_C.getPrevious(), null)
+
+	### unlink end node ###
+	telescopicText.reset()
+	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
+	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
+	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
+	telescopicText.Graph.link(vertex_A, vertex_B)
+	telescopicText.Graph.link(vertex_B, vertex_C)
+
+	telescopicText.Graph.dangerousUnlink(vertex_C)
+	equal(vertex_C.getNext(), null)
+	equal(vertex_C.getPrevious(), null)
+	equal(vertex_B.getNext(), null)
+	equal(vertex_B.getPrevious(), vertex_A)
+
+	### unlink start node ###
+	telescopicText.reset()
+	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
+	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
+	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
+	telescopicText.Graph.link(vertex_A, vertex_B)
+	telescopicText.Graph.link(vertex_B, vertex_C)
+
+	telescopicText.Graph.dangerousUnlink(vertex_A)
+	equal(vertex_A.getNext(), null)
+	equal(vertex_A.getPrevious(), null)
+	equal(vertex_B.getNext(), vertex_C)
+	equal(vertex_B.getPrevious(), null)
+
+test 'telescopicText.Graph safeUnlink', ->
+	### unlink middle node ###
+	telescopicText.reset()
+	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
+	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
+	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
+	telescopicText.Graph.link(vertex_A, vertex_B)
+	telescopicText.Graph.link(vertex_B, vertex_C)
+
+	telescopicText.Graph.safeUnlink(vertex_B)
+	equal(vertex_B.getNext(), null)
+	equal(vertex_B.getPrevious(), null)
+	equal(vertex_A.getNext(),vertex_C)
+	equal(vertex_C.getPrevious(),vertex_A)
+
+	### unlink end node ###
+	telescopicText.reset()
+	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
+	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
+	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
+	telescopicText.Graph.link(vertex_A, vertex_B)
+	telescopicText.Graph.link(vertex_B, vertex_C)
+
+	telescopicText.Graph.safeUnlink(vertex_C)
+	equal(vertex_C.getNext(), null)
+	equal(vertex_C.getPrevious(), null)
+	equal(vertex_B.getNext(), null)
+	equal(vertex_B.getPrevious(), vertex_A)
+
+	### unlink start node ###
+	telescopicText.reset()
+	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
+	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
+	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
+	telescopicText.Graph.link(vertex_A, vertex_B)
+	telescopicText.Graph.link(vertex_B, vertex_C)
+
+	telescopicText.Graph.safeUnlink(vertex_A)
+	equal(vertex_A.getNext(), null)
+	equal(vertex_A.getPrevious(), null)
+	equal(vertex_B.getNext(), vertex_C)
+	equal(vertex_B.getPrevious(), null)
 
 
 test 'telescopicText.Graph makeLinkedList', ->
 	# happy path (one starting node supplied)
+	telescopicText.reset()
 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'B', null)
 	vertex_B = new telescopicText.Vertex('B', 'b', null, true, 'C', null)
 	vertex_C = new telescopicText.Vertex('C', 'c', null, null, null, null)
@@ -79,19 +185,16 @@ test 'telescopicText.Graph makeLinkedList', ->
 	equal(vertex_B.getPrevious(),vertex_A)
 	equal(vertex_C.getPrevious(),vertex_B)
 
-	vertex_A = null
-	vertex_B = null
-	vertex_C = null
-	telescopicText.reset()
 
-	# Sad path - infinite unary loop
+# 	# Sad path - infinite unary loop
+	telescopicText.reset()
 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'A', null)
 	telescopicText.graphs['telescopicDefaultID'].makeLinkedList(vertex_A)
 	equal(vertex_A.getNext(),null)
-
-	telescopicText.reset()
+	equal(vertex_A.getPrevious(), null)
 
 	# Sad path - infinite long loop
+	telescopicText.reset()
 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'B', null)
 	vertex_B = new telescopicText.Vertex('B', 'b', null, true, 'C', null)
 	vertex_C = new telescopicText.Vertex('C', 'c', null, null, 'A', null)
@@ -100,79 +203,6 @@ test 'telescopicText.Graph makeLinkedList', ->
 	equal(vertex_C.getNext(),null)
 	equal(vertex_A.getNext(),vertex_B)
 
-
-
-
-
-
-	# confused path (no starting node supplied, multiple starting nodes evident)
-
-	# sad path (no starting node supplied, no starting node)
-
-
-
-# 	makeVerticiesIntoLinkedList('A')
-
-# 	equal(verticies['A'].next, verticies['B'])
-# 	equal(verticies['B'].next, verticies['D'])
-	
-# 	equal(verticies['A'].previous, null)
-# 	equal(verticies['B'].previous, verticies['A'])
-
-# 	navigation_order = ''
-# 	current_vertex = verticies['A'] 
-# 	while current_vertex? 
-# 		navigation_order = navigation_order.concat(current_vertex.content)
-# 		current_vertex = current_vertex.next
-
-# 	equal(navigation_order, 'abdgcehfivjuklmnopqrst')
-
-
-# test 'Verticies can be unlinked', ->
-# 	makeTestVerticies()
-# 	makeVerticiesIntoLinkedList('A')
-
-# 	verticies['A'].unlink()
-
-# 	equal(verticies['A'].next, null)
-# 	equal(verticies['A'].previous, null)
-
-# 	equal(verticies['B'].previous, null)
-# 	equal(verticies['B'].next, verticies['D'])
-
-# 	verticies['E'].unlink
-# 	equal(verticies['C'].next, verticies['H'])
-# 	equal(verticies['H'].previous, verticies['C'])
-# 	equal(verticies['E'].next, null)
-# 	equal(verticies['E'].previous, null)
-	
-# test 'Verticies can be linked', ->
-# 	makeTestVerticies()
-# 	makeVerticiesIntoLinkedList('A')
-# 	# need to call verticies can be unlinked before this works.
-# 	verticies['A'] = new Vertex('A', 'a', [['C','B']], 1, 'B')
-# 	verticies['A'].link()
-# 	equal(verticies['A'].next, verticies['B'])
-# 	equal(verticies['A'].previous, null)
-# 	equal(verticies['B'].next, verticies['D'])
-# 	equal(verticies['B'].previous, verticies['A'])
-
-# 	verticies['E'] = new Vertex('E', 'e', [['F', 'J', 'I', 'H'], ['Q']], 1, 'H');
-# 	verticies['E'].link
-# 	equal(verticies['E'].next, verticies['H'])
-# 	equal(verticies['E'].previous, verticies['C'])
-# 	equal(verticies['C'].next, verticies['E'])
-# 	equal(verticies['H'].previous, verticies['E'])
-
-
-
-	# true
-
-# test 'TText Method Basics', ->
-	# shouldhave
-
-	# reveal text
-	# hide text
 
 # attempting to make a stub:
 # Had trouble assigning a prototype method to an object.

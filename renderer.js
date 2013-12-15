@@ -28,30 +28,75 @@ telescopicText.Graph = (function() {
     this.setNode = function(key, value) {
       return nodes[key] = value;
     };
-    /* object method*/
+    /* object-level methods*/
 
-    this.makeLinkedList = function(start_vertex) {
-      var current_vertex, next_key, next_vertex, previous_vertex;
-      current_vertex = start_vertex;
-      previous_vertex = null;
-      if (!start_vertex.getNext()) {
-        console.log('Warning: This graph only has one vertex linked.');
-      }
-      while (current_vertex) {
-        current_vertex.setPrevious(previous_vertex);
-        next_key = current_vertex.getNext();
-        next_vertex = this.getNode(next_key);
-        current_vertex.setNext(next_vertex);
-        if (next_vertex === start_vertex) {
-          current_vertex.setNext(null);
-          console.log("Your linked list is cyclical when it should be linear. " + "Did not link the start and end nodes.");
-          return;
-        }
-        previous_vertex = current_vertex;
-        current_vertex = next_vertex;
+    this.returnVertexFromKeyOrObject = function(key_or_object) {
+      if (!(key_or_object instanceof telescopicText.Vertex)) {
+        return key_or_object = this.getNode(key_or_object);
+      } else {
+        return key_or_object;
       }
     };
+    this.makeLinkedList = function(start_vertex) {
+      var current_vertex, next_vertex, _results;
+      current_vertex = start_vertex;
+      next_vertex = this.returnVertexFromKeyOrObject(current_vertex.getNext());
+      if (!start_vertex.getNext()) {
+        console.log('Careful! This graph only has one vertex linked.');
+        +'and that seems pretty silly to me.';
+      }
+      _results = [];
+      while (next_vertex) {
+        if (next_vertex === start_vertex) {
+          current_vertex.setNext(null);
+          next_vertex.setPrevious(null);
+          console.log("Your linked list is cyclical when it should be linear. " + "Did not link the start and end nodes.");
+          _results.push(next_vertex = false);
+        } else {
+          this.constructor.link(current_vertex, next_vertex);
+          current_vertex = next_vertex;
+          _results.push(next_vertex = this.returnVertexFromKeyOrObject(current_vertex.getNext()));
+        }
+      }
+      return _results;
+    };
   }
+
+  /* class method*/
+
+
+  Graph.link = function(from_vertex, to_vertex) {
+    from_vertex.setNext(to_vertex);
+    return to_vertex.setPrevious(from_vertex);
+  };
+
+  Graph.dangerousUnlink = function(vertex) {
+    var next, previous;
+    next = vertex.getNext();
+    previous = vertex.getPrevious();
+    vertex.setNext(null);
+    vertex.setPrevious(null);
+    if (next) {
+      next.setPrevious(null);
+    }
+    if (previous) {
+      return previous.setNext(null);
+    }
+  };
+
+  Graph.safeUnlink = function(vertex) {
+    var next, previous;
+    next = vertex.getNext();
+    previous = vertex.getPrevious();
+    vertex.setNext(null);
+    vertex.setPrevious(null);
+    if (next) {
+      next.setPrevious(previous);
+    }
+    if (previous) {
+      return previous.setNext(next);
+    }
+  };
 
   return Graph;
 
