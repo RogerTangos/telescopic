@@ -1,11 +1,23 @@
+test 'find clicks remaining on unclickable link', ->
+	telescopicText.reset()
+	name_vertex = new telescopicText.Vertex('myName', 'myContent', null, null, null, null, null)
+
+	equal(name_vertex.click_count, undefined)
+	equal(name_vertex.findClicksRemaining(), 0)
+
 test 'forward click a node, vertex_A. test vertex_A visibility', ->
 	telescopicText.reset()
 	graph1 = makeTestVerticies()
 	vertex_A = graph1.getNode('A')
-	vertex_A.forward_click()
 
+	equal(vertex_A.findClicksRemaining(), 1)
+	
+	vertex_A.forward_click()
 	equal(vertex_A.findClicksRemaining(), 0)
 	equal(vertex_A.shouldBeVisible(), false)
+
+	equal()
+
 
 test 'forward click a node, vertex_A. Test its children\'s visibility', ->
 	telescopicText.reset()

@@ -9,7 +9,6 @@ test 'Verticies have the correct default attributes', ->
 	equal(name_vertex.getRemainAfterClick(),false)
 	equal(name_vertex.getNext(),null)
 	equal(name_vertex.getGraph().getName(),'telescopicDefaultID')
-	equal(name_vertex.findClicksRemaining(), 0)
 
 	equal(name_vertex.incoming_tree, false)
 	equal(name_vertex.incoming_forward, false)

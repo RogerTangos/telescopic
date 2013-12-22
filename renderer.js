@@ -144,6 +144,8 @@ telescopicText.Vertex = (function() {
     this.incoming_forward = false;
     this.incoming_back = false;
     this.incoming_cross = false;
+    /* private variables*/
+
     previous = null;
     click_count = 0;
     /* getters, setters*/
@@ -173,6 +175,10 @@ telescopicText.Vertex = (function() {
       return remain_after_click;
     };
     this.findClicksRemaining = function() {
+      /* doesn't take remain_after_click into account, because
+      				that wouldn't count as a click
+      */
+
       return this.children.length - click_count;
     };
     this.shouldBeVisible = function() {

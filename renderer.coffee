@@ -113,7 +113,7 @@ class telescopicText.Vertex
 		@incoming_back = false
 		@incoming_cross = false
 
-		#private
+		### private variables ### 
 		previous = null
 		click_count = 0
 
@@ -130,6 +130,8 @@ class telescopicText.Vertex
 			previous = newPrevious
 		@getRemainAfterClick = -> remain_after_click
 		@findClicksRemaining = -> 
+			### doesn't take remain_after_click into account, because
+				that wouldn't count as a click ### 
 			@.children.length - click_count
 		@shouldBeVisible = ->
 			### starter case ###
