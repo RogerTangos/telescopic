@@ -5,7 +5,7 @@ test 'find clicks remaining on unclickable link', ->
 	equal(name_vertex.click_count, undefined)
 	equal(name_vertex.findClicksRemaining(), 0)
 
-test 'forward click a node, vertex_A. test vertex_A visibility', ->
+test 'forward click a node, vertex_A. Test vertex_A visibility and clicks remaining', ->
 	telescopicText.reset()
 	graph1 = makeTestVerticies()
 	vertex_A = graph1.getNode('A')
@@ -16,7 +16,14 @@ test 'forward click a node, vertex_A. test vertex_A visibility', ->
 	equal(vertex_A.findClicksRemaining(), 0)
 	equal(vertex_A.shouldBeVisible(), false)
 
-	equal()
+test 'make sure hidden nodes give correct visibility.', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	vertex_C = graph1.getNode('C')
+	vertex_K = graph1.getNode('K')
+
+	equal(vertex_C.shouldBeVisible(), false)
+	equal(vertex_K.shouldBeVisible(), false)
 
 
 test 'forward click a node, vertex_A. Test its children\'s visibility', ->

@@ -7,7 +7,7 @@ test('find clicks remaining on unclickable link', function() {
   return equal(name_vertex.findClicksRemaining(), 0);
 });
 
-test('forward click a node, vertex_A. test vertex_A visibility', function() {
+test('forward click a node, vertex_A. Test vertex_A visibility and clicks remaining', function() {
   var graph1, vertex_A;
   telescopicText.reset();
   graph1 = makeTestVerticies();
@@ -15,8 +15,17 @@ test('forward click a node, vertex_A. test vertex_A visibility', function() {
   equal(vertex_A.findClicksRemaining(), 1);
   vertex_A.forward_click();
   equal(vertex_A.findClicksRemaining(), 0);
-  equal(vertex_A.shouldBeVisible(), false);
-  return equal();
+  return equal(vertex_A.shouldBeVisible(), false);
+});
+
+test('make sure hidden nodes give correct visibility.', function() {
+  var graph1, vertex_C, vertex_K;
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  vertex_C = graph1.getNode('C');
+  vertex_K = graph1.getNode('K');
+  equal(vertex_C.shouldBeVisible(), false);
+  return equal(vertex_K.shouldBeVisible(), false);
 });
 
 test('forward click a node, vertex_A. Test its children\'s visibility', function() {
