@@ -11,9 +11,9 @@ test 'Verticies have the correct default attributes', ->
 	equal(name_vertex.getGraph().getName(),'telescopicDefaultID')
 
 	equal(name_vertex.incoming_tree, false)
-	equal(name_vertex.incoming_forward, false)
-	equal(name_vertex.incoming_back, false)
-	equal(name_vertex.incoming_cross, false)
+	equal(name_vertex.incoming_forward[0], undefined)
+	equal(name_vertex.incoming_back[0], undefined)
+	equal(name_vertex.incoming_cross[0], undefined)
 	equal(name_vertex.getStarter(), false)
 	equal(name_vertex.shouldBeVisible(), true)
 

@@ -12,11 +12,13 @@ telescopicText.reset = function() {
 
 telescopicText.Graph = (function() {
   function Graph(name) {
-    var nodes;
+    /* shortcut to reference graphs*/
+
+    var _nodes;
     telescopicText.graphs[name] = this;
     /* private*/
 
-    nodes = {};
+    _nodes = {};
     /*getters, setters*/
 
     this.getName = function() {
@@ -24,7 +26,7 @@ telescopicText.Graph = (function() {
     };
     this.getNode = function(key) {
       var node;
-      node = nodes[key];
+      node = _nodes[key];
       if (node === void 0) {
         console.log('Graph "' + this.getName() + '" is missing a child, with key "' + key + '."');
         null;
@@ -32,7 +34,7 @@ telescopicText.Graph = (function() {
       return node;
     };
     this.setNode = function(key, value) {
-      return nodes[key] = value;
+      return _nodes[key] = value;
     };
     /* object-level methods*/
 
@@ -70,8 +72,8 @@ telescopicText.Graph = (function() {
     this.setReferencesForChildrenThroughoutGraph = function() {
       var key, value, _results;
       _results = [];
-      for (key in nodes) {
-        value = nodes[key];
+      for (key in _nodes) {
+        value = _nodes[key];
         _results.push(value.setChildrenReferences());
       }
       return _results;
@@ -120,7 +122,7 @@ telescopicText.Graph = (function() {
 
 telescopicText.Vertex = (function() {
   function Vertex(name, content, children, remain_after_click, next, graph, starter) {
-    var click_count, previous;
+    var _click_count, _previous;
     this.content = content;
     this.children = children != null ? children : [];
     if (remain_after_click == null) {
@@ -141,13 +143,13 @@ telescopicText.Vertex = (function() {
     graph = telescopicText.graphs[graph];
     graph.setNode(name, this);
     this.incoming_tree = false;
-    this.incoming_forward = false;
-    this.incoming_back = false;
-    this.incoming_cross = false;
+    this.incoming_forward = [];
+    this.incoming_back = [];
+    this.incoming_cross = [];
     /* private variables*/
 
-    previous = null;
-    click_count = 0;
+    _previous = null;
+    _click_count = 0;
     /* getters, setters*/
 
     this.getStarter = function() {
@@ -166,10 +168,10 @@ telescopicText.Vertex = (function() {
       return next = newNext;
     };
     this.getPrevious = function() {
-      return previous;
+      return _previous;
     };
     this.setPrevious = function(newPrevious) {
-      return previous = newPrevious;
+      return _previous = newPrevious;
     };
     this.getRemainAfterClick = function() {
       return remain_after_click;
@@ -179,7 +181,7 @@ telescopicText.Vertex = (function() {
       				that wouldn't count as a click
       */
 
-      return this.children.length - click_count;
+      return this.children.length - _click_count;
     };
     this.shouldBeVisible = function() {
       /* starter case*/
@@ -200,13 +202,45 @@ telescopicText.Vertex = (function() {
         return false;
       }
     };
-    this.forward_click = function() {
-      return click_count += 1;
-    };
-    this.receive_forward_click = function(incoming_vertex) {
-      if (!incoming_tree) {
+    this.determineAndSetIncomingEdge = function(incoming_vertex) {
+      /* assumes that incoming_vertex is valid*/
+
+      if (!this.incoming_tree && !this.getStarter()) {
         return this.incoming_tree = incoming_vertex;
+      } else if (this.determineIfBackEdge(incoming_vertex)) {
+        return this.incoming_back.push(incoming_vertex);
+      } else if (this.determineIfForwardEdge(incoming_vertex)) {
+        return this.incoming_forward.push(incoming_vertex);
+      } else {
+        return this.incoming_cross.push(incoming_vertex);
       }
+    };
+    this.determineIfBackEdge = function(incoming_vertex) {
+      var parent_vertex;
+      parent_vertex = incoming_vertex.incoming_tree;
+      while (parent_vertex) {
+        if (parent_vertex === this) {
+          return true;
+        } else {
+          parent_vertex = parent_vertex.incoming_tree;
+        }
+      }
+      return false;
+    };
+    this.determineIfForwardEdge = function(incoming_vertex) {
+      var parent_vertex;
+      parent_vertex = this.incoming_tree;
+      while (parent_vertex) {
+        if (parent_vertex === incoming_vertex) {
+          return true;
+        } else {
+          parent_vertex = parent_vertex.incoming_tree;
+        }
+      }
+      return false;
+    };
+    this.forwardClick = function() {
+      return _click_count += 1;
     };
     this.setChildrenReferences = function() {
       var child, child_index, child_key, set_index, _results;

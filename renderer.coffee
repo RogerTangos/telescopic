@@ -8,23 +8,24 @@ telescopicText.reset= ->
 
 class telescopicText.Graph
 	constructor: (name) ->
+		### shortcut to reference graphs ###
 		telescopicText.graphs[name] = @
 
 		### private ###
-		nodes = {}
+		_nodes = {}
 
 		###getters, setters###
 		@getName = -> name
 
 		@getNode = (key) ->
-			node = nodes[key]
+			node = _nodes[key]
 			if node == undefined
 				console.log 'Graph "' + @.getName() + '" is missing a child, with key "' + key + '."'
 				null
 			node
 
 		@setNode = (key, value) ->
-			nodes[key] = value
+			_nodes[key] = value
 
 
 		### object-level methods ###
@@ -57,7 +58,7 @@ class telescopicText.Graph
 					next_vertex = @.returnVertexFromKeyOrObject(current_vertex.getNext())
 
 		@setReferencesForChildrenThroughoutGraph= () ->
-			for key, value of nodes
+			for key, value of _nodes
 				value.setChildrenReferences()
 
 	### class method ###
@@ -109,30 +110,29 @@ class telescopicText.Vertex
 		graph.setNode(name, @)
 	
 		@incoming_tree = false
-		@incoming_forward = false
-		@incoming_back = false
-		@incoming_cross = false
+		@incoming_forward = []
+		@incoming_back = []
+		@incoming_cross = []
 
 		### private variables ### 
-		previous = null
-		click_count = 0
+		_previous = null
+		_click_count = 0
 
 		### getters, setters ###
 		@getStarter = -> starter #intentionally, no setter method.
 		@getName = -> name
 		@getGraph = -> graph
-		@getNext = -> 
-				next
+		@getNext = -> next
 		@setNext = (newNext) -> 
 			next = newNext
-		@getPrevious = -> previous
+		@getPrevious = -> _previous
 		@setPrevious= (newPrevious) ->
-			previous = newPrevious
+			_previous = newPrevious
 		@getRemainAfterClick = -> remain_after_click
 		@findClicksRemaining = -> 
 			### doesn't take remain_after_click into account, because
 				that wouldn't count as a click ### 
-			@.children.length - click_count
+			@.children.length - _click_count
 		@shouldBeVisible = ->
 			### starter case ###
 			if @.children.length == 0
@@ -149,12 +149,48 @@ class telescopicText.Vertex
 			else
 				false			
 
-		@forward_click= ->
-			click_count +=1
-
-		@receive_forward_click = (incoming_vertex) ->
-			if !incoming_tree
+		@determineAndSetIncomingEdge= (incoming_vertex)->
+			### assumes that incoming_vertex is valid ###
+			if !@.incoming_tree and !@.getStarter()
 				@.incoming_tree = incoming_vertex
+			else if @.determineIfBackEdge(incoming_vertex)
+				@.incoming_back.push(incoming_vertex)
+			else if @.determineIfForwardEdge(incoming_vertex)
+				@.incoming_forward.push(incoming_vertex)
+			else
+				@.incoming_cross.push(incoming_vertex)
+
+
+		@determineIfBackEdge = (incoming_vertex) ->
+			parent_vertex = incoming_vertex.incoming_tree
+
+			while parent_vertex
+				if parent_vertex == @
+					return true
+				else
+					parent_vertex = parent_vertex.incoming_tree
+			false
+
+
+		@determineIfForwardEdge = (incoming_vertex) ->
+			parent_vertex = @.incoming_tree
+
+			while parent_vertex
+				if parent_vertex == incoming_vertex
+					return true
+				else
+					parent_vertex = parent_vertex.incoming_tree
+
+			false
+
+		@forwardClick= ->
+			_click_count +=1
+
+			# figure out which set of children you're on.
+			# cycle through the next set of children.
+			# determine if it is a tree edge.
+				# if so, record the incoming_tree
+				# if not, determine the correct type & record it.
 
 
 		@setChildrenReferences= ->

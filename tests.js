@@ -10,11 +10,10 @@ test('Verticies have the correct default attributes', function() {
   equal(name_vertex.getRemainAfterClick(), false);
   equal(name_vertex.getNext(), null);
   equal(name_vertex.getGraph().getName(), 'telescopicDefaultID');
-  equal(name_vertex.findClicksRemaining(), 0);
   equal(name_vertex.incoming_tree, false);
-  equal(name_vertex.incoming_forward, false);
-  equal(name_vertex.incoming_back, false);
-  equal(name_vertex.incoming_cross, false);
+  equal(name_vertex.incoming_forward[0], void 0);
+  equal(name_vertex.incoming_back[0], void 0);
+  equal(name_vertex.incoming_cross[0], void 0);
   equal(name_vertex.getStarter(), false);
   return equal(name_vertex.shouldBeVisible(), true);
 });
