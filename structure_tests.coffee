@@ -77,14 +77,48 @@ test 'determine and record forward edges', ->
 	equal(vertex_Q.incoming_cross.length, 0)
 	equal(vertex_Q.incoming_forward[0], vertex_E)
 
-# test 'forward click a node, vertex_A. Test its children\'s visibility', ->
-# 	telescopicText.reset()
-# 	graph1 = makeTestVerticies()
-# 	vertex_A = graph1.getNode('A')
-# 	vertex_B = graph1.getNode('B')
-# 	vertex_C = graph1.getNode('C')
+test 'forward click a nodes A, B, C. test edge matching.', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	vertex_A = graph1.getNode('A')
+	vertex_B = graph1.getNode('B')
+	vertex_C = graph1.getNode('C')
+	vertex_K = graph1.getNode('K')
+	vertex_F = graph1.getNode('F')
 
-# 	vertex_A.forward_click()
+	vertex_A.forwardClick()
+	equal(vertex_B.incoming_tree, vertex_A)
+	equal(vertex_C.incoming_tree, vertex_A)
+
+	vertex_B.forwardClick()
+	equal(vertex_C.incoming_cross[0], vertex_B)
+	equal(vertex_K.incoming_tree, vertex_B)
+
+	vertex_C.forwardClick()
+	equal(vertex_A.incoming_back[0], vertex_C)
+	equal(vertex_F.incoming_tree, vertex_C)
+
+
+test 'forward click notes D, E, J, Q. test edge matching.', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	vertex_D = graph1.getNode('D')
+	vertex_E = graph1.getNode('E')
+	vertex_J = graph1.getNode('J')
+	vertex_Q = graph1.getNode('Q')
+
+	vertex_D.forwardClick()
+	equal(vertex_E.incoming_tree, vertex_D)
+
+	vertex_E.forwardClick()
+	equal(vertex_J.incoming_tree, vertex_E)
+
+	vertex_J.forwardClick()
+	equal(vertex_Q.incoming_tree, vertex_J)
+
+	vertex_E.forwardClick()
+	equal(vertex_Q.incoming_forward[0], vertex_E)
+
 # 	equal(vertex_A.shouldBeVisible(), false)
 
 # 	equal(vertex_B.incoming_tree, vertex_A)

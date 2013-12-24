@@ -80,3 +80,41 @@ test('determine and record forward edges', function() {
   equal(vertex_Q.incoming_cross.length, 0);
   return equal(vertex_Q.incoming_forward[0], vertex_E);
 });
+
+test('forward click a nodes A, B, C. test edge matching.', function() {
+  var graph1, vertex_A, vertex_B, vertex_C, vertex_F, vertex_K;
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  vertex_A = graph1.getNode('A');
+  vertex_B = graph1.getNode('B');
+  vertex_C = graph1.getNode('C');
+  vertex_K = graph1.getNode('K');
+  vertex_F = graph1.getNode('F');
+  vertex_A.forwardClick();
+  equal(vertex_B.incoming_tree, vertex_A);
+  equal(vertex_C.incoming_tree, vertex_A);
+  vertex_B.forwardClick();
+  equal(vertex_C.incoming_cross[0], vertex_B);
+  equal(vertex_K.incoming_tree, vertex_B);
+  vertex_C.forwardClick();
+  equal(vertex_A.incoming_back[0], vertex_C);
+  return equal(vertex_F.incoming_tree, vertex_C);
+});
+
+test('forward click notes D, E, J, Q. test edge matching.', function() {
+  var graph1, vertex_D, vertex_E, vertex_J, vertex_Q;
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  vertex_D = graph1.getNode('D');
+  vertex_E = graph1.getNode('E');
+  vertex_J = graph1.getNode('J');
+  vertex_Q = graph1.getNode('Q');
+  vertex_D.forwardClick();
+  equal(vertex_E.incoming_tree, vertex_D);
+  vertex_E.forwardClick();
+  equal(vertex_J.incoming_tree, vertex_E);
+  vertex_J.forwardClick();
+  equal(vertex_Q.incoming_tree, vertex_J);
+  vertex_E.forwardClick();
+  return equal(vertex_Q.incoming_forward[0], vertex_E);
+});

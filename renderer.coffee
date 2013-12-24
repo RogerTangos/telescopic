@@ -183,14 +183,16 @@ class telescopicText.Vertex
 			false
 
 		@forwardClick= ->
+			relevant_children = @.children[_click_count]
+			for child in relevant_children
+				child.receiveForwardClick(@)
+
 			_click_count +=1
+			@
 
-			# figure out which set of children you're on.
-			# cycle through the next set of children.
-			# determine if it is a tree edge.
-				# if so, record the incoming_tree
-				# if not, determine the correct type & record it.
-
+		@receiveForwardClick= (incoming_vertex)->
+			@determineAndSetIncomingEdge(incoming_vertex)
+			@
 
 		@setChildrenReferences= ->
 			# can use returnVertexFromKeyOrObject, but at some later point
