@@ -95,7 +95,6 @@ class telescopicText.Graph
 
 
 
-
 class telescopicText.Vertex
 	constructor: (_name, @content, @children=[], _remain_after_click=false, _next=null, _graph="telescopicDefaultID", _starter=false) ->
 		# The @symbol makes attributes public. Omitting the @ makes them private.

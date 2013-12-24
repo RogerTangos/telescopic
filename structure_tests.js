@@ -64,6 +64,19 @@ test('determine and record incoming tree, cross, and back edges', function() {
 });
 
 test('determine and record forward edges', function() {
-  equal(1, 1);
-  return true;
+  var graph1, vertex_D, vertex_E, vertex_J, vertex_Q;
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  vertex_D = graph1.getNode('D');
+  vertex_E = graph1.getNode('E');
+  vertex_J = graph1.getNode('J');
+  vertex_Q = graph1.getNode('Q');
+  vertex_Q.incoming_tree = vertex_J;
+  vertex_J.incoming_tree = vertex_E;
+  vertex_E.incoming_tree = vertex_D;
+  vertex_Q.determineAndSetIncomingEdge(vertex_E);
+  equal(vertex_Q.incoming_tree, vertex_J);
+  equal(vertex_Q.incoming_back.length, 0);
+  equal(vertex_Q.incoming_cross.length, 0);
+  return equal(vertex_Q.incoming_forward[0], vertex_E);
 });
