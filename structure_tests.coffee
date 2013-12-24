@@ -59,7 +59,8 @@ test 'determine and record incoming tree, cross, and back edges', ->
 	equal(vertex_A.incoming_forward[0], undefined)
 	equal(vertex_A.incoming_tree, false)
 
-test 'determine and record cross edge', ->
+test 'determine and record forward edges', ->
+	equal(1, 1)
 	true
 
 # test 'forward click a node, vertex_A. Test its children\'s visibility', ->

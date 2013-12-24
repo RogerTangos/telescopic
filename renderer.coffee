@@ -7,15 +7,15 @@ telescopicText.reset= ->
 	new telescopicText.Graph('telescopicDefaultID')
 
 class telescopicText.Graph
-	constructor: (name) ->
+	constructor: (_name) ->
 		### shortcut to reference graphs ###
-		telescopicText.graphs[name] = @
+		telescopicText.graphs[_name] = @
 
 		### private ###
 		_nodes = {}
 
 		###getters, setters###
-		@getName = -> name
+		@getName = -> _name
 
 		@getNode = (key) ->
 			node = _nodes[key]
@@ -97,17 +97,17 @@ class telescopicText.Graph
 
 
 class telescopicText.Vertex
-	constructor: (name, @content, @children=[], remain_after_click=false, next=null, graph="telescopicDefaultID", starter=false) ->
+	constructor: (_name, @content, @children=[], _remain_after_click=false, _next=null, _graph="telescopicDefaultID", _starter=false) ->
 		# The @symbol makes attributes public. Omitting the @ makes them private.
 		
 		# Make the graph, if it doesn't already exist
 		# Make the graph attribute a reference
 		# Insert node into the graph.
-		if not telescopicText.graphs[graph]
-			new telescopicText.Graph(graph)
+		if not telescopicText.graphs[_graph]
+			new telescopicText.Graph(_graph)
 		# take graph as string, turn it into a reference to the graph.  
-		graph = telescopicText.graphs[graph]
-		graph.setNode(name, @)
+		_graph = telescopicText.graphs[_graph]
+		_graph.setNode(_name, @)
 	
 		@incoming_tree = false
 		@incoming_forward = []
@@ -119,18 +119,18 @@ class telescopicText.Vertex
 		_click_count = 0
 
 		### getters, setters ###
-		@getStarter = -> starter #intentionally, no setter method.
-		@getName = -> name
-		@getGraph = -> graph
-		@getNext = -> next
+		@getStarter = -> _starter #intentionally, no setter method.
+		@getName = -> _name
+		@getGraph = -> _graph
+		@getNext = -> _next
 		@setNext = (newNext) -> 
-			next = newNext
+			_next = newNext
 		@getPrevious = -> _previous
 		@setPrevious= (newPrevious) ->
 			_previous = newPrevious
-		@getRemainAfterClick = -> remain_after_click
+		@getRemainAfterClick = -> _remain_after_click
 		@findClicksRemaining = -> 
-			### doesn't take remain_after_click into account, because
+			### doesn't take _remain_after_click into account, because
 				that wouldn't count as a click ### 
 			@.children.length - _click_count
 		@shouldBeVisible = ->
@@ -200,7 +200,7 @@ class telescopicText.Vertex
 				child_index = 0
 				while child_index < @.children[set_index].length
 					child_key = @.children[set_index][child_index]
-					child = graph.returnVertexFromKeyOrObject(child_key)  
+					child = _graph.returnVertexFromKeyOrObject(child_key)  
 
 					if child !instanceof telescopicText.Vertex
 						console.log 'The key, "'+ child_key+ '", will be removed from vertex\'s child array.'

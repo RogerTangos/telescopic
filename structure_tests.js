@@ -63,6 +63,7 @@ test('determine and record incoming tree, cross, and back edges', function() {
   return equal(vertex_A.incoming_tree, false);
 });
 
-test('determine and record cross edge', function() {
+test('determine and record forward edges', function() {
+  equal(1, 1);
   return true;
 });

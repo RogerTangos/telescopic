@@ -11,18 +11,18 @@ telescopicText.reset = function() {
 };
 
 telescopicText.Graph = (function() {
-  function Graph(name) {
+  function Graph(_name) {
     /* shortcut to reference graphs*/
 
     var _nodes;
-    telescopicText.graphs[name] = this;
+    telescopicText.graphs[_name] = this;
     /* private*/
 
     _nodes = {};
     /*getters, setters*/
 
     this.getName = function() {
-      return name;
+      return _name;
     };
     this.getNode = function(key) {
       var node;
@@ -121,27 +121,27 @@ telescopicText.Graph = (function() {
 })();
 
 telescopicText.Vertex = (function() {
-  function Vertex(name, content, children, remain_after_click, next, graph, starter) {
+  function Vertex(_name, content, children, _remain_after_click, _next, _graph, _starter) {
     var _click_count, _previous;
     this.content = content;
     this.children = children != null ? children : [];
-    if (remain_after_click == null) {
-      remain_after_click = false;
+    if (_remain_after_click == null) {
+      _remain_after_click = false;
     }
-    if (next == null) {
-      next = null;
+    if (_next == null) {
+      _next = null;
     }
-    if (graph == null) {
-      graph = "telescopicDefaultID";
+    if (_graph == null) {
+      _graph = "telescopicDefaultID";
     }
-    if (starter == null) {
-      starter = false;
+    if (_starter == null) {
+      _starter = false;
     }
-    if (!telescopicText.graphs[graph]) {
-      new telescopicText.Graph(graph);
+    if (!telescopicText.graphs[_graph]) {
+      new telescopicText.Graph(_graph);
     }
-    graph = telescopicText.graphs[graph];
-    graph.setNode(name, this);
+    _graph = telescopicText.graphs[_graph];
+    _graph.setNode(_name, this);
     this.incoming_tree = false;
     this.incoming_forward = [];
     this.incoming_back = [];
@@ -153,19 +153,19 @@ telescopicText.Vertex = (function() {
     /* getters, setters*/
 
     this.getStarter = function() {
-      return starter;
+      return _starter;
     };
     this.getName = function() {
-      return name;
+      return _name;
     };
     this.getGraph = function() {
-      return graph;
+      return _graph;
     };
     this.getNext = function() {
-      return next;
+      return _next;
     };
     this.setNext = function(newNext) {
-      return next = newNext;
+      return _next = newNext;
     };
     this.getPrevious = function() {
       return _previous;
@@ -174,10 +174,10 @@ telescopicText.Vertex = (function() {
       return _previous = newPrevious;
     };
     this.getRemainAfterClick = function() {
-      return remain_after_click;
+      return _remain_after_click;
     };
     this.findClicksRemaining = function() {
-      /* doesn't take remain_after_click into account, because
+      /* doesn't take _remain_after_click into account, because
       				that wouldn't count as a click
       */
 
@@ -250,7 +250,7 @@ telescopicText.Vertex = (function() {
         child_index = 0;
         while (child_index < this.children[set_index].length) {
           child_key = this.children[set_index][child_index];
-          child = graph.returnVertexFromKeyOrObject(child_key);
+          child = _graph.returnVertexFromKeyOrObject(child_key);
           if (!(child instanceof telescopicText.Vertex)) {
             console.log('The key, "' + child_key + '", will be removed from vertex\'s child array.');
             this.children[set_index].splice(child_index, 1);
