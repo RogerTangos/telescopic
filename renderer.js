@@ -240,7 +240,18 @@ telescopicText.Vertex = (function() {
       return false;
     };
     this.forwardClick = function() {
-      return _click_count += 1;
+      var child, relevant_children, _i, _len;
+      relevant_children = this.children[_click_count];
+      for (_i = 0, _len = relevant_children.length; _i < _len; _i++) {
+        child = relevant_children[_i];
+        child.receiveForwardClick(this);
+      }
+      _click_count += 1;
+      return this;
+    };
+    this.receiveForwardClick = function(incoming_vertex) {
+      this.determineAndSetIncomingEdge(incoming_vertex);
+      return this;
     };
     this.setChildrenReferences = function() {
       var child, child_index, child_key, set_index, _results;
