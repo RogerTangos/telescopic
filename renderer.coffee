@@ -127,11 +127,24 @@ class telescopicText.Vertex
 		@getPrevious = -> _previous
 		@setPrevious= (newPrevious) ->
 			_previous = newPrevious
+
+		### meta information ###
+		@getClickCount= -> _click_count
 		@getRemainAfterClick = -> _remain_after_click
 		@findClicksRemaining = -> 
 			### doesn't take _remain_after_click into account, because
 				that wouldn't count as a click ### 
 			@.children.length - _click_count
+		@findIndexOfChildInChildren =(child_vertex)->
+			child_index = 0
+			for row in children
+				for child in row
+					if child == child_vertex
+						return child_index
+				child_index +=1
+			false
+		
+		### visibility information ###
 		@shouldBeVisible = ->
 			### starter case ###
 			if @.children.length == 0
@@ -147,8 +160,19 @@ class telescopicText.Vertex
 				true
 			else
 				false			
+		@shouldBeReverseClickable = ->
+			### need to check to make sure that parent is on the same click index as the child ###
+			if _click_count == 0 &&
+					@.shouldBeVisible() && 
+					@.incoming_tree && 
+					_click_count == 0 &&
+					@.incoming_tree.findIndexOfChildInChildren(@) == @.incoming_tree.getClickCount()-1
+				return true
+			else
+				return false
 
-		@determineAndSetIncomingEdge= (incoming_vertex)->
+
+		@forwardDetermineAndSetIncomingEdge= (incoming_vertex)->
 			### assumes that incoming_vertex is valid ###
 			if !@.incoming_tree and !@.getStarter()
 				@.incoming_tree = incoming_vertex
@@ -158,8 +182,6 @@ class telescopicText.Vertex
 				@.incoming_forward.push(incoming_vertex)
 			else
 				@.incoming_cross.push(incoming_vertex)
-
-
 		@determineIfBackEdge = (incoming_vertex) ->
 			parent_vertex = incoming_vertex.incoming_tree
 
@@ -169,8 +191,6 @@ class telescopicText.Vertex
 				else
 					parent_vertex = parent_vertex.incoming_tree
 			false
-
-
 		@determineIfForwardEdge = (incoming_vertex) ->
 			parent_vertex = @.incoming_tree
 
@@ -182,6 +202,7 @@ class telescopicText.Vertex
 
 			false
 
+		### clicking ###
 		@forwardClick= ->
 			### catch instance in which it shouldn't be clicked ###
 			if @.findClicksRemaining() <= 0 or !@shouldBeVisible()
@@ -193,9 +214,8 @@ class telescopicText.Vertex
 
 			_click_count +=1
 			@
-
 		@receiveForwardClick= (incoming_vertex)->
-			@determineAndSetIncomingEdge(incoming_vertex)
+			@forwardDetermineAndSetIncomingEdge(incoming_vertex)
 			@
 
 		@setChildrenReferences= ->

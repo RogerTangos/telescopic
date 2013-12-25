@@ -173,6 +173,11 @@ telescopicText.Vertex = (function() {
     this.setPrevious = function(newPrevious) {
       return _previous = newPrevious;
     };
+    /* meta information*/
+
+    this.getClickCount = function() {
+      return _click_count;
+    };
     this.getRemainAfterClick = function() {
       return _remain_after_click;
     };
@@ -183,6 +188,23 @@ telescopicText.Vertex = (function() {
 
       return this.children.length - _click_count;
     };
+    this.findIndexOfChildInChildren = function(child_vertex) {
+      var child, child_index, row, _i, _j, _len, _len1;
+      child_index = 0;
+      for (_i = 0, _len = children.length; _i < _len; _i++) {
+        row = children[_i];
+        for (_j = 0, _len1 = row.length; _j < _len1; _j++) {
+          child = row[_j];
+          if (child === child_vertex) {
+            return child_index;
+          }
+        }
+        child_index += 1;
+      }
+      return false;
+    };
+    /* visibility information*/
+
     this.shouldBeVisible = function() {
       /* starter case*/
 
@@ -202,7 +224,16 @@ telescopicText.Vertex = (function() {
         return false;
       }
     };
-    this.determineAndSetIncomingEdge = function(incoming_vertex) {
+    this.shouldBeReverseClickable = function() {
+      /* need to check to make sure that parent is on the same click index as the child*/
+
+      if (_click_count === 0 && this.shouldBeVisible() && this.incoming_tree && _click_count === 0 && this.incoming_tree.findIndexOfChildInChildren(this) === this.incoming_tree.getClickCount() - 1) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+    this.forwardDetermineAndSetIncomingEdge = function(incoming_vertex) {
       /* assumes that incoming_vertex is valid*/
 
       if (!this.incoming_tree && !this.getStarter()) {
@@ -239,6 +270,8 @@ telescopicText.Vertex = (function() {
       }
       return false;
     };
+    /* clicking*/
+
     this.forwardClick = function() {
       /* catch instance in which it shouldn't be clicked*/
 
@@ -255,7 +288,7 @@ telescopicText.Vertex = (function() {
       return this;
     };
     this.receiveForwardClick = function(incoming_vertex) {
-      this.determineAndSetIncomingEdge(incoming_vertex);
+      this.forwardDetermineAndSetIncomingEdge(incoming_vertex);
       return this;
     };
     this.setChildrenReferences = function() {

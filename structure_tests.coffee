@@ -34,27 +34,27 @@ test 'determine and record incoming tree, cross, and back edges', ->
 	vertex_C = graph1.getNode('C')
 
 	### tree edges ###
-	vertex_B.determineAndSetIncomingEdge(vertex_A)
+	vertex_B.forwardDetermineAndSetIncomingEdge(vertex_A)
 	equal(vertex_B.incoming_tree, vertex_A)
 	equal(vertex_B.incoming_forward, false)
 	equal(vertex_B.incoming_back, false)
 	equal(vertex_B.incoming_cross, false)
 
-	vertex_C.determineAndSetIncomingEdge(vertex_A)	
+	vertex_C.forwardDetermineAndSetIncomingEdge(vertex_A)	
 	equal(vertex_C.incoming_tree, vertex_A)
 	equal(vertex_C.incoming_forward, false)
 	equal(vertex_C.incoming_back, false)
 	equal(vertex_C.incoming_cross, false)
 
 	### cross edge ###
-	vertex_C.determineAndSetIncomingEdge(vertex_B)
+	vertex_C.forwardDetermineAndSetIncomingEdge(vertex_B)
 	equal(vertex_C.incoming_tree, vertex_A)
 	equal(vertex_C.incoming_cross[0], vertex_B)
 	equal(vertex_C.incoming_back[0], undefined)
 	equal(vertex_C.incoming_forward[0], undefined)
 
 	### back edge ###
-	vertex_A.determineAndSetIncomingEdge(vertex_C)
+	vertex_A.forwardDetermineAndSetIncomingEdge(vertex_C)
 	equal(vertex_A.incoming_back[0],vertex_C)
 	equal(vertex_A.incoming_tree[0], undefined)
 	equal(vertex_A.incoming_forward[0], undefined)
@@ -72,7 +72,7 @@ test 'determine and record forward edges', ->
 	vertex_J.incoming_tree = vertex_E
 	vertex_E.incoming_tree = vertex_D
 
-	vertex_Q.determineAndSetIncomingEdge(vertex_E)
+	vertex_Q.forwardDetermineAndSetIncomingEdge(vertex_E)
 	equal(vertex_Q.incoming_tree, vertex_J)
 	equal(vertex_Q.incoming_back.length, 0)
 	equal(vertex_Q.incoming_cross.length, 0)
@@ -179,5 +179,44 @@ test 'visibility when forward clicking', ->
 		ok(!vertex_A.shouldBeVisible() && 
 		!vertex_B.shouldBeVisible())
 
+test 'find index of child in children', ->
+	g = graphPatternOne()
+	equal(g.vertex_C.findIndexOfChildInChildren(g.vertex_L), 1)
+	equal(g.vertex_C.findIndexOfChildInChildren(g.vertex_F), 0)
+	equal(g.vertex_A.findIndexOfChildInChildren(g.vertex_C), 0)
+
+test 'determine elibility for reverseClick', ->
+	g = graphPatternOne()
+	ok(g.vertex_L.shouldBeReverseClickable() &&
+		g.vertex_K.shouldBeReverseClickable)
+	ok(!g.vertex_F.shouldBeReverseClickable() &&
+		!g.vertex_C.shouldBeReverseClickable() &&
+		!g.vertex_A.shouldBeReverseClickable() &&
+		!g.vertex_B.shouldBeReverseClickable() &&
+		!g.vertex_A.shouldBeReverseClickable())
 
 
+# test 'reverse click', ->
+# 	g = graphPatternOne()
+
+# 	vertex_L.reverseClick()
+# 	ok(vertex_C.shouldBeVisible() && vertex_F.shouldBeVisible())
+# 	ok(!vertex_A.shouldBeVisible() && 
+# 		!vertex_B.shouldBeVisible() &&
+# 		!vertex_L.shouldBeVisible())
+
+### helper function ###
+graphPatternOne= ->
+	result = {}
+	result.graph1 = makeTestVerticies()
+	result.vertex_A = result.graph1.getNode('A')
+	result.vertex_B = result.graph1.getNode('B')
+	result.vertex_C = result.graph1.getNode('C')
+	result.vertex_K = result.graph1.getNode('K')
+	result.vertex_F = result.graph1.getNode('F')
+	result.vertex_L = result.graph1.getNode('L')
+	result.vertex_A.forwardClick()
+	result.vertex_B.forwardClick()
+	result.vertex_C.forwardClick()
+	result.vertex_C.forwardClick()
+	result
