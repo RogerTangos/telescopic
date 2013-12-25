@@ -108,7 +108,7 @@ class telescopicText.Vertex
 		_graph = telescopicText.graphs[_graph]
 		_graph.setNode(_name, @)
 	
-		@incoming_tree = false
+		@incoming_tree = false;
 		@incoming_forward = []
 		@incoming_back = []
 		@incoming_cross = []
