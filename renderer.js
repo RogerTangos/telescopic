@@ -240,7 +240,12 @@ telescopicText.Vertex = (function() {
       return false;
     };
     this.forwardClick = function() {
+      /* catch instance in which it shouldn't be clicked*/
+
       var child, relevant_children, _i, _len;
+      if (this.findClicksRemaining() <= 0 || !this.shouldBeVisible()) {
+        return this;
+      }
       relevant_children = this.children[_click_count];
       for (_i = 0, _len = relevant_children.length; _i < _len; _i++) {
         child = relevant_children[_i];

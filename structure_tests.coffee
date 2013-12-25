@@ -1,6 +1,7 @@
 test 'find clicks remaining on unclickable link', ->
 	telescopicText.reset()
-	name_vertex = new telescopicText.Vertex('myName', 'myContent', null, null, null, null, null)
+	name_vertex = new telescopicText.Vertex('myName', 'myContent', 
+		null, null, null, null, null)
 
 	equal(name_vertex.click_count, undefined)
 	equal(name_vertex.findClicksRemaining(), 0)
@@ -119,13 +120,64 @@ test 'forward click notes D, E, J, Q. test edge matching.', ->
 	vertex_E.forwardClick()
 	equal(vertex_Q.incoming_forward[0], vertex_E)
 
-# 	equal(vertex_A.shouldBeVisible(), false)
+test 'visibility when forward clicking', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	vertex_A = graph1.getNode('A')
+	vertex_B = graph1.getNode('B')
+	vertex_C = graph1.getNode('C')
+	vertex_K = graph1.getNode('K')
+	vertex_F = graph1.getNode('F')
+	vertex_L = graph1.getNode('L')
 
-# 	equal(vertex_B.incoming_tree, vertex_A)
-# 	equal(vertex_B.findClicksRemaining, 1)
-# 	equal(vertex_B.shouldBeVisible(), true)
+	ok(!vertex_B.shouldBeVisible() && 
+		!vertex_C.shouldBeVisible() && 
+		!vertex_K.shouldBeVisible() && 
+		!vertex_F.shouldBeVisible())
 
-# 	equal(vertex_C.incoming_tree, vertex_A)
-# 	equal(vertex_C.findClicksRemaining, 2)
-# 	equal(vertex_C.shouldBeVisible(), true)
+	### happy path. vertex_A "clicked" while visible ###
+	vertex_A.forwardClick()
+	ok(vertex_B.shouldBeVisible() && vertex_C.shouldBeVisible())
+	ok(!vertex_A.shouldBeVisible() && !vertex_K.shouldBeVisible() && 
+		!vertex_F.shouldBeVisible())
+
+	### sad path. vertex_A "clicked" while it should be invisible ###
+	vertex_A.forwardClick()
+	ok(vertex_B.shouldBeVisible() && vertex_C.shouldBeVisible())
+	ok(!vertex_A.shouldBeVisible() && 
+		!vertex_K.shouldBeVisible() && 
+		!vertex_F.shouldBeVisible() && 
+		!vertex_L.shouldBeVisible())
+
+	###sad path. vertex_L "clicked" while it should be invisible ###
+	vertex_L.forwardClick()
+	ok(vertex_B.shouldBeVisible() && vertex_C.shouldBeVisible())
+	ok(!vertex_A.shouldBeVisible() && 
+		!vertex_K.shouldBeVisible() && 
+		!vertex_F.shouldBeVisible() && 
+		!vertex_L.shouldBeVisible())
+
+	vertex_B.forwardClick()
+	ok(vertex_K.shouldBeVisible(), vertex_C.shouldBeVisible())
+	ok(!vertex_A.shouldBeVisible() && 
+		!vertex_B.shouldBeVisible() &&
+		!vertex_F.shouldBeVisible() &&
+		!vertex_L.shouldBeVisible())
+
+	### test case for vertex with multiple sets of children ###
+	vertex_C.forwardClick()
+	ok(vertex_C.shouldBeVisible() && vertex_F.shouldBeVisible())
+	ok(!vertex_A.shouldBeVisible() && 
+		!vertex_B.shouldBeVisible() &&
+		!vertex_L.shouldBeVisible())
+
+	### test set [1] of children and _remain_after_click### 
+	vertex_C.forwardClick()
+	ok(vertex_C.shouldBeVisible() && 
+		vertex_F.shouldBeVisible() && 
+		vertex_L.shouldBeVisible())
+		ok(!vertex_A.shouldBeVisible() && 
+		!vertex_B.shouldBeVisible())
+
+
 

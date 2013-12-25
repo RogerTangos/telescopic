@@ -183,6 +183,10 @@ class telescopicText.Vertex
 			false
 
 		@forwardClick= ->
+			### catch instance in which it shouldn't be clicked ###
+			if @.findClicksRemaining() <= 0 or !@shouldBeVisible()
+				return @
+
 			relevant_children = @.children[_click_count]
 			for child in relevant_children
 				child.receiveForwardClick(@)
