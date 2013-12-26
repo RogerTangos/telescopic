@@ -15,7 +15,7 @@ test 'Verticies have the correct default attributes', ->
 	equal(name_vertex.incoming_back[0], undefined)
 	equal(name_vertex.incoming_cross[0], undefined)
 	equal(name_vertex.getStarter(), false)
-	equal(name_vertex.shouldBeVisible(), true)
+	equal(name_vertex.shouldBeVisible(), false)
 
 test 'Verticies have correct non-default attributes', ->
 	# testing non-default attributes

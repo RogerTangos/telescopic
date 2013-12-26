@@ -177,6 +177,24 @@ test('determine elibility for reverseClick', function() {
   return ok(!g.vertex_F.shouldBeReverseClickable() && !g.vertex_C.shouldBeReverseClickable() && !g.vertex_A.shouldBeReverseClickable() && !g.vertex_B.shouldBeReverseClickable() && !g.vertex_A.shouldBeReverseClickable());
 });
 
+test('reverse click', function() {
+  var g;
+  g = graphPatternOne();
+  /* sad path. vertex_F should not be clickable.*/
+
+  g.vertex_F.reverseClick();
+  ok(g.vertex_F.shouldBeVisible() && g.vertex_L.shouldBeVisible() && g.vertex_C.shouldBeVisible() && g.vertex_K.shouldBeVisible());
+  ok(!g.vertex_B.shouldBeVisible() && !g.vertex_A.shouldBeVisible());
+  /* happy path. vertex_L should be clickable*/
+
+  g.vertex_L.reverseClick();
+  ok(g.vertex_C.shouldBeVisible() && g.vertex_F.shouldBeVisible() && g.vertex_K.shouldBeVisible());
+  return ok(!g.vertex_A.shouldBeVisible() && !g.vertex_B.shouldBeVisible() && !g.vertex_L.shouldBeVisible());
+});
+
+/* helper function*/
+
+
 graphPatternOne = function() {
   var result;
   result = {};

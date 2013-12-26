@@ -108,10 +108,12 @@ class telescopicText.Vertex
 		_graph = telescopicText.graphs[_graph]
 		_graph.setNode(_name, @)
 	
-		@incoming_tree = false;
-		@incoming_forward = []
-		@incoming_back = []
-		@incoming_cross = []
+		@setEdgesToDefault= ->
+			@incoming_tree = false;
+			@incoming_forward = []
+			@incoming_back = []
+			@incoming_cross = []
+		@setEdgesToDefault()
 
 		### private variables ### 
 		_previous = null
@@ -127,6 +129,7 @@ class telescopicText.Vertex
 		@getPrevious = -> _previous
 		@setPrevious= (newPrevious) ->
 			_previous = newPrevious
+
 
 		### meta information ###
 		@getClickCount= -> _click_count
@@ -146,10 +149,10 @@ class telescopicText.Vertex
 		
 		### visibility information ###
 		@shouldBeVisible = ->
-			### starter case ###
-			if @.children.length == 0
-				true
-			else if @.getStarter() && @.findClicksRemaining() > 0
+			# ### starter case ###
+			# if @.children.length == 0
+			# 	true
+			if @.getStarter() && @.findClicksRemaining() > 0
 				true
 			else if @.getStarter() && @.getRemainAfterClick()
 				true
@@ -217,6 +220,26 @@ class telescopicText.Vertex
 		@receiveForwardClick= (incoming_vertex)->
 			@forwardDetermineAndSetIncomingEdge(incoming_vertex)
 			@
+
+		@reverseClick= ->
+			if !@shouldBeReverseClickable()
+				return @
+			@incoming_tree.receiveReverseClickFromChild(@)
+			@
+
+
+		@receiveReverseClickFromChild=(child_vertex)->
+			_click_count += -1
+			child_index = @findIndexOfChildInChildren(child_vertex)
+			for child in @.children[child_index]
+				child.receiveReverseClickFromParent(@)
+			@
+
+		@receiveReverseClickFromParent= (parent_vertex)->
+			if @incoming_tree == parent_vertex
+				@setEdgesToDefault()
+			@
+
 
 		@setChildrenReferences= ->
 			# can use returnVertexFromKeyOrObject, but at some later point

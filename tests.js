@@ -15,7 +15,7 @@ test('Verticies have the correct default attributes', function() {
   equal(name_vertex.incoming_back[0], void 0);
   equal(name_vertex.incoming_cross[0], void 0);
   equal(name_vertex.getStarter(), false);
-  return equal(name_vertex.shouldBeVisible(), true);
+  return equal(name_vertex.shouldBeVisible(), false);
 });
 
 test('Verticies have correct non-default attributes', function() {

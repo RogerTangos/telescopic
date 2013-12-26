@@ -142,10 +142,13 @@ telescopicText.Vertex = (function() {
     }
     _graph = telescopicText.graphs[_graph];
     _graph.setNode(_name, this);
-    this.incoming_tree = false;
-    this.incoming_forward = [];
-    this.incoming_back = [];
-    this.incoming_cross = [];
+    this.setEdgesToDefault = function() {
+      this.incoming_tree = false;
+      this.incoming_forward = [];
+      this.incoming_back = [];
+      return this.incoming_cross = [];
+    };
+    this.setEdgesToDefault();
     /* private variables*/
 
     _previous = null;
@@ -206,11 +209,7 @@ telescopicText.Vertex = (function() {
     /* visibility information*/
 
     this.shouldBeVisible = function() {
-      /* starter case*/
-
-      if (this.children.length === 0) {
-        return true;
-      } else if (this.getStarter() && this.findClicksRemaining() > 0) {
+      if (this.getStarter() && this.findClicksRemaining() > 0) {
         return true;
       } else if (this.getStarter() && this.getRemainAfterClick()) {
         return true;
@@ -289,6 +288,30 @@ telescopicText.Vertex = (function() {
     };
     this.receiveForwardClick = function(incoming_vertex) {
       this.forwardDetermineAndSetIncomingEdge(incoming_vertex);
+      return this;
+    };
+    this.reverseClick = function() {
+      if (!this.shouldBeReverseClickable()) {
+        return this;
+      }
+      this.incoming_tree.receiveReverseClickFromChild(this);
+      return this;
+    };
+    this.receiveReverseClickFromChild = function(child_vertex) {
+      var child, child_index, _i, _len, _ref;
+      _click_count += -1;
+      child_index = this.findIndexOfChildInChildren(child_vertex);
+      _ref = this.children[child_index];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        child = _ref[_i];
+        child.receiveReverseClickFromParent(this);
+      }
+      return this;
+    };
+    this.receiveReverseClickFromParent = function(parent_vertex) {
+      if (this.incoming_tree === parent_vertex) {
+        this.setEdgesToDefault();
+      }
       return this;
     };
     this.setChildrenReferences = function() {

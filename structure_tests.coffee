@@ -185,6 +185,7 @@ test 'find index of child in children', ->
 	equal(g.vertex_C.findIndexOfChildInChildren(g.vertex_F), 0)
 	equal(g.vertex_A.findIndexOfChildInChildren(g.vertex_C), 0)
 
+
 test 'determine elibility for reverseClick', ->
 	g = graphPatternOne()
 	ok(g.vertex_L.shouldBeReverseClickable() &&
@@ -195,15 +196,31 @@ test 'determine elibility for reverseClick', ->
 		!g.vertex_B.shouldBeReverseClickable() &&
 		!g.vertex_A.shouldBeReverseClickable())
 
+test 'reverse click', ->
+	g = graphPatternOne()
+	
+	### sad path. vertex_F should not be clickable. ###
+	g.vertex_F.reverseClick()
+	ok(g.vertex_F.shouldBeVisible() &&
+		g.vertex_L.shouldBeVisible() &&
+		g.vertex_C.shouldBeVisible() &&
+		g.vertex_K.shouldBeVisible())
+	ok(!g.vertex_B.shouldBeVisible() &&
+		!g.vertex_A.shouldBeVisible())
 
-# test 'reverse click', ->
-# 	g = graphPatternOne()
+	### happy path. vertex_L should be clickable ###
+	g.vertex_L.reverseClick()
+	ok(g.vertex_C.shouldBeVisible() && 
+		g.vertex_F.shouldBeVisible() &&
+		g.vertex_K.shouldBeVisible())
 
-# 	vertex_L.reverseClick()
-# 	ok(vertex_C.shouldBeVisible() && vertex_F.shouldBeVisible())
-# 	ok(!vertex_A.shouldBeVisible() && 
-# 		!vertex_B.shouldBeVisible() &&
-# 		!vertex_L.shouldBeVisible())
+	ok(!g.vertex_A.shouldBeVisible() &&
+		!g.vertex_B.shouldBeVisible() &&
+		!g.vertex_L.shouldBeVisible())
+		
+
+
+
 
 ### helper function ###
 graphPatternOne= ->
