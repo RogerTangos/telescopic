@@ -29,8 +29,6 @@ test 'Verticies have correct non-default attributes', ->
 	equal(name_vertex.getStarter(), true)
 	equal(name_vertex.shouldBeVisible(), true)
 
-
-
 test 'Verticies create the new relevant graph and insert themselves', ->
 	# default graph case
 	telescopicText.reset()
@@ -47,7 +45,6 @@ test 'Verticies create the new relevant graph and insert themselves', ->
 		'myGraph')
 	equal(telescopicText.graphs['myGraph'].getNode('bar'),
 		bar)
-
 	
 test 'vertex.object returnVertexFromKeyOrObject', ->
 	telescopicText.reset()
@@ -55,7 +52,6 @@ test 'vertex.object returnVertexFromKeyOrObject', ->
 	
 	equal(vertex_A.getGraph().returnVertexFromKeyOrObject('A'), vertex_A)
 	equal(vertex_A.getGraph().returnVertexFromKeyOrObject(vertex_A), vertex_A)
-
 
 test 'Vertex.setChildReferences references correct graph, and verticies', ->
 	telescopicText.reset()

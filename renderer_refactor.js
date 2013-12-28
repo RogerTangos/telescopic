@@ -49,7 +49,26 @@ telescopicText.graph = function(spec) {
     _nodes[key] = value;
     return that;
   };
+  /* linking/children functions*/
+
+  that.setReferencesForChildrenThroughoutGraph = function() {
+    var key, value, _results;
+    _results = [];
+    for (key in _nodes) {
+      value = _nodes[key];
+      _results.push(value.setChildrenReferences());
+    }
+    return _results;
+  };
   return that;
+};
+
+/* object level functions*/
+
+
+telescopicText.graph.link = function(fromVertex, toVertex) {
+  fromVertex.setNext(toVertex);
+  return toVertex.setPrevious(fromVertex);
 };
 
 telescopicText.vertex = function(spec) {
@@ -123,15 +142,15 @@ telescopicText.vertex = function(spec) {
   /* linking utilities*/
 
   that.setChildrenReferences = function() {
-    var child, childIndex, child_key, setIndex;
+    var child, childIndex, childKey, setIndex;
     setIndex = 0;
     while (setIndex < spec._children.length) {
       childIndex = 0;
       while (childIndex < spec._children[setIndex].length) {
-        child_key = spec._children[setIndex][childIndex];
-        child = spec._graph.getNode(child_key);
+        childKey = spec._children[setIndex][childIndex];
+        child = spec._graph.getNode(childKey);
         if (child === void 0) {
-          console.log('The key, "' + child_key + '", will be removed from vertex\'s child array.');
+          console.log('The key, "' + childKey + '", will be removed from vertex\'s child array.');
           spec._children[setIndex].splice(childIndex, 1);
         } else {
           spec._children[setIndex][childIndex] = child;

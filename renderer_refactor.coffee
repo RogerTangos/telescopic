@@ -5,7 +5,6 @@ telescopicText.graphs = {}
 telescopicText.reset = ->
 	telescopicText.graph({_name:'telescopicDefaultID'})
 
-
 telescopicText.graph = (spec) ->
 	### set defaults ###
 	spec = spec || {}
@@ -29,9 +28,20 @@ telescopicText.graph = (spec) ->
 		node
 	that.setNode = (key, value) ->
 		_nodes[key] = value
-		that	
+		that
+
+	### linking/children functions ###
+	that.setReferencesForChildrenThroughoutGraph = ->
+		for key, value of _nodes
+			value.setChildrenReferences()
 
 	return that
+
+### object level functions ###
+telescopicText.graph.link= (fromVertex, toVertex) ->
+	#link two vertexes. needs to be passed vertex objects, not just their keys
+	fromVertex.setNext(toVertex)
+	toVertex.setPrevious(fromVertex)
 
 telescopicText.vertex = (spec) ->
 	### set defaults ###
@@ -77,17 +87,16 @@ telescopicText.vertex = (spec) ->
 		while setIndex < spec._children.length
 			childIndex = 0
 			while childIndex < spec._children[setIndex].length
-				child_key = spec._children[setIndex][childIndex]
-				child = spec._graph.getNode(child_key)  
+				childKey = spec._children[setIndex][childIndex]
+				child = spec._graph.getNode(childKey)  
 				if child == undefined
-					console.log 'The key, "'+ child_key+ '", will be removed from vertex\'s child array.'
+					console.log 'The key, "'+ childKey+ '", will be removed from vertex\'s child array.'
 					spec._children[setIndex].splice(childIndex,1)
 				else
 					spec._children[setIndex][childIndex] = child
 					childIndex +=1
 			setIndex += 1
 		that
-
 
 	### insert node into graph###
 	spec._graph.setNode(spec._name, that)	
