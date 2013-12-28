@@ -43,6 +43,20 @@ telescopicText.graph.link= (fromVertex, toVertex) ->
 	fromVertex.setNext(toVertex)
 	toVertex.setPrevious(fromVertex)
 
+telescopicText.graph.dangerousUnlink = (vertex) ->
+	#unlink a vertex. needs to be passed a vertex objects, not just its keys
+		next = vertex.getNext()
+		previous = vertex.getPrevious()
+
+		vertex.setNext(null)
+		vertex.setPrevious(null) 
+
+		if next
+			next.setPrevious(null)
+		if previous
+			previous.setNext(null)
+
+
 telescopicText.vertex = (spec) ->
 	### set defaults ###
 	spec = spec || {}

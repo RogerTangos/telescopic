@@ -71,6 +71,20 @@ telescopicText.graph.link = function(fromVertex, toVertex) {
   return toVertex.setPrevious(fromVertex);
 };
 
+telescopicText.graph.dangerousUnlink = function(vertex) {
+  var next, previous;
+  next = vertex.getNext();
+  previous = vertex.getPrevious();
+  vertex.setNext(null);
+  vertex.setPrevious(null);
+  if (next) {
+    next.setPrevious(null);
+  }
+  if (previous) {
+    return previous.setNext(null);
+  }
+};
+
 telescopicText.vertex = function(spec) {
   /* set defaults*/
 

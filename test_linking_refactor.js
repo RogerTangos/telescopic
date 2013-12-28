@@ -44,3 +44,18 @@ test('telescopicText.Graph link', function() {
   equal(vertexB.getNext(), vertexC);
   return equal(vertexC.getPrevious(), vertexB);
 });
+
+test('telescopicText.graph dangerousUnlink', function() {
+  var graph1;
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  telescopicText.graph.link(vertexA, vertexB);
+  telescopicText.graph.link(vertexB, vertexC);
+  /* unlink between nodes*/
+
+  telescopicText.graph.dangerousUnlink(vertexB);
+  equal(vertexB.getNext(), null);
+  equal(vertexB.getPrevious(), null);
+  equal(vertexA.getNext(), null);
+  return equal(vertexC.getPrevious(), null);
+});

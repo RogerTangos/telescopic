@@ -48,20 +48,18 @@ test 'telescopicText.Graph link', ->
 	equal(vertexC.getPrevious(),vertexB)
 
 
-test 'telescopicText.Graph dangerousUnlink', ->
+test 'telescopicText.graph dangerousUnlink', ->
 	telescopicText.reset()
-	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
-	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
-	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
-	telescopicText.Graph.link(vertex_A, vertex_B)
-	telescopicText.Graph.link(vertex_B, vertex_C)
+	graph1 = makeTestVerticies()
+	telescopicText.graph.link(vertexA, vertexB)
+	telescopicText.graph.link(vertexB, vertexC)
 
-# 	### unlink between nodes ###
-# 	telescopicText.Graph.dangerousUnlink(vertex_B)
-# 	equal(vertex_B.getNext(), null)
-# 	equal(vertex_B.getPrevious(), null)
-# 	equal(vertex_A.getNext(), null)
-# 	equal(vertex_C.getPrevious(), null)
+	### unlink between nodes ###
+	telescopicText.graph.dangerousUnlink(vertexB)
+	equal(vertexB.getNext(), null)
+	equal(vertexB.getPrevious(), null)
+	equal(vertexA.getNext(), null)
+	equal(vertexC.getPrevious(), null)
 
 # 	### unlink end node ###
 # 	telescopicText.reset()
