@@ -1,4 +1,4 @@
-telescopicText = {}
+ telescopicText = {}
 
 telescopicText.graphs = {}	#place to store all graphs
 
@@ -92,8 +92,6 @@ class telescopicText.Graph
 			next.setPrevious(previous)
 		if previous
 			previous.setNext(next)
-
-
 
 class telescopicText.Vertex
 	constructor: (_name, @content, @children=[], _remain_after_click=false, _next=null, _graph="telescopicDefaultID", _starter=false) ->

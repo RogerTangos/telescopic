@@ -8,29 +8,40 @@ telescopicText = {};
 telescopicText.graphs = {};
 
 telescopicText.reset = function() {
-  telescopicText.graphs = {};
   return telescopicText.graph({
     _name: 'telescopicDefaultID'
   });
 };
 
 telescopicText.graph = function(spec) {
-  /* private*/
+  /* set defaults*/
 
   var that, _nodes;
+  spec = spec || {};
+  spec._name = spec._name || 'telescopicDefaultID';
+  /* private attributes*/
+
   that = {};
   _nodes = {};
-  /* public*/
+  /* constructor. default text, and insert into graphs*/
+
+  telescopicText.graphs[spec._name] = that;
+  /* public functions*/
 
   that.getName = function() {
     return spec._name;
   };
-  that.getNode = function(key) {
+  that.getNode = function(keyOrVertex) {
+    /* in case get the vertex's key*/
+
     var node;
-    node = _nodes[key];
+    if (keyOrVertex instanceof Object) {
+      keyOrVertex = keyOrVertex.getName();
+    }
+    node = _nodes[keyOrVertex];
     if (node === void 0) {
-      console.log('Graph "' + this.getName() + '" is missing a child, with key "' + key + '."');
-      null;
+      console.log('Graph "' + this.getName() + '" is missing a child, with key "' + keyOrVertex + '."');
+      void 0;
     }
     return node;
   };
@@ -38,16 +49,19 @@ telescopicText.graph = function(spec) {
     _nodes[key] = value;
     return that;
   };
-  /* insert graph into graphs object*/
-
-  telescopicText.graphs[spec._name] = that;
   return that;
 };
 
 telescopicText.vertex = function(spec) {
-  /* constructor necessities*/
+  /* set defaults*/
 
   var that;
+  spec = spec || {};
+  spec._starter = spec._starter || false;
+  spec._children = spec._children || [];
+  spec._remain_after_click = spec._remain_after_click || false;
+  /* constructor*/
+
   if (!telescopicText.graphs[spec._graph]) {
     spec._graph = telescopicText.graph({
       _name: spec._graph
@@ -63,6 +77,10 @@ telescopicText.vertex = function(spec) {
   /* public attributes*/
 
   that.content = spec.content;
+  that.incomingTree = false;
+  that.incomingForward = [];
+  that.incomingBack = [];
+  that.incomingCross = [];
   /* public functions*/
 
   that.getStarter = function() {
@@ -83,24 +101,27 @@ telescopicText.vertex = function(spec) {
   that.getPrevious = function() {
     return spec._previous;
   };
-  that.setPrevious = function() {
+  that.setPrevious = function(newPrevious) {
     return spec._previous = newPrevious;
   };
   that.getClickCount = function() {
     return spec._click_count;
   };
   that.getChildren = function() {
-    return spec._children || [];
+    return spec._children;
   };
-  /* public functions meta info*/
-
   that.getRemainAfterClick = function() {
     return spec._remain_after_click;
   };
+  /* public functions meta info*/
+
   that.findClicksRemaining = function() {
     /* ignore _remain_after_click b/c it's not a click*/
 
     return that.children.length - spec._click_count;
   };
+  /* insert node into graph*/
+
+  spec._graph.setNode(spec._name, that);
   return that;
 };

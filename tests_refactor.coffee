@@ -2,17 +2,20 @@ test 'graphs generate on reset', ->
 	telescopicText.reset()
 	ok(telescopicText.graphs['telescopicDefaultID'])
 
-test 'Verticies public spec attributes are visible', ->
+test 'Verticies public spec attributes inc. edges are visible', ->
 	# testing name and default attributes
 	telescopicText.reset()
 	nameVertex = makeDefaultVertex1()
 	equal(nameVertex.content, 'myContent')
-	# ok(nameVertex.children instanceof Array)
-	# equal(nameVertex.children[0], undefined)
+	equal(nameVertex.incomingTree, false)
+	equal(nameVertex.incomingForward[0], undefined)
+	equal(nameVertex.incomingBack[0], undefined)
+	equal(nameVertex.incomingCross[0], undefined)
+
 
 test 'Verticies private spec attributes have getters and setters', ->
+	telescopicText.reset()
 	nameVertex = makeDefaultVertex1()
-
 	equal(nameVertex.getName(), 'myName')
 	equal(nameVertex.getRemainAfterClick(), true)
 	equal(nameVertex.getNext(), true)
@@ -22,16 +25,74 @@ test 'Verticies private spec attributes have getters and setters', ->
 	ok(nameVertex.getChildren() instanceof Array)
 
 test 'Vertex attributes default correctly.', ->
+	telescopicText.reset()
 	nameVertex = makeDefaultVertex2()
 	ok(nameVertex.getChildren() instanceof Array)
 	equal(nameVertex.getChildren()[0], undefined)
+	equal(nameVertex.getRemainAfterClick(), false)
+	equal(nameVertex.getGraph(), telescopicText.graphs['telescopicDefaultID'])
+	equal(nameVertex.getStarter(), false)
 
-test 'Make sure verticies create a graph and insert themselves into it on creation', ->
-	nameVertex = makeDefaultVertex1()
-	equal(telescopicText.graphs['defaultID2'].getName(),'defaultID2')
-	equal(nameVertex.getGraph().getName(), 'defaultID2')
 
+test 'graph can get nodes from key or object', ->
+	telescopicText.reset()
+	vertexA = makeDefaultVertexA()
 	
+	equal(vertexA.getGraph().getNode('A'), vertexA)
+	equal(vertexA.getGraph().getNode(vertexA), vertexA)
+
+test 'graph default characteristics', ->
+	newGraph = telescopicText.graph()
+	equal(newGraph.getName(), 'telescopicDefaultID')
+	equal(newGraph.getNode('foo'), undefined)
+
+test 'vertex sets child references on command', ->
+	telescopicText.reset()
+	vertexA = makeDefaultVertexA()
+	vertexB = makeDefaultVertexB()
+	vertexC = makeDefaultVertexC()
+	vertexA.setChildrenReferences()
+
+	# happy path. vertices found.
+	equal(vertexA.children[0][0], vertexB)
+	equal(vertexA.children[0][1], vertexC)
+
+
+	# sad path where vertex isn't found
+	equal(vertexA.children[1][0], undefined)
+
+
+
+# test 'Vertex.setChildReferences references correct graph, and verticies', ->
+# 	telescopicText.reset()
+# 	vertex_A = new telescopicText.Vertex('A', 'a', [['D'],['B', 'C','nope']], null, 'B', null)
+# 	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
+# 	vertex_C = new telescopicText.Vertex('C', 'c', null, null, null, null)
+# 	vertex_D = new telescopicText.Vertex('D', 'd', null, null, null, null)
+# 	vertex_A.setChildrenReferences()
+
+# 	# happy path
+# 	equal(vertex_A.children[0][0], vertex_D)
+# 	equal(vertex_A.children[1][0], vertex_B)
+# 	equal(vertex_A.children[1][1], vertex_C)
+
+# 	# sad path where vertex isn't found
+# 	equal(vertex_A.children[1][2], undefined)
+
+
+# test 'Properly assign children', ->
+# 	equal(1,1)
+
+# test 'Vertex Meta Methods', ->
+# 	telescopicText.reset()
+# 	vertexA = makeDefaultVertexA()
+
+
+# 	equal(nameVertex3.shouldBeVisible(), false)
+# 	equal(nameVertex.findClicksRemaining(), 1)
+# 	# findIndexOfChildInChildren
+
+
 makeDefaultVertex1 = ->
 	nameVertexSpec = {
 		_name: 'myName',
@@ -55,43 +116,46 @@ makeDefaultVertex2 = ->
 	}
 	return telescopicText.vertex(nameVertexSpec)
 
-	# equal(name_vertex.incoming_tree, false)
-	# equal(name_vertex.incoming_forward[0], undefined)
-	# equal(name_vertex.incoming_back[0], undefined)
-	# equal(name_vertex.incoming_cross[0], undefined)
-	# equal(name_vertex.getStarter(), false)
-	# equal(name_vertex.shouldBeVisible(), false)
+makeDefaultVertexA = ->
+	nameVertexSpec = {
+	_name: 'A',
+	content: 'a',
+	_children: [['B','C']],
+	_remain_after_click: false,
+	_next: 'B',
+	_graph: 'defaultID2',
+	_starter: true
+	}
+	return telescopicText.vertex(nameVertexSpec)
 
-# test 'Verticies have correct non-default attributes', ->
-# 	# testing non-default attributes
-# 	telescopicText.reset()
-# 	name_vertex = new telescopicText.Vertex('myName', 'myContent', [['foo'],['bar']], true, 'next', 'newGraphName', true)
-# 	equal(name_vertex.children[0][0],'foo')
-# 	equal(name_vertex.children[1][0],'bar')
-# 	equal(name_vertex.getRemainAfterClick(),true)
-# 	equal(name_vertex.getNext(),'next')
-# 	equal(name_vertex.getGraph().getName(),'newGraphName')
-# 	equal(name_vertex.getStarter(), true)
-# 	equal(name_vertex.shouldBeVisible(), true)
+makeDefaultVertexB = ->
+	nameVertexSpec = {
+	_name: 'B',
+	content: 'b',
+	_children: [['C','F']],
+	_remain_after_click: false,
+	_next: 'D',
+	_graph: 'defaultID2',
+	_starter: false
+	}
+	return telescopicText.vertex(nameVertexSpec)
+
+makeDefaultVertexC = ->
+	nameVertexSpec = {
+	_name: 'C',
+	content: 'c',
+	_children: [['F'],['L']],
+	_remain_after_click: true,
+	_next: 'E',
+	_graph: 'defaultID2',
+	_starter: false
+	}
+	return telescopicText.vertex(nameVertexSpec)
 
 
 
-# test 'Verticies create the new relevant graph and insert themselves', ->
-# 	# default graph case
-# 	telescopicText.reset()
-# 	foo = new telescopicText.Vertex("foo", null, null, true, null, null)
-# 	equal(telescopicText.graphs['telescopicDefaultID'].getName(),
-# 		'telescopicDefaultID') 
-# 	equal(telescopicText.graphs['telescopicDefaultID'].getNode('foo'),
-# 		foo)
 
-# 	# named graph case
-# 	telescopicText.reset()
-# 	bar = new telescopicText.Vertex("bar", null, null, true, null, 'myGraph')
-# 	equal(telescopicText.graphs['myGraph'].getName(),
-# 		'myGraph')
-# 	equal(telescopicText.graphs['myGraph'].getNode('bar'),
-# 		bar)
+
 
 	
 # test 'vertex.object returnVertexFromKeyOrObject', ->
