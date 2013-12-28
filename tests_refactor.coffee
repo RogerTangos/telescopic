@@ -98,7 +98,7 @@ makeDefaultVertex1 = ->
 		_name: 'myName',
 		content: 'myContent',
 		_children: [],
-		_remain_after_click: true,
+		_remainAfterClick: true,
 		_next: true, 
 		_graph: 'defaultID2',
 		_starter: true}
@@ -109,7 +109,7 @@ makeDefaultVertex2 = ->
 		_name: 'myName',
 		content: 'myContent',
 		# _children: []
-		# _remain_after_click: true,
+		# _remainAfterClick: true,
 		_next: true
 		# _graph: 'defaultID2',
 		# _starter: true
@@ -121,7 +121,7 @@ makeDefaultVertexA = ->
 	_name: 'A',
 	content: 'a',
 	_children: [['B','C']],
-	_remain_after_click: false,
+	_remainAfterClick: false,
 	_next: 'B',
 	_graph: 'defaultID2',
 	_starter: true
@@ -133,7 +133,7 @@ makeDefaultVertexB = ->
 	_name: 'B',
 	content: 'b',
 	_children: [['C','F']],
-	_remain_after_click: false,
+	_remainAfterClick: false,
 	_next: 'D',
 	_graph: 'defaultID2',
 	_starter: false
@@ -145,7 +145,7 @@ makeDefaultVertexC = ->
 	_name: 'C',
 	content: 'c',
 	_children: [['F'],['L']],
-	_remain_after_click: true,
+	_remainAfterClick: true,
 	_next: 'E',
 	_graph: 'defaultID2',
 	_starter: false

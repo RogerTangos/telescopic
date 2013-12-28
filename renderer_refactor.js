@@ -59,7 +59,7 @@ telescopicText.vertex = function(spec) {
   spec = spec || {};
   spec._starter = spec._starter || false;
   spec._children = spec._children || [];
-  spec._remain_after_click = spec._remain_after_click || false;
+  spec._remainAfterClick = spec._remainAfterClick || false;
   /* constructor*/
 
   if (!telescopicText.graphs[spec._graph]) {
@@ -111,12 +111,12 @@ telescopicText.vertex = function(spec) {
     return spec._children;
   };
   that.getRemainAfterClick = function() {
-    return spec._remain_after_click;
+    return spec._remainAfterClick;
   };
   /* public functions meta info*/
 
   that.findClicksRemaining = function() {
-    /* ignore _remain_after_click b/c it's not a click*/
+    /* ignore _remainAfterClick b/c it's not a click*/
 
     return that.children.length - spec._click_count;
   };

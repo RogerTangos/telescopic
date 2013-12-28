@@ -1,6 +1,12 @@
 makeTestVerticies = ->
 	window.vertexA = telescopicText.vertex(
-		'A', 'a', [['C', 'B']], false, 'B', 'graph1', true);
+		_name: 'A',
+		content: 'a',
+		_children: [['C', 'B']],
+		_next: false,
+		_remainAfterClick: 'B',
+		_graph: 'graph1',
+		_starter: true);
 	window.vertexB = telescopicText.vertex({
 		_name: 'B', 
 		content: 'b', 
@@ -11,7 +17,7 @@ makeTestVerticies = ->
 		_starter: false
 		})
 	window.vertexC = telescopicText.vertex({
-		_name: 'C',`
+		_name: 'C',
 		content:'c',
 		_children: [['A','F'],['L']],
 		_remainAfterClick: true,
@@ -154,9 +160,9 @@ makeTestVerticies = ->
 		_graph: 'graph1',
 		_starter: true})
 
+	# graph1.makeLinkedList('A')
+	# graph1.setReferencesForChildrenThroughoutGraph()
 	graph1 = telescopicText.graphs['graph1']
-	graph1.makeLinkedList('A')
-	graph1.setReferencesForChildrenThroughoutGraph()
 	graph1
 
 

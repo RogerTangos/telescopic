@@ -38,7 +38,7 @@ telescopicText.vertex = (spec) ->
 	spec = spec || {}
 	spec._starter = spec._starter || false
 	spec._children = spec._children || []
-	spec._remain_after_click = spec._remain_after_click  || false
+	spec._remainAfterClick = spec._remainAfterClick  || false
 	### constructor  ###
 	if not telescopicText.graphs[spec._graph]
 		spec._graph = telescopicText.graph({_name: spec._graph})
@@ -64,11 +64,11 @@ telescopicText.vertex = (spec) ->
 	that.setPrevious = (newPrevious) -> spec._previous = newPrevious
 	that.getClickCount = -> spec._click_count
 	that.getChildren = -> spec._children
-	that.getRemainAfterClick = -> spec._remain_after_click
+	that.getRemainAfterClick = -> spec._remainAfterClick
 	 
 	### public functions meta info ###
 	that.findClicksRemaining =->
-		### ignore _remain_after_click b/c it's not a click ###
+		### ignore _remainAfterClick b/c it's not a click ###
 		that.children.length - spec._click_count
 
 	### insert node into graph###

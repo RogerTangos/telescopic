@@ -57,7 +57,15 @@ test('graph default characteristics', function() {
 });
 
 test('vertex sets child references on command', function() {
-  return telescopicText.reset();
+  var vertexA, vertexB, vertexC;
+  telescopicText.reset();
+  vertexA = makeDefaultVertexA();
+  vertexB = makeDefaultVertexB();
+  vertexC = makeDefaultVertexC();
+  vertexA.setChildrenReferences();
+  equal(vertexA.children[0][0], vertexB);
+  equal(vertexA.children[0][1], vertexC);
+  return equal(vertexA.children[1][0], void 0);
 });
 
 makeDefaultVertex1 = function() {
@@ -66,7 +74,7 @@ makeDefaultVertex1 = function() {
     _name: 'myName',
     content: 'myContent',
     _children: [],
-    _remain_after_click: true,
+    _remainAfterClick: true,
     _next: true,
     _graph: 'defaultID2',
     _starter: true
@@ -90,7 +98,7 @@ makeDefaultVertexA = function() {
     _name: 'A',
     content: 'a',
     _children: [['B', 'C']],
-    _remain_after_click: false,
+    _remainAfterClick: false,
     _next: 'B',
     _graph: 'defaultID2',
     _starter: true
@@ -104,7 +112,7 @@ makeDefaultVertexB = function() {
     _name: 'B',
     content: 'b',
     _children: [['C', 'F']],
-    _remain_after_click: false,
+    _remainAfterClick: false,
     _next: 'D',
     _graph: 'defaultID2',
     _starter: false
@@ -118,7 +126,7 @@ makeDefaultVertexC = function() {
     _name: 'C',
     content: 'c',
     _children: [['F'], ['L']],
-    _remain_after_click: true,
+    _remainAfterClick: true,
     _next: 'E',
     _graph: 'defaultID2',
     _starter: false
