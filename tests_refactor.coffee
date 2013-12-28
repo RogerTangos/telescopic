@@ -36,8 +36,8 @@ test 'Vertex attributes default correctly.', ->
 
 test 'graph can get nodes from key or object', ->
 	telescopicText.reset()
-	vertexA = makeDefaultVertexA()
-	
+	makeTestVerticies()
+		
 	equal(vertexA.getGraph().getNode('A'), vertexA)
 	equal(vertexA.getGraph().getNode(vertexA), vertexA)
 
@@ -45,22 +45,6 @@ test 'graph default characteristics', ->
 	newGraph = telescopicText.graph()
 	equal(newGraph.getName(), 'telescopicDefaultID')
 	equal(newGraph.getNode('foo'), undefined)
-
-test 'vertex sets child references on command', ->
-	telescopicText.reset()
-	vertexA = makeDefaultVertexA()
-	vertexB = makeDefaultVertexB()
-	vertexC = makeDefaultVertexC()
-	vertexA.setChildrenReferences()
-
-	# happy path. vertices found.
-	equal(vertexA.children[0][0], vertexB)
-	equal(vertexA.children[0][1], vertexC)
-
-
-	# sad path where vertex isn't found
-	equal(vertexA.children[1][0], undefined)
-
 
 
 # test 'Vertex.setChildReferences references correct graph, and verticies', ->
@@ -113,42 +97,6 @@ makeDefaultVertex2 = ->
 		_next: true
 		# _graph: 'defaultID2',
 		# _starter: true
-	}
-	return telescopicText.vertex(nameVertexSpec)
-
-makeDefaultVertexA = ->
-	nameVertexSpec = {
-	_name: 'A',
-	content: 'a',
-	_children: [['B','C']],
-	_remainAfterClick: false,
-	_next: 'B',
-	_graph: 'defaultID2',
-	_starter: true
-	}
-	return telescopicText.vertex(nameVertexSpec)
-
-makeDefaultVertexB = ->
-	nameVertexSpec = {
-	_name: 'B',
-	content: 'b',
-	_children: [['C','F']],
-	_remainAfterClick: false,
-	_next: 'D',
-	_graph: 'defaultID2',
-	_starter: false
-	}
-	return telescopicText.vertex(nameVertexSpec)
-
-makeDefaultVertexC = ->
-	nameVertexSpec = {
-	_name: 'C',
-	content: 'c',
-	_children: [['F'],['L']],
-	_remainAfterClick: true,
-	_next: 'E',
-	_graph: 'defaultID2',
-	_starter: false
 	}
 	return telescopicText.vertex(nameVertexSpec)
 
