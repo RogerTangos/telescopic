@@ -57,5 +57,48 @@ test('telescopicText.graph dangerousUnlink', function() {
   equal(vertexB.getNext(), null);
   equal(vertexB.getPrevious(), null);
   equal(vertexA.getNext(), null);
-  return equal(vertexC.getPrevious(), null);
+  equal(vertexC.getPrevious(), null);
+  /* unlink end node*/
+
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  telescopicText.graph.link(vertexA, vertexB);
+  telescopicText.graph.link(vertexB, vertexC);
+  vertexA.setPrevious(null);
+  vertexC.setNext(null);
+  telescopicText.graph.dangerousUnlink(vertexC);
+  equal(vertexC.getNext(), null);
+  equal(vertexC.getPrevious(), null);
+  equal(vertexB.getNext(), null);
+  equal(vertexB.getPrevious(), vertexA);
+  /* unlink start node*/
+
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  telescopicText.graph.link(vertexA, vertexB);
+  telescopicText.graph.link(vertexB, vertexC);
+  vertexA.setPrevious(null);
+  vertexC.setNext(null);
+  telescopicText.graph.dangerousUnlink(vertexA);
+  equal(vertexA.getNext(), null);
+  equal(vertexA.getPrevious(), null);
+  equal(vertexB.getNext(), vertexC);
+  return equal(vertexB.getPrevious(), null);
+});
+
+test('telescopicText.Graph safeUnlink', function() {
+  /* unlink middle node*/
+
+  var graph1;
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  telescopicText.graph.link(vertexA, vertexB);
+  telescopicText.graph.link(vertexB, vertexC);
+  vertexA.setPrevious(null);
+  vertexC.setNext(null);
+  telescopicText.graph.safeUnlink(vertexB);
+  equal(vertexB.getNext(), null);
+  equal(vertexB.getPrevious(), null);
+  equal(vertexA.getNext(), vertexC);
+  return equal(vertexC.getPrevious(), vertexA);
 });

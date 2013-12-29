@@ -47,7 +47,6 @@ test 'telescopicText.Graph link', ->
 	equal(vertexB.getNext(), vertexC)
 	equal(vertexC.getPrevious(),vertexB)
 
-
 test 'telescopicText.graph dangerousUnlink', ->
 	telescopicText.reset()
 	graph1 = makeTestVerticies()
@@ -61,79 +60,79 @@ test 'telescopicText.graph dangerousUnlink', ->
 	equal(vertexA.getNext(), null)
 	equal(vertexC.getPrevious(), null)
 
+	### unlink end node ###
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	telescopicText.graph.link(vertexA, vertexB)
+	telescopicText.graph.link(vertexB, vertexC)
+	vertexA.setPrevious(null)
+	vertexC.setNext(null)
+
+	telescopicText.graph.dangerousUnlink(vertexC)
+	equal(vertexC.getNext(), null)
+	equal(vertexC.getPrevious(), null)
+	equal(vertexB.getNext(), null)
+	equal(vertexB.getPrevious(), vertexA)
+
+	### unlink start node ###
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	telescopicText.graph.link(vertexA, vertexB)
+	telescopicText.graph.link(vertexB, vertexC)
+	vertexA.setPrevious(null)
+	vertexC.setNext(null)
+
+	telescopicText.graph.dangerousUnlink(vertexA)
+	equal(vertexA.getNext(), null)
+	equal(vertexA.getPrevious(), null)
+	equal(vertexB.getNext(), vertexC)
+	equal(vertexB.getPrevious(), null)
+
+
+test 'telescopicText.Graph safeUnlink', ->
+	### unlink middle node ###
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	telescopicText.graph.link(vertexA, vertexB)
+	telescopicText.graph.link(vertexB, vertexC)
+	vertexA.setPrevious(null)
+	vertexC.setNext(null)
+
+	telescopicText.graph.safeUnlink(vertexB)
+	equal(vertexB.getNext(), null)
+	equal(vertexB.getPrevious(), null)
+	equal(vertexA.getNext(),vertexC)
+	equal(vertexC.getPrevious(),vertexA)
+
 # 	### unlink end node ###
-# 	telescopicText.reset()
-# 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
-# 	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
-# 	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
-# 	telescopicText.Graph.link(vertex_A, vertex_B)
-# 	telescopicText.Graph.link(vertex_B, vertex_C)
+	# telescopicText.reset()
+	# vertexA = new telescopicText.Vertex('A', 'a', null, null, null, null)
+	# vertexB = new telescopicText.Vertex('B', 'b', null, true, null, null)
+	# vertexC = new telescopicText.Vertex('C', 'c', null, true, null, null)
+	# telescopicText.graph.link(vertexA, vertexB)
+	# telescopicText.graph.link(vertexB, vertexC)
 
-# 	telescopicText.Graph.dangerousUnlink(vertex_C)
-# 	equal(vertex_C.getNext(), null)
-# 	equal(vertex_C.getPrevious(), null)
-# 	equal(vertex_B.getNext(), null)
-# 	equal(vertex_B.getPrevious(), vertex_A)
-
+# 	telescopicText.graph.safeUnlink(vertexC)
+# 	equal(vertexC.getNext(), null)
+# 	equal(vertexC.getPrevious(), null)
+# 	equal(vertexB.getNext(), null)
+	# equal(vertexB.getPrevious(), vertexA)
 # 	### unlink start node ###
 # 	telescopicText.reset()
-# 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
-# 	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
-# 	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
-# 	telescopicText.Graph.link(vertex_A, vertex_B)
-# 	telescopicText.Graph.link(vertex_B, vertex_C)
+# 	vertexA = new telescopicText.Vertex('A', 'a', null, null, null, null)
+# 	vertexB = new telescopicText.Vertex('B', 'b', null, true, null, null)
+# 	vertexC = new telescopicText.Vertex('C', 'c', null, true, null, null)
+# 	telescopicText.graph.link(vertexA, vertexB)
+# 	telescopicText.graph.link(vertexB, vertexC)
 
-# 	telescopicText.Graph.dangerousUnlink(vertex_A)
-# 	equal(vertex_A.getNext(), null)
-# 	equal(vertex_A.getPrevious(), null)
-# 	equal(vertex_B.getNext(), vertex_C)
-# 	equal(vertex_B.getPrevious(), null)
-
-# test 'telescopicText.Graph safeUnlink', ->
-# 	### unlink middle node ###
-# 	telescopicText.reset()
-# 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
-# 	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
-# 	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
-# 	telescopicText.Graph.link(vertex_A, vertex_B)
-# 	telescopicText.Graph.link(vertex_B, vertex_C)
-
-# 	telescopicText.Graph.safeUnlink(vertex_B)
-# 	equal(vertex_B.getNext(), null)
-# 	equal(vertex_B.getPrevious(), null)
-# 	equal(vertex_A.getNext(),vertex_C)
-# 	equal(vertex_C.getPrevious(),vertex_A)
-
-# 	### unlink end node ###
-# 	telescopicText.reset()
-# 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
-# 	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
-# 	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
-# 	telescopicText.Graph.link(vertex_A, vertex_B)
-# 	telescopicText.Graph.link(vertex_B, vertex_C)
-
-# 	telescopicText.Graph.safeUnlink(vertex_C)
-# 	equal(vertex_C.getNext(), null)
-# 	equal(vertex_C.getPrevious(), null)
-# 	equal(vertex_B.getNext(), null)
-# 	equal(vertex_B.getPrevious(), vertex_A)
-
-# 	### unlink start node ###
-# 	telescopicText.reset()
-# 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, null, null)
-# 	vertex_B = new telescopicText.Vertex('B', 'b', null, true, null, null)
-# 	vertex_C = new telescopicText.Vertex('C', 'c', null, true, null, null)
-# 	telescopicText.Graph.link(vertex_A, vertex_B)
-# 	telescopicText.Graph.link(vertex_B, vertex_C)
-
-# 	telescopicText.Graph.safeUnlink(vertex_A)
-# 	equal(vertex_A.getNext(), null)
-# 	equal(vertex_A.getPrevious(), null)
-# 	equal(vertex_B.getNext(), vertex_C)
-# 	equal(vertex_B.getPrevious(), null)
+# 	telescopicText.graph.safeUnlink(vertexA)
+# 	equal(vertexA.getNext(), null)
+# 	equal(vertexA.getPrevious(), null)
+# 	equal(vertexB.getNext(), vertexC)
+# 	equal(vertexB.getPrevious(), null)
 
 
-# test 'telescopicText.Graph makeLinkedList', ->
+# test 'telescopicText.graph makeLinkedList', ->
 # 	# happy path (one starting node supplied)
 # 	telescopicText.reset()
 # 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'B', null)
@@ -164,4 +163,4 @@ test 'telescopicText.graph dangerousUnlink', ->
 	
 # 	telescopicText.graphs['telescopicDefaultID'].makeLinkedList(vertex_A)
 # 	equal(vertex_C.getNext(),null)
-# 	equal(vertex_A.getNext(),vertex_B)
+	# equal(vertex_A.getNext(),vertex_B)

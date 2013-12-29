@@ -85,6 +85,20 @@ telescopicText.graph.dangerousUnlink = function(vertex) {
   }
 };
 
+telescopicText.graph.safeUnlink = function(vertex) {
+  var next, previous;
+  next = vertex.getNext();
+  previous = vertex.getPrevious();
+  vertex.setNext(null);
+  vertex.setPrevious(null);
+  if (next) {
+    next.setPrevious(previous);
+  }
+  if (previous) {
+    return previous.setNext(next);
+  }
+};
+
 telescopicText.vertex = function(spec) {
   /* set defaults*/
 
@@ -93,6 +107,7 @@ telescopicText.vertex = function(spec) {
   spec._starter = spec._starter || false;
   spec._children = spec._children || [];
   spec._remainAfterClick = spec._remainAfterClick || false;
+  spec._next = spec._next || null;
   /* constructor*/
 
   if (!telescopicText.graphs[spec._graph]) {
