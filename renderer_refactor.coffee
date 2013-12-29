@@ -104,7 +104,7 @@ telescopicText.vertex = (spec) ->
 	### private attributes ###
 	that = {}
 	spec._previous = null
-	spec._click_count = 0
+	spec._clickCount = 0
 	### public attributes ###
 	that.content = spec.content
 	that.incomingTree = false
@@ -119,14 +119,29 @@ telescopicText.vertex = (spec) ->
 	that.setNext = (newNext) -> spec._next = newNext
 	that.getPrevious = -> spec._previous
 	that.setPrevious = (newPrevious) -> spec._previous = newPrevious
-	that.getClickCount = -> spec._click_count
+	that.getClickCount = -> spec._clickCount
 	that.getChildren = -> spec._children
 	that.getRemainAfterClick = -> spec._remainAfterClick
 	 
 	### public functions meta info ###
 	that.findClicksRemaining =->
 		### ignore _remainAfterClick b/c it's not a click ###
-		that.children.length - spec._click_count
+		spec._children.length - spec._clickCount
+	that.shouldBeVisible = ->
+		# ### starter case ###
+		# if @.children.length == 0
+		# 	true
+		if that.getStarter() && that.findClicksRemaining() > 0
+			true
+		else if that.getStarter() && that.getRemainAfterClick()
+			true
+			### not a starter node ###
+		else if that.findClicksRemaining() > 0 && that.incoming_tree
+			true
+		else if that.incoming_tree && that.getRemainAfterClick()
+			true
+		else
+			false		
 
 	### linking utilities ###
 	that.setChildrenReferences = ->
@@ -144,6 +159,61 @@ telescopicText.vertex = (spec) ->
 					childIndex +=1
 			setIndex += 1
 		that
+
+	### clicking utilities ###
+	that.forwardClick= ->
+		### catch instance in which it shouldn't be clicked ###
+		# if that.findClicksRemaining() <= 0 or !that.shouldBeVisible()
+		# 	return that
+
+		# relevantChildren = spec._children[spec._clickCount]
+		# for child in relevantChildren
+		# 	child.receiveForwardClick(that)
+
+		spec._clickCount +=1
+		@
+	@receiveForwardClick= (incoming_vertex)->
+		@forwardDetermineAndSetIncomingEdge(incoming_vertex)
+		@
+
+	@reverseClick= ->
+		if !@shouldBeReverseClickable()
+			return @
+		@incoming_tree.receiveReverseClickFromChild(@)
+		@
+
+
+	@receiveReverseClickFromChild=(child_vertex)->
+		_clickCount += -1
+		child_index = @findIndexOfChildInChildren(child_vertex)
+		for child in @.children[child_index]
+			child.receiveReverseClickFromParent(@)
+		@
+
+	@receiveReverseClickFromParent= (parent_vertex)->
+		if @incoming_tree == parent_vertex
+			@setEdgesToDefault()
+		@
+
+
+	@setChildrenReferences= ->
+		# can use returnVertexFromKeyOrObject, but at some later point
+		set_index = 0
+		while set_index < @.children.length
+			child_index = 0
+			while child_index < @.children[set_index].length
+				child_key = @.children[set_index][child_index]
+				child = _graph.returnVertexFromKeyOrObject(child_key)  
+
+				if child !instanceof telescopicText.Vertex
+					console.log 'The key, "'+ child_key+ '", will be removed from vertex\'s child array.'
+					@.children[set_index].splice(child_index,1)
+
+				else
+					@.children[set_index][child_index] = child
+					child_index +=1
+				
+			set_index += 1
 
 	### insert node into graph###
 	spec._graph.setNode(spec._name, that)	

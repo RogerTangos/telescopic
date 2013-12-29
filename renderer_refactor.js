@@ -145,7 +145,7 @@ telescopicText.vertex = function(spec) {
 
   that = {};
   spec._previous = null;
-  spec._click_count = 0;
+  spec._clickCount = 0;
   /* public attributes*/
 
   that.content = spec.content;
@@ -177,7 +177,7 @@ telescopicText.vertex = function(spec) {
     return spec._previous = newPrevious;
   };
   that.getClickCount = function() {
-    return spec._click_count;
+    return spec._clickCount;
   };
   that.getChildren = function() {
     return spec._children;
@@ -190,7 +190,22 @@ telescopicText.vertex = function(spec) {
   that.findClicksRemaining = function() {
     /* ignore _remainAfterClick b/c it's not a click*/
 
-    return that.children.length - spec._click_count;
+    return spec._children.length - spec._clickCount;
+  };
+  that.shouldBeVisible = function() {
+    if (that.getStarter() && that.findClicksRemaining() > 0) {
+      return true;
+    } else if (that.getStarter() && that.getRemainAfterClick()) {
+      return true;
+      /* not a starter node*/
+
+    } else if (that.findClicksRemaining() > 0 && that.incoming_tree) {
+      return true;
+    } else if (that.incoming_tree && that.getRemainAfterClick()) {
+      return true;
+    } else {
+      return false;
+    }
   };
   /* linking utilities*/
 
@@ -213,6 +228,63 @@ telescopicText.vertex = function(spec) {
       setIndex += 1;
     }
     return that;
+  };
+  /* clicking utilities*/
+
+  that.forwardClick = function() {
+    /* catch instance in which it shouldn't be clicked*/
+
+    spec._clickCount += 1;
+    return this;
+  };
+  this.receiveForwardClick = function(incoming_vertex) {
+    this.forwardDetermineAndSetIncomingEdge(incoming_vertex);
+    return this;
+  };
+  this.reverseClick = function() {
+    if (!this.shouldBeReverseClickable()) {
+      return this;
+    }
+    this.incoming_tree.receiveReverseClickFromChild(this);
+    return this;
+  };
+  this.receiveReverseClickFromChild = function(child_vertex) {
+    var child, child_index, _i, _len, _ref;
+    _clickCount += -1;
+    child_index = this.findIndexOfChildInChildren(child_vertex);
+    _ref = this.children[child_index];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      child = _ref[_i];
+      child.receiveReverseClickFromParent(this);
+    }
+    return this;
+  };
+  this.receiveReverseClickFromParent = function(parent_vertex) {
+    if (this.incoming_tree === parent_vertex) {
+      this.setEdgesToDefault();
+    }
+    return this;
+  };
+  this.setChildrenReferences = function() {
+    var child, child_index, child_key, set_index, _results;
+    set_index = 0;
+    _results = [];
+    while (set_index < this.children.length) {
+      child_index = 0;
+      while (child_index < this.children[set_index].length) {
+        child_key = this.children[set_index][child_index];
+        child = _graph.returnVertexFromKeyOrObject(child_key);
+        if (!(child instanceof telescopicText.Vertex)) {
+          console.log('The key, "' + child_key + '", will be removed from vertex\'s child array.');
+          this.children[set_index].splice(child_index, 1);
+        } else {
+          this.children[set_index][child_index] = child;
+          child_index += 1;
+        }
+      }
+      _results.push(set_index += 1);
+    }
+    return _results;
   };
   /* insert node into graph*/
 

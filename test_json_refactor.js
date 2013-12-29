@@ -7,8 +7,8 @@ makeTestVerticies = function() {
     _name: 'A',
     content: 'a',
     _children: [['C', 'B']],
-    _next: false,
-    _remainAfterClick: 'B',
+    _next: 'B',
+    _remainAfterClick: false,
     _graph: 'graph1',
     _starter: true
   });
