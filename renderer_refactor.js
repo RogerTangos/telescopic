@@ -49,6 +49,30 @@ telescopicText.graph = function(spec) {
     _nodes[key] = value;
     return that;
   };
+  that.makeLinkedList = function(startVertex) {
+    var currentVertex, nextVertex, _results;
+    startVertex = that.getNode(startVertex);
+    currentVertex = startVertex;
+    nextVertex = that.getNode(currentVertex.getNext());
+    if (!startVertex.getNext()) {
+      console.log('Careful! This graph only has one vertex linked.');
+      +'and that seems pretty silly to me.';
+    }
+    _results = [];
+    while (nextVertex) {
+      if (nextVertex === startVertex) {
+        currentVertex.setNext(null);
+        nextVertex.setPrevious(null);
+        console.log("Your linked list is cyclical when it should be linear. " + "Did not link the start and end nodes.");
+        _results.push(nextVertex = false);
+      } else {
+        telescopicText.graph.link(currentVertex, nextVertex);
+        currentVertex = nextVertex;
+        _results.push(nextVertex = that.getNode(currentVertex.getNext()));
+      }
+    }
+    return _results;
+  };
   /* linking/children functions*/
 
   that.setReferencesForChildrenThroughoutGraph = function() {

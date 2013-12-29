@@ -104,63 +104,72 @@ test 'telescopicText.Graph safeUnlink', ->
 	equal(vertexA.getNext(),vertexC)
 	equal(vertexC.getPrevious(),vertexA)
 
-# 	### unlink end node ###
-	# telescopicText.reset()
-	# vertexA = new telescopicText.Vertex('A', 'a', null, null, null, null)
-	# vertexB = new telescopicText.Vertex('B', 'b', null, true, null, null)
-	# vertexC = new telescopicText.Vertex('C', 'c', null, true, null, null)
-	# telescopicText.graph.link(vertexA, vertexB)
-	# telescopicText.graph.link(vertexB, vertexC)
+	### unlink end node ###
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	telescopicText.graph.link(vertexA, vertexB)
+	telescopicText.graph.link(vertexB, vertexC)
+	vertexA.setPrevious(null)
+	vertexC.setNext(null)
 
-# 	telescopicText.graph.safeUnlink(vertexC)
-# 	equal(vertexC.getNext(), null)
-# 	equal(vertexC.getPrevious(), null)
-# 	equal(vertexB.getNext(), null)
-	# equal(vertexB.getPrevious(), vertexA)
-# 	### unlink start node ###
-# 	telescopicText.reset()
-# 	vertexA = new telescopicText.Vertex('A', 'a', null, null, null, null)
-# 	vertexB = new telescopicText.Vertex('B', 'b', null, true, null, null)
-# 	vertexC = new telescopicText.Vertex('C', 'c', null, true, null, null)
-# 	telescopicText.graph.link(vertexA, vertexB)
-# 	telescopicText.graph.link(vertexB, vertexC)
+	telescopicText.graph.safeUnlink(vertexC)
+	equal(vertexC.getNext(), null)
+	equal(vertexC.getPrevious(), null)
+	equal(vertexB.getNext(), null)
+	equal(vertexB.getPrevious(), vertexA)
 
-# 	telescopicText.graph.safeUnlink(vertexA)
-# 	equal(vertexA.getNext(), null)
-# 	equal(vertexA.getPrevious(), null)
-# 	equal(vertexB.getNext(), vertexC)
-# 	equal(vertexB.getPrevious(), null)
+	### unlink start node ###
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	telescopicText.graph.link(vertexA, vertexB)
+	telescopicText.graph.link(vertexB, vertexC)
+	vertexA.setPrevious(null)
+	vertexC.setNext(null)
 
-
-# test 'telescopicText.graph makeLinkedList', ->
-# 	# happy path (one starting node supplied)
-# 	telescopicText.reset()
-# 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'B', null)
-# 	vertex_B = new telescopicText.Vertex('B', 'b', null, true, 'C', null)
-# 	vertex_C = new telescopicText.Vertex('C', 'c', null, null, null, null)
-# 	telescopicText.graphs['telescopicDefaultID'].makeLinkedList(vertex_A)
-
-# 	equal(vertex_A.getNext(),vertex_B)
-# 	equal(vertex_B.getNext(),vertex_C)
-# 	equal(vertex_C.getNext(),null)
-# 	equal(vertex_A.getPrevious(),null)
-# 	equal(vertex_B.getPrevious(),vertex_A)
-# 	equal(vertex_C.getPrevious(),vertex_B)
+	telescopicText.graph.safeUnlink(vertexA)
+	equal(vertexA.getNext(), null)
+	equal(vertexA.getPrevious(), null)
+	equal(vertexB.getNext(), vertexC)
+	equal(vertexB.getPrevious(), null)
 
 
-# 	# Sad path - infinite unary loop
-# 	telescopicText.reset()
-# 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'A', null)
-# 	telescopicText.graphs['telescopicDefaultID'].makeLinkedList(vertex_A)
-# 	equal(vertex_A.getNext(),null)
-# 	equal(vertex_A.getPrevious(), null)
+test 'telescopicText.graph makeLinkedList', ->
+	### happy path (one starting node supplied) ###
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	vertexA.setNext('B')
+	vertexB.setNext('C')
+	vertexC.setNext(null)
+	graph1.makeLinkedList(vertexA)
 
-# 	# Sad path - infinite long loop
-# 	telescopicText.reset()
-# 	vertex_A = new telescopicText.Vertex('A', 'a', null, null, 'B', null)
-# 	vertex_B = new telescopicText.Vertex('B', 'b', null, true, 'C', null)
-# 	vertex_C = new telescopicText.Vertex('C', 'c', null, null, 'A', null)
+	equal(vertexA.getNext(),vertexB)
+	equal(vertexB.getNext(),vertexC)
+	equal(vertexC.getNext(),null)
+	equal(vertexA.getPrevious(),null)
+	equal(vertexB.getPrevious(),vertexA)
+	equal(vertexC.getPrevious(),vertexB)
+
+	### Sad path - infinite unary loop ###
+	telescopicText.reset()
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	vertexA.setNext('A')
+
+	graph1.makeLinkedList(vertexA)
+	equal(vertexA.getNext(),null)
+	equal(vertexA.getPrevious(), null)
+
+	### Sad path - infinite long loop ###
+	telescopicText.reset()
+	telescopicText.reset()
+	graph1 = makeTestVerticies()
+	vertexA.setNext('B')
+	vertexB.setNext('C')
+	vertexC.setNext('A')
 	
-# 	telescopicText.graphs['telescopicDefaultID'].makeLinkedList(vertex_A)
-# 	equal(vertex_C.getNext(),null)
-	# equal(vertex_A.getNext(),vertex_B)
+	graph1.makeLinkedList(vertexA)
+	equal(vertexC.getNext(),null)
+	equal(vertexA.getPrevious(), null)
+	equal(vertexA.getNext(),vertexB)
+
+

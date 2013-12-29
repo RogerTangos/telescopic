@@ -100,5 +100,70 @@ test('telescopicText.Graph safeUnlink', function() {
   equal(vertexB.getNext(), null);
   equal(vertexB.getPrevious(), null);
   equal(vertexA.getNext(), vertexC);
-  return equal(vertexC.getPrevious(), vertexA);
+  equal(vertexC.getPrevious(), vertexA);
+  /* unlink end node*/
+
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  telescopicText.graph.link(vertexA, vertexB);
+  telescopicText.graph.link(vertexB, vertexC);
+  vertexA.setPrevious(null);
+  vertexC.setNext(null);
+  telescopicText.graph.safeUnlink(vertexC);
+  equal(vertexC.getNext(), null);
+  equal(vertexC.getPrevious(), null);
+  equal(vertexB.getNext(), null);
+  equal(vertexB.getPrevious(), vertexA);
+  /* unlink start node*/
+
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  telescopicText.graph.link(vertexA, vertexB);
+  telescopicText.graph.link(vertexB, vertexC);
+  vertexA.setPrevious(null);
+  vertexC.setNext(null);
+  telescopicText.graph.safeUnlink(vertexA);
+  equal(vertexA.getNext(), null);
+  equal(vertexA.getPrevious(), null);
+  equal(vertexB.getNext(), vertexC);
+  return equal(vertexB.getPrevious(), null);
+});
+
+test('telescopicText.graph makeLinkedList', function() {
+  /* happy path (one starting node supplied)*/
+
+  var graph1;
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  vertexA.setNext('B');
+  vertexB.setNext('C');
+  vertexC.setNext(null);
+  graph1.makeLinkedList(vertexA);
+  equal(vertexA.getNext(), vertexB);
+  equal(vertexB.getNext(), vertexC);
+  equal(vertexC.getNext(), null);
+  equal(vertexA.getPrevious(), null);
+  equal(vertexB.getPrevious(), vertexA);
+  equal(vertexC.getPrevious(), vertexB);
+  /* Sad path - infinite unary loop*/
+
+  telescopicText.reset();
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  vertexA.setNext('A');
+  graph1.makeLinkedList(vertexA);
+  equal(vertexA.getNext(), null);
+  equal(vertexA.getPrevious(), null);
+  /* Sad path - infinite long loop*/
+
+  telescopicText.reset();
+  telescopicText.reset();
+  graph1 = makeTestVerticies();
+  vertexA.setNext('B');
+  vertexB.setNext('C');
+  vertexC.setNext('A');
+  graph1.makeLinkedList(vertexA);
+  equal(vertexC.getNext(), null);
+  equal(vertexA.getPrevious(), null);
+  return equal(vertexA.getNext(), vertexB);
 });

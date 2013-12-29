@@ -4,7 +4,6 @@ telescopicText = {}
 telescopicText.graphs = {}
 telescopicText.reset = ->
 	telescopicText.graph({_name:'telescopicDefaultID'})
-
 telescopicText.graph = (spec) ->
 	### set defaults ###
 	spec = spec || {}
@@ -29,6 +28,28 @@ telescopicText.graph = (spec) ->
 	that.setNode = (key, value) ->
 		_nodes[key] = value
 		that
+
+	that.makeLinkedList = (startVertex) ->
+		startVertex = that.getNode(startVertex)
+		currentVertex = startVertex
+		nextVertex = that.getNode(currentVertex.getNext())
+
+		if !startVertex.getNext()
+			console.log 'Careful! This graph only has one vertex linked.' 
+			+ 'and that seems pretty silly to me.'
+
+		while nextVertex
+			if nextVertex == startVertex
+				currentVertex.setNext(null)
+				nextVertex.setPrevious(null)
+				console.log "Your linked list is cyclical when it should be linear. " + 
+				"Did not link the start and end nodes."
+				nextVertex = false
+			else 
+				telescopicText.graph.link(currentVertex, nextVertex)
+				currentVertex = nextVertex
+				nextVertex = that.getNode(currentVertex.getNext())
+
 
 	### linking/children functions ###
 	that.setReferencesForChildrenThroughoutGraph = ->
@@ -55,7 +76,6 @@ telescopicText.graph.dangerousUnlink = (vertex) ->
 			next.setPrevious(null)
 		if previous
 			previous.setNext(null)
-
 telescopicText.graph.safeUnlink = (vertex) ->
 	next = vertex.getNext()
 	previous = vertex.getPrevious()
@@ -67,7 +87,7 @@ telescopicText.graph.safeUnlink = (vertex) ->
 		next.setPrevious(previous)
 	if previous
 		previous.setNext(next)
-	
+
 
 telescopicText.vertex = (spec) ->
 	### set defaults ###
