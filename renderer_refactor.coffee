@@ -244,7 +244,6 @@ telescopicText.vertex = (spec) ->
 		that.incomingTree.receiveReverseClickFromChild(that)
 		that
 
-
 	that.receiveReverseClickFromChild=(childVertex)->
 		spec._clickCount += -1
 		childIndex = that.findIndexOfChildInChildren(childVertex)

@@ -217,9 +217,6 @@ test 'reverse click', ->
 	ok(!g.vertex_A.shouldBeVisible() &&
 		!g.vertex_B.shouldBeVisible() &&
 		!g.vertex_L.shouldBeVisible())
-		
-
-
 
 
 ### helper function ###
