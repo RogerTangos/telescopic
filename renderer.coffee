@@ -1,73 +1,76 @@
- telescopicText = {}
+#note to self: setChildrenReferences uses this, but should use that.
+# for some reason it works. That's fucked up.
+# you are also working on edge assignment w/ forward
 
-telescopicText.graphs = {}	#place to store all graphs
+### add all private attributes to spec by convention.### 
 
-telescopicText.reset= ->
-	telescopicText.graphs = {}
-	new telescopicText.Graph('telescopicDefaultID')
+telescopicText = {}
+telescopicText.graphs = {}
+telescopicText.reset = ->
+	telescopicText.graph({_name:'telescopicDefaultID'})
+telescopicText.graph = (spec) ->
+	### set defaults ###
+	spec = spec || {}
+	spec._name = spec._name || 'telescopicDefaultID' 
+	### private attributes ###
+	that = {}
+	_nodes = {}
+	### constructor. default text, and insert into graphs ###
+	telescopicText.graphs[spec._name] = that
+	### public functions ###
+	that.getName = -> spec._name
+	that.getNode = (keyOrVertex) ->
+		### in case get the vertex's key ###
+		if keyOrVertex instanceof Object
+			keyOrVertex = keyOrVertex.getName()
+		node = _nodes[keyOrVertex]
+		if node == undefined
+			console.log 'Graph "' + that.getName() + 
+			'" is missing a child, with key "' + keyOrVertex + '."'
+			undefined
+		node
+	that.setNode = (key, value) ->
+		_nodes[key] = value
+		that
 
-class telescopicText.Graph
-	constructor: (_name) ->
-		### shortcut to reference graphs ###
-		telescopicText.graphs[_name] = @
+	that.makeLinkedList = (startVertex) ->
+		startVertex = that.getNode(startVertex)
+		currentVertex = startVertex
+		nextVertex = that.getNode(currentVertex.getNext())
 
-		### private ###
-		_nodes = {}
+		if !startVertex.getNext()
+			console.log 'Careful! This graph only has one vertex linked.' 
+			+ 'and that seems pretty silly to me.'
 
-		###getters, setters###
-		@getName = -> _name
-
-		@getNode = (key) ->
-			node = _nodes[key]
-			if node == undefined
-				console.log 'Graph "' + @.getName() + '" is missing a child, with key "' + key + '."'
-				null
-			node
-
-		@setNode = (key, value) ->
-			_nodes[key] = value
-
-
-		### object-level methods ###
-		@returnVertexFromKeyOrObject= (key_or_object) ->
-			if key_or_object !instanceof telescopicText.Vertex
-				key_or_object = @.getNode(key_or_object)
-			else
-				key_or_object
+		while nextVertex
+			if nextVertex == startVertex
+				currentVertex.setNext(null)
+				nextVertex.setPrevious(null)
+				console.log "Your linked list is cyclical when it should be linear. " + 
+				"Did not link the start and end nodes."
+				nextVertex = false
+			else 
+				telescopicText.graph.link(currentVertex, nextVertex)
+				currentVertex = nextVertex
+				nextVertex = that.getNode(currentVertex.getNext())
+		that
 
 
-		@makeLinkedList= (start_vertex) ->
-			start_vertex = @.returnVertexFromKeyOrObject(start_vertex)
-			current_vertex = start_vertex
-			next_vertex = @.returnVertexFromKeyOrObject(current_vertex.getNext())
+	### linking/children functions ###
+	that.setGraphChildReferences = ->
+		for key, value of _nodes
+			value.setChildrenReferences()
+		that
 
-			if !start_vertex.getNext()
-				console.log 'Careful! This graph only has one vertex linked.' 
-				+ 'and that seems pretty silly to me.'
+	return that
 
-			while next_vertex
-				if next_vertex == start_vertex
-					current_vertex.setNext(null)
-					next_vertex.setPrevious(null)
-					console.log "Your linked list is cyclical when it should be linear. " + 
-					"Did not link the start and end nodes."
-					next_vertex = false
-				else 
-					@.constructor.link(current_vertex, next_vertex)
-					current_vertex = next_vertex
-					next_vertex = @.returnVertexFromKeyOrObject(current_vertex.getNext())
-
-		@setReferencesForChildrenThroughoutGraph= () ->
-			for key, value of _nodes
-				value.setChildrenReferences()
-
-	### class method ###
-	@link= (from_vertex, to_vertex) -> 
+### object level functions ###
+telescopicText.graph.link= (fromVertex, toVertex) ->
 	#link two vertexes. needs to be passed vertex objects, not just their keys
-		from_vertex.setNext(to_vertex)
-		to_vertex.setPrevious(from_vertex)
+	fromVertex.setNext(toVertex)
+	toVertex.setPrevious(fromVertex)
 
-	@dangerousUnlink =(vertex) ->
+telescopicText.graph.dangerousUnlink = (vertex) ->
 	#unlink a vertex. needs to be passed a vertex objects, not just its keys
 		next = vertex.getNext()
 		previous = vertex.getPrevious()
@@ -79,185 +82,180 @@ class telescopicText.Graph
 			next.setPrevious(null)
 		if previous
 			previous.setNext(null)
+telescopicText.graph.safeUnlink = (vertex) ->
+	next = vertex.getNext()
+	previous = vertex.getPrevious()
 
-	@safeUnlink= (vertex) ->
-	#unlink a vertex. needs to be passed a vertex object, not just its keys
-		next = vertex.getNext()
-		previous = vertex.getPrevious()
+	vertex.setNext(null)
+	vertex.setPrevious(null)
 
-		vertex.setNext(null)
-		vertex.setPrevious(null)
-
-		if next
-			next.setPrevious(previous)
-		if previous
-			previous.setNext(next)
-
-class telescopicText.Vertex
-	constructor: (_name, @content, @children=[], _remain_after_click=false, _next=null, _graph="telescopicDefaultID", _starter=false) ->
-		# The @symbol makes attributes public. Omitting the @ makes them private.
-		
-		# Make the graph, if it doesn't already exist
-		# Make the graph attribute a reference
-		# Insert node into the graph.
-		if not telescopicText.graphs[_graph]
-			new telescopicText.Graph(_graph)
-		# take graph as string, turn it into a reference to the graph.  
-		_graph = telescopicText.graphs[_graph]
-		_graph.setNode(_name, @)
-	
-		@setEdgesToDefault= ->
-			@incoming_tree = false;
-			@incoming_forward = []
-			@incoming_back = []
-			@incoming_cross = []
-		@setEdgesToDefault()
-
-		### private variables ### 
-		_previous = null
-		_click_count = 0
-
-		### getters, setters ###
-		@getStarter = -> _starter #intentionally, no setter method.
-		@getName = -> _name
-		@getGraph = -> _graph
-		@getNext = -> _next
-		@setNext = (newNext) -> 
-			_next = newNext
-		@getPrevious = -> _previous
-		@setPrevious= (newPrevious) ->
-			_previous = newPrevious
+	if next
+		next.setPrevious(previous)
+	if previous
+		previous.setNext(next)
 
 
-		### meta information ###
-		@getClickCount= -> _click_count
-		@getRemainAfterClick = -> _remain_after_click
-		@findClicksRemaining = -> 
-			### doesn't take _remain_after_click into account, because
-				that wouldn't count as a click ### 
-			@.children.length - _click_count
-		@findIndexOfChildInChildren =(child_vertex)->
-			child_index = 0
-			for row in children
-				for child in row
-					if child == child_vertex
-						return child_index
-				child_index +=1
-			false
-		
-		### visibility information ###
-		@shouldBeVisible = ->
-			# ### starter case ###
-			# if @.children.length == 0
-			# 	true
-			if @.getStarter() && @.findClicksRemaining() > 0
-				true
-			else if @.getStarter() && @.getRemainAfterClick()
-				true
-				### not a starter node ###
-			else if @.findClicksRemaining() > 0 && @.incoming_tree
-				true
-			else if @.incoming_tree && @.getRemainAfterClick()
-				true
-			else
-				false			
-		@shouldBeReverseClickable = ->
-			### need to check to make sure that parent is on the same click index as the child ###
-			if _click_count == 0 &&
-					@.shouldBeVisible() && 
-					@.incoming_tree && 
-					_click_count == 0 &&
-					@.incoming_tree.findIndexOfChildInChildren(@) == @.incoming_tree.getClickCount()-1
+telescopicText.vertex = (spec) ->
+	### set defaults ###
+	spec = spec || {}
+	spec._starter = spec._starter || false
+	spec._children = spec._children || []
+	spec._remainAfterClick = spec._remainAfterClick  || false
+	spec._next = spec._next || null
+	### constructor  ###
+	if not telescopicText.graphs[spec._graph]
+		spec._graph = telescopicText.graph({_name: spec._graph})
+	else
+		spec._graph = telescopicText.graphs[spec._graph]
+	### private attributes ###
+	that = {}
+	spec._previous = null
+	spec._clickCount = 0
+	### public attributes ###
+	that.content = spec.content
+	that.incomingTree = false
+	that.incomingForward = []
+	that.incomingBack = []
+	that.incomingCross = []
+	### public functions ###
+	that.getStarter = -> spec._starter
+	that.getName = -> spec._name
+	that.getGraph = -> spec._graph
+	that.getNext = -> spec._next
+	that.setNext = (newNext) -> spec._next = newNext
+	that.getPrevious = -> spec._previous
+	that.setPrevious = (newPrevious) -> spec._previous = newPrevious
+	that.getClickCount = -> spec._clickCount
+	that.getChildren = -> spec._children
+	that.getRemainAfterClick = -> spec._remainAfterClick
+	that.setEdgesToDefault = ->
+		that.incomingTree = false
+		that.incomingForward = []
+		that.incomingBack = []
+		that.incomingCross = []
+	 
+	### public functions meta info ###
+	that.findClicksRemaining =->
+		### ignore _remainAfterClick b/c it's not a click ###
+		spec._children.length - spec._clickCount
+	that.shouldBeVisible = ->
+		# ### starter case ###
+		# if that.children.length == 0
+		# 	true
+		if that.getStarter() && that.findClicksRemaining() > 0
+			true
+		else if that.getStarter() && that.getRemainAfterClick()
+			true
+			### not a starter node ###
+		else if that.findClicksRemaining() > 0 && that.incomingTree
+			true
+		else if that.incomingTree && that.getRemainAfterClick()
+			true
+		else
+			false		
+	that.forwardDetermineAndSetIncomingEdge= (incomingVertex)->
+		### assumes that incomingVertex is valid ###
+		if !that.incomingTree and !that.getStarter()
+			that.incomingTree = incomingVertex
+		else if that.determineIfBackEdge(incomingVertex)
+			that.incomingBack.push(incomingVertex)
+		else if that.determineIfForwardEdge(incomingVertex)
+			that.incomingForward.push(incomingVertex)
+		else
+			that.incomingCross.push(incomingVertex)
+		that
+	that.determineIfBackEdge = (incomingVertex) ->
+		parentVertex = incomingVertex.incomingTree
+
+		while parentVertex
+			if parentVertex == that
 				return true
 			else
-				return false
+				parentVertex = parentVertex.incomingTree
+		false
+	that.determineIfForwardEdge = (incomingVertex) ->
+		parentVertex = that.incomingTree
 
-
-		@forwardDetermineAndSetIncomingEdge= (incoming_vertex)->
-			### assumes that incoming_vertex is valid ###
-			if !@.incoming_tree and !@.getStarter()
-				@.incoming_tree = incoming_vertex
-			else if @.determineIfBackEdge(incoming_vertex)
-				@.incoming_back.push(incoming_vertex)
-			else if @.determineIfForwardEdge(incoming_vertex)
-				@.incoming_forward.push(incoming_vertex)
+		while parentVertex
+			if parentVertex == incomingVertex
+				return true
 			else
-				@.incoming_cross.push(incoming_vertex)
-		@determineIfBackEdge = (incoming_vertex) ->
-			parent_vertex = incoming_vertex.incoming_tree
+				parentVertex = parentVertex.incomingTree
+		false
 
-			while parent_vertex
-				if parent_vertex == @
-					return true
+	that.shouldBeReverseClickable = ->
+		### need to check to make sure that parent is on the same click index as the child ###
+		if spec._clickCount == 0 &&
+				that.shouldBeVisible() && 
+				that.incomingTree && 
+				spec._clickCount == 0 &&
+				that.incomingTree.findIndexOfChildInChildren(that) == that.incomingTree.getClickCount()-1
+			return true
+		else
+			return false
+
+	### linking utilities ###
+	that.setChildrenReferences = ->
+		setIndex = 0
+		while setIndex < spec._children.length
+			childIndex = 0
+			while childIndex < spec._children[setIndex].length
+				childKey = spec._children[setIndex][childIndex]
+				child = spec._graph.getNode(childKey)  
+				if child == undefined
+					console.log 'The key, "'+ childKey+ '", will be removed from vertex\'s child array.'
+					spec._children[setIndex].splice(childIndex,1)
 				else
-					parent_vertex = parent_vertex.incoming_tree
-			false
-		@determineIfForwardEdge = (incoming_vertex) ->
-			parent_vertex = @.incoming_tree
+					spec._children[setIndex][childIndex] = child
+					childIndex +=1
+			setIndex += 1
+		that
 
-			while parent_vertex
-				if parent_vertex == incoming_vertex
-					return true
-				else
-					parent_vertex = parent_vertex.incoming_tree
+	that.findIndexOfChildInChildren =(chidVertex)->
+		childIndex = 0
+		for row in spec._children
+			for child in row
+				if child == chidVertex
+					return childIndex
+			childIndex +=1
+		false
 
-			false
+	### clicking utilities ###
+	that.forwardClick= ->
+		### catch instance in which it shouldn't be clicked ###
+		if that.findClicksRemaining() <= 0 or !that.shouldBeVisible()
+			return that
 
-		### clicking ###
-		@forwardClick= ->
-			### catch instance in which it shouldn't be clicked ###
-			if @.findClicksRemaining() <= 0 or !@shouldBeVisible()
-				return @
+		relevantChildren = spec._children[spec._clickCount]
+		for child in relevantChildren
+			child.receiveForwardClick(that)
 
-			relevant_children = @.children[_click_count]
-			for child in relevant_children
-				child.receiveForwardClick(@)
+		spec._clickCount +=1
+		that
 
-			_click_count +=1
-			@
-		@receiveForwardClick= (incoming_vertex)->
-			@forwardDetermineAndSetIncomingEdge(incoming_vertex)
-			@
+	that.receiveForwardClick= (incomingVertex)->
+		that.forwardDetermineAndSetIncomingEdge(incomingVertex)
+		that
 
-		@reverseClick= ->
-			if !@shouldBeReverseClickable()
-				return @
-			@incoming_tree.receiveReverseClickFromChild(@)
-			@
+	that.reverseClick= ->
+		if !that.shouldBeReverseClickable()
+			return that
+		that.incomingTree.receiveReverseClickFromChild(that)
+		that
 
+	that.receiveReverseClickFromChild=(childVertex)->
+		spec._clickCount += -1
+		childIndex = that.findIndexOfChildInChildren(childVertex)
+		for child in spec._children[childIndex]
+			child.receiveReverseClickFromParent(that)
+		that
 
-		@receiveReverseClickFromChild=(child_vertex)->
-			_click_count += -1
-			child_index = @findIndexOfChildInChildren(child_vertex)
-			for child in @.children[child_index]
-				child.receiveReverseClickFromParent(@)
-			@
-
-		@receiveReverseClickFromParent= (parent_vertex)->
-			if @incoming_tree == parent_vertex
-				@setEdgesToDefault()
-			@
+	that.receiveReverseClickFromParent= (parentVertex)->
+		if that.incomingTree == parentVertex
+			that.setEdgesToDefault()
+		that
 
 
-		@setChildrenReferences= ->
-			# can use returnVertexFromKeyOrObject, but at some later point
-			set_index = 0
-			while set_index < @.children.length
-				child_index = 0
-				while child_index < @.children[set_index].length
-					child_key = @.children[set_index][child_index]
-					child = _graph.returnVertexFromKeyOrObject(child_key)  
-
-					if child !instanceof telescopicText.Vertex
-						console.log 'The key, "'+ child_key+ '", will be removed from vertex\'s child array.'
-						@.children[set_index].splice(child_index,1)
-
-					else
-						@.children[set_index][child_index] = child
-						child_index +=1
-					
-				set_index += 1
-
-# create the default graph
-telescopicText.reset()
-
+	### insert node into graph###
+	spec._graph.setNode(spec._name, that)	
+	return that
