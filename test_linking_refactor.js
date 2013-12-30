@@ -20,9 +20,9 @@ test('vertex sets child references on command', function() {
   return equal(badVertexBMod.getChildren()[0][1], vertexK);
 });
 
-test('Graph.graph1.setReferencesForChildrenThroughoutGraph sets all child references', function() {
+test('Graph.graph1.setGraphChildReferences sets all child references', function() {
   telescopicText.reset();
-  makeTestVerticies().setReferencesForChildrenThroughoutGraph();
+  makeTestVerticies().setGraphChildReferences();
   equal(1, 1);
   equal(vertexA.getChildren()[0][0], vertexC);
   equal(vertexA.getChildren()[0][1], vertexB);

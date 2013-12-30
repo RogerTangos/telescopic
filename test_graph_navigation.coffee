@@ -6,233 +6,207 @@ test 'find clicks remaining on unclickable link', ->
 	equal(vertexX.findClicksRemaining(), 0)
 
 
-test 'forward click a node, vertex_A. Test vertex_A visibility and clicks remaining', ->
+test 'forward click a node, vertexA. Test vertexA visibility and clicks remaining', ->
 	telescopicText.reset()
-	graph1 = makeTestVerticies()
+	graph1 = makeTestVerticies().setGraphChildReferences()
+
 	equal(vertexA.findClicksRemaining(), 1)
 
 	vertexA.forwardClick()
 	equal(vertexA.findClicksRemaining(), 0)
 	equal(vertexA.shouldBeVisible(), false)
 
-# test 'make sure hidden nodes give correct visibility.', ->
-# 	telescopicText.reset()
-# 	graph1 = makeTestVerticies()
-# 	vertex_C = graph1.getNode('C')
-# 	vertex_K = graph1.getNode('K')
+test 'make sure hidden nodes give correct visibility.', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies().setGraphChildReferences()
+	
+	equal(vertexC.shouldBeVisible(), false)
+	equal(vertexK.shouldBeVisible(), false)
 
-# 	equal(vertex_C.shouldBeVisible(), false)
-# 	equal(vertex_K.shouldBeVisible(), false)
+test 'determine and record incoming tree edges', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies().setGraphChildReferences()
 
+	### tree edges ###
+	vertexB.forwardDetermineAndSetIncomingEdge(vertexA)
+	equal(vertexB.incomingTree, vertexA)
+	equal(vertexB.incomingForward, false)
+	equal(vertexB.incomingBack, false)
+	equal(vertexB.incomingCross, false)
 
-# test 'determine and record incoming tree, cross, and back edges', ->
-# 	telescopicText.reset()
-# 	graph1 = makeTestVerticies()
-# 	vertex_A = graph1.getNode('A')
-# 	vertex_B = graph1.getNode('B')
-# 	vertex_C = graph1.getNode('C')
+	vertexC.forwardDetermineAndSetIncomingEdge(vertexA)	
+	equal(vertexC.incomingTree, vertexA)
+	equal(vertexC.incomingForward, false)
+	equal(vertexC.incomingBack, false)
+	equal(vertexC.incomingCross, false)
 
-# 	### tree edges ###
-# 	vertex_B.forwardDetermineAndSetIncomingEdge(vertex_A)
-# 	equal(vertex_B.incoming_tree, vertex_A)
-# 	equal(vertex_B.incoming_forward, false)
-# 	equal(vertex_B.incoming_back, false)
-# 	equal(vertex_B.incoming_cross, false)
+test 'determine and record cross and back edges', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies().setGraphChildReferences()
+	vertexB.forwardDetermineAndSetIncomingEdge(vertexA)
+	vertexC.forwardDetermineAndSetIncomingEdge(vertexA)	
 
-# 	vertex_C.forwardDetermineAndSetIncomingEdge(vertex_A)	
-# 	equal(vertex_C.incoming_tree, vertex_A)
-# 	equal(vertex_C.incoming_forward, false)
-# 	equal(vertex_C.incoming_back, false)
-# 	equal(vertex_C.incoming_cross, false)
+	### cross edge ###
+	vertexC.forwardDetermineAndSetIncomingEdge(vertexB)
+	equal(vertexC.incomingTree, vertexA)
+	equal(vertexC.incomingCross[0], vertexB)
+	equal(vertexC.incomingBack[0], undefined)
+	equal(vertexC.incomingForward[0], undefined)
 
-# 	### cross edge ###
-# 	vertex_C.forwardDetermineAndSetIncomingEdge(vertex_B)
-# 	equal(vertex_C.incoming_tree, vertex_A)
-# 	equal(vertex_C.incoming_cross[0], vertex_B)
-# 	equal(vertex_C.incoming_back[0], undefined)
-# 	equal(vertex_C.incoming_forward[0], undefined)
+	### back edge ###
+	vertexA.forwardDetermineAndSetIncomingEdge(vertexC)
+	equal(vertexA.incomingBack[0],vertexC)
+	equal(vertexA.incomingTree[0], undefined)
+	equal(vertexA.incomingForward[0], undefined)
+	equal(vertexA.incomingTree, false)
 
-# 	### back edge ###
-# 	vertex_A.forwardDetermineAndSetIncomingEdge(vertex_C)
-# 	equal(vertex_A.incoming_back[0],vertex_C)
-# 	equal(vertex_A.incoming_tree[0], undefined)
-# 	equal(vertex_A.incoming_forward[0], undefined)
-# 	equal(vertex_A.incoming_tree, false)
+test 'determine and record forward edges', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies().setGraphChildReferences()
+	
+	vertexQ.incomingTree = vertexJ
+	vertexJ.incomingTree = vertexE
+	vertexE.incomingTree = vertexD
 
-# test 'determine and record forward edges', ->
-# 	telescopicText.reset()
-# 	graph1 = makeTestVerticies()
-# 	vertex_D = graph1.getNode('D')
-# 	vertex_E = graph1.getNode('E')
-# 	vertex_J = graph1.getNode('J')
-# 	vertex_Q = graph1.getNode('Q')
+	vertexQ.forwardDetermineAndSetIncomingEdge(vertexE)
+	equal(vertexQ.incomingTree, vertexJ)
+	equal(vertexQ.incomingBack.length, 0)
+	equal(vertexQ.incomingCross.length, 0)
+	equal(vertexQ.incomingForward[0], vertexE)
 
-# 	vertex_Q.incoming_tree = vertex_J
-# 	vertex_J.incoming_tree = vertex_E
-# 	vertex_E.incoming_tree = vertex_D
+test 'forward click a nodes A, B, C. test edge matching.', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies().setGraphChildReferences()
+	
+	vertexA.forwardClick()
+	equal(vertexB.incomingTree, vertexA)
+	equal(vertexC.incomingTree, vertexA)
 
-# 	vertex_Q.forwardDetermineAndSetIncomingEdge(vertex_E)
-# 	equal(vertex_Q.incoming_tree, vertex_J)
-# 	equal(vertex_Q.incoming_back.length, 0)
-# 	equal(vertex_Q.incoming_cross.length, 0)
-# 	equal(vertex_Q.incoming_forward[0], vertex_E)
+	vertexB.forwardClick()
+	equal(vertexC.incomingCross[0], vertexB)
+	equal(vertexK.incomingTree, vertexB)
 
-# test 'forward click a nodes A, B, C. test edge matching.', ->
-# 	telescopicText.reset()
-# 	graph1 = makeTestVerticies()
-# 	vertex_A = graph1.getNode('A')
-# 	vertex_B = graph1.getNode('B')
-# 	vertex_C = graph1.getNode('C')
-# 	vertex_K = graph1.getNode('K')
-# 	vertex_F = graph1.getNode('F')
-
-# 	vertex_A.forwardClick()
-# 	equal(vertex_B.incoming_tree, vertex_A)
-# 	equal(vertex_C.incoming_tree, vertex_A)
-
-# 	vertex_B.forwardClick()
-# 	equal(vertex_C.incoming_cross[0], vertex_B)
-# 	equal(vertex_K.incoming_tree, vertex_B)
-
-# 	vertex_C.forwardClick()
-# 	equal(vertex_A.incoming_back[0], vertex_C)
-# 	equal(vertex_F.incoming_tree, vertex_C)
+	vertexC.forwardClick()
+	equal(vertexA.incomingBack[0], vertexC)
+	equal(vertexF.incomingTree, vertexC)
 
 
 # test 'forward click notes D, E, J, Q. test edge matching.', ->
-# 	telescopicText.reset()
-# 	graph1 = makeTestVerticies()
-# 	vertex_D = graph1.getNode('D')
-# 	vertex_E = graph1.getNode('E')
-# 	vertex_J = graph1.getNode('J')
-# 	vertex_Q = graph1.getNode('Q')
-
-# 	vertex_D.forwardClick()
-# 	equal(vertex_E.incoming_tree, vertex_D)
-
-# 	vertex_E.forwardClick()
-# 	equal(vertex_J.incoming_tree, vertex_E)
-
-# 	vertex_J.forwardClick()
-# 	equal(vertex_Q.incoming_tree, vertex_J)
-
-# 	vertex_E.forwardClick()
-# 	equal(vertex_Q.incoming_forward[0], vertex_E)
-
-# test 'visibility when forward clicking', ->
-# 	telescopicText.reset()
-# 	graph1 = makeTestVerticies()
-# 	vertex_A = graph1.getNode('A')
-# 	vertex_B = graph1.getNode('B')
-# 	vertex_C = graph1.getNode('C')
-# 	vertex_K = graph1.getNode('K')
-# 	vertex_F = graph1.getNode('F')
-# 	vertex_L = graph1.getNode('L')
-
-# 	ok(!vertex_B.shouldBeVisible() && 
-# 		!vertex_C.shouldBeVisible() && 
-# 		!vertex_K.shouldBeVisible() && 
-# 		!vertex_F.shouldBeVisible())
-
-# 	### happy path. vertex_A "clicked" while visible ###
-# 	vertex_A.forwardClick()
-# 	ok(vertex_B.shouldBeVisible() && vertex_C.shouldBeVisible())
-# 	ok(!vertex_A.shouldBeVisible() && !vertex_K.shouldBeVisible() && 
-# 		!vertex_F.shouldBeVisible())
-
-# 	### sad path. vertex_A "clicked" while it should be invisible ###
-# 	vertex_A.forwardClick()
-# 	ok(vertex_B.shouldBeVisible() && vertex_C.shouldBeVisible())
-# 	ok(!vertex_A.shouldBeVisible() && 
-# 		!vertex_K.shouldBeVisible() && 
-# 		!vertex_F.shouldBeVisible() && 
-# 		!vertex_L.shouldBeVisible())
-
-# 	###sad path. vertex_L "clicked" while it should be invisible ###
-# 	vertex_L.forwardClick()
-# 	ok(vertex_B.shouldBeVisible() && vertex_C.shouldBeVisible())
-# 	ok(!vertex_A.shouldBeVisible() && 
-# 		!vertex_K.shouldBeVisible() && 
-# 		!vertex_F.shouldBeVisible() && 
-# 		!vertex_L.shouldBeVisible())
-
-# 	vertex_B.forwardClick()
-# 	ok(vertex_K.shouldBeVisible(), vertex_C.shouldBeVisible())
-# 	ok(!vertex_A.shouldBeVisible() && 
-# 		!vertex_B.shouldBeVisible() &&
-# 		!vertex_F.shouldBeVisible() &&
-# 		!vertex_L.shouldBeVisible())
-
-# 	### test case for vertex with multiple sets of children ###
-# 	vertex_C.forwardClick()
-# 	ok(vertex_C.shouldBeVisible() && vertex_F.shouldBeVisible())
-# 	ok(!vertex_A.shouldBeVisible() && 
-# 		!vertex_B.shouldBeVisible() &&
-# 		!vertex_L.shouldBeVisible())
-
-# 	### test set [1] of children and _remain_after_click### 
-# 	vertex_C.forwardClick()
-# 	ok(vertex_C.shouldBeVisible() && 
-# 		vertex_F.shouldBeVisible() && 
-# 		vertex_L.shouldBeVisible())
-# 		ok(!vertex_A.shouldBeVisible() && 
-# 		!vertex_B.shouldBeVisible())
-
-# test 'find index of child in children', ->
-# 	g = graphPatternOne()
-# 	equal(g.vertex_C.findIndexOfChildInChildren(g.vertex_L), 1)
-# 	equal(g.vertex_C.findIndexOfChildInChildren(g.vertex_F), 0)
-# 	equal(g.vertex_A.findIndexOfChildInChildren(g.vertex_C), 0)
-
-
-# test 'determine elibility for reverseClick', ->
-# 	g = graphPatternOne()
-# 	ok(g.vertex_L.shouldBeReverseClickable() &&
-# 		g.vertex_K.shouldBeReverseClickable)
-# 	ok(!g.vertex_F.shouldBeReverseClickable() &&
-# 		!g.vertex_C.shouldBeReverseClickable() &&
-# 		!g.vertex_A.shouldBeReverseClickable() &&
-# 		!g.vertex_B.shouldBeReverseClickable() &&
-# 		!g.vertex_A.shouldBeReverseClickable())
-
-# test 'reverse click', ->
-# 	g = graphPatternOne()
+	telescopicText.reset()
+	graph1 = makeTestVerticies().setGraphChildReferences()
 	
-# 	### sad path. vertex_F should not be clickable. ###
-# 	g.vertex_F.reverseClick()
-# 	ok(g.vertex_F.shouldBeVisible() &&
-# 		g.vertex_L.shouldBeVisible() &&
-# 		g.vertex_C.shouldBeVisible() &&
-# 		g.vertex_K.shouldBeVisible())
-# 	ok(!g.vertex_B.shouldBeVisible() &&
-# 		!g.vertex_A.shouldBeVisible())
+	vertexD.forwardClick()
+	equal(vertexE.incomingTree, vertexD)
 
-# 	### happy path. vertex_L should be clickable ###
-# 	g.vertex_L.reverseClick()
-# 	ok(g.vertex_C.shouldBeVisible() && 
-# 		g.vertex_F.shouldBeVisible() &&
-# 		g.vertex_K.shouldBeVisible())
+	vertexE.forwardClick()
+	equal(vertexJ.incomingTree, vertexE)
 
-# 	ok(!g.vertex_A.shouldBeVisible() &&
-# 		!g.vertex_B.shouldBeVisible() &&
-# 		!g.vertex_L.shouldBeVisible())
-		
+	vertexJ.forwardClick()
+	equal(vertexQ.incomingTree, vertexJ)
+
+	vertexE.forwardClick()
+	equal(vertexQ.incomingForward[0], vertexE)
+
+test 'visibility when forward clicking', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies().setGraphChildReferences()
+
+	ok(!vertexB.shouldBeVisible() && 
+		!vertexC.shouldBeVisible() && 
+		!vertexK.shouldBeVisible() && 
+		!vertexF.shouldBeVisible())
+
+	### happy path. vertexA "clicked" while visible ###
+	vertexA.forwardClick()
+	ok(vertexB.shouldBeVisible() && vertexC.shouldBeVisible())
+	ok(!vertexA.shouldBeVisible() && !vertexK.shouldBeVisible() && 
+		!vertexF.shouldBeVisible())
+
+	### sad path. vertexA "clicked" while it should be invisible ###
+	vertexA.forwardClick()
+	ok(vertexB.shouldBeVisible() && vertexC.shouldBeVisible())
+	ok(!vertexA.shouldBeVisible() && 
+		!vertexK.shouldBeVisible() && 
+		!vertexF.shouldBeVisible() && 
+		!vertexL.shouldBeVisible())
+
+	###sad path. vertexL "clicked" while it should be invisible ###
+	vertexL.forwardClick()
+	ok(vertexB.shouldBeVisible() && vertexC.shouldBeVisible())
+	ok(!vertexA.shouldBeVisible() && 
+		!vertexK.shouldBeVisible() && 
+		!vertexF.shouldBeVisible() && 
+		!vertexL.shouldBeVisible())
+
+	vertexB.forwardClick()
+	ok(vertexK.shouldBeVisible(), vertexC.shouldBeVisible())
+	ok(!vertexA.shouldBeVisible() && 
+		!vertexB.shouldBeVisible() &&
+		!vertexF.shouldBeVisible() &&
+		!vertexL.shouldBeVisible())
+
+	### test case for vertex with multiple sets of children ###
+	vertexC.forwardClick()
+	ok(vertexC.shouldBeVisible() && vertexF.shouldBeVisible())
+	ok(!vertexA.shouldBeVisible() && 
+		!vertexB.shouldBeVisible() &&
+		!vertexL.shouldBeVisible())
+
+	### test set [1] of children and _remain_after_click### 
+	vertexC.forwardClick()
+	ok(vertexC.shouldBeVisible() && 
+		vertexF.shouldBeVisible() && 
+		vertexL.shouldBeVisible())
+		ok(!vertexA.shouldBeVisible() && 
+		!vertexB.shouldBeVisible())
+
+test 'find index of child in children', ->
+	graph1 = makeTestVerticies().setGraphChildReferences()
+	graphPatternOne()
+	equal(vertexC.findIndexOfChildInChildren(vertexL), 1)
+	equal(vertexC.findIndexOfChildInChildren(vertexF), 0)
+	equal(vertexA.findIndexOfChildInChildren(vertexC), 0)
 
 
+test 'determine elibility for reverseClick', ->
+	graph1 = makeTestVerticies().setGraphChildReferences()
+	graphPatternOne()
+	ok(vertexL.shouldBeReverseClickable() &&
+		vertexK.shouldBeReverseClickable)
+	ok(!vertexF.shouldBeReverseClickable() &&
+		!vertexC.shouldBeReverseClickable() &&
+		!vertexA.shouldBeReverseClickable() &&
+		!vertexB.shouldBeReverseClickable() &&
+		!vertexA.shouldBeReverseClickable())
+
+test 'reverse click', ->
+	graph1 = makeTestVerticies().setGraphChildReferences()
+	graphPatternOne()
+
+	### sad path. vertexF should not be clickable. ###
+	vertexF.reverseClick()
+	ok(vertexF.shouldBeVisible() &&
+		vertexL.shouldBeVisible() &&
+		vertexC.shouldBeVisible() &&
+		vertexK.shouldBeVisible())
+	ok(!vertexB.shouldBeVisible() &&
+		!vertexA.shouldBeVisible())
+
+	### happy path. vertexL should be clickable ###
+	vertexL.reverseClick()
+	ok(vertexC.shouldBeVisible() && 
+		vertexF.shouldBeVisible() &&
+		vertexK.shouldBeVisible())
+
+	ok(!vertexA.shouldBeVisible() &&
+		!vertexB.shouldBeVisible() &&
+		!vertexL.shouldBeVisible())
 
 
-# ### helper function ###
-# graphPatternOne= ->
-# 	result = {}
-# 	result.graph1 = makeTestVerticies()
-# 	result.vertex_A = result.graph1.getNode('A')
-# 	result.vertex_B = result.graph1.getNode('B')
-# 	result.vertex_C = result.graph1.getNode('C')
-# 	result.vertex_K = result.graph1.getNode('K')
-# 	result.vertex_F = result.graph1.getNode('F')
-# 	result.vertex_L = result.graph1.getNode('L')
-# 	result.vertex_A.forwardClick()
-# 	result.vertex_B.forwardClick()
-# 	result.vertex_C.forwardClick()
-# 	result.vertex_C.forwardClick()
-# 	result
+### helper function ###
+graphPatternOne= ->
+	vertexA.forwardClick()
+	vertexB.forwardClick()
+	vertexC.forwardClick()
+	vertexC.forwardClick()
+	

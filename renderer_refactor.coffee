@@ -1,3 +1,7 @@
+#note to self: setChildrenReferences uses this, but should use that.
+# for some reason it works. That's fucked up.
+# you are also working on edge assignment w/ forward
+
 ### add all private attributes to spec by convention.### 
 
 telescopicText = {}
@@ -21,7 +25,7 @@ telescopicText.graph = (spec) ->
 			keyOrVertex = keyOrVertex.getName()
 		node = _nodes[keyOrVertex]
 		if node == undefined
-			console.log 'Graph "' + @.getName() + 
+			console.log 'Graph "' + that.getName() + 
 			'" is missing a child, with key "' + keyOrVertex + '."'
 			undefined
 		node
@@ -49,12 +53,14 @@ telescopicText.graph = (spec) ->
 				telescopicText.graph.link(currentVertex, nextVertex)
 				currentVertex = nextVertex
 				nextVertex = that.getNode(currentVertex.getNext())
+		that
 
 
 	### linking/children functions ###
-	that.setReferencesForChildrenThroughoutGraph = ->
+	that.setGraphChildReferences = ->
 		for key, value of _nodes
 			value.setChildrenReferences()
+		that
 
 	return that
 
@@ -122,6 +128,11 @@ telescopicText.vertex = (spec) ->
 	that.getClickCount = -> spec._clickCount
 	that.getChildren = -> spec._children
 	that.getRemainAfterClick = -> spec._remainAfterClick
+	that.setEdgesToDefault = ->
+		that.incomingTree = false
+		that.incomingForward = []
+		that.incomingBack = []
+		that.incomingCross = []
 	 
 	### public functions meta info ###
 	that.findClicksRemaining =->
@@ -129,19 +140,60 @@ telescopicText.vertex = (spec) ->
 		spec._children.length - spec._clickCount
 	that.shouldBeVisible = ->
 		# ### starter case ###
-		# if @.children.length == 0
+		# if that.children.length == 0
 		# 	true
 		if that.getStarter() && that.findClicksRemaining() > 0
 			true
 		else if that.getStarter() && that.getRemainAfterClick()
 			true
 			### not a starter node ###
-		else if that.findClicksRemaining() > 0 && that.incoming_tree
+		else if that.findClicksRemaining() > 0 && that.incomingTree
 			true
-		else if that.incoming_tree && that.getRemainAfterClick()
+		else if that.incomingTree && that.getRemainAfterClick()
 			true
 		else
 			false		
+	that.forwardDetermineAndSetIncomingEdge= (incomingVertex)->
+		### assumes that incomingVertex is valid ###
+		if !that.incomingTree and !that.getStarter()
+			that.incomingTree = incomingVertex
+		else if that.determineIfBackEdge(incomingVertex)
+			that.incomingBack.push(incomingVertex)
+		else if that.determineIfForwardEdge(incomingVertex)
+			that.incomingForward.push(incomingVertex)
+		else
+			that.incomingCross.push(incomingVertex)
+		that
+	that.determineIfBackEdge = (incomingVertex) ->
+		parentVertex = incomingVertex.incomingTree
+
+		while parentVertex
+			if parentVertex == that
+				return true
+			else
+				parentVertex = parentVertex.incomingTree
+		false
+	that.determineIfForwardEdge = (incomingVertex) ->
+		parentVertex = that.incomingTree
+
+		while parentVertex
+			if parentVertex == incomingVertex
+				return true
+			else
+				parentVertex = parentVertex.incomingTree
+
+		false
+
+	that.shouldBeReverseClickable = ->
+		### need to check to make sure that parent is on the same click index as the child ###
+		if spec._clickCount == 0 &&
+				that.shouldBeVisible() && 
+				that.incomingTree && 
+				spec._clickCount == 0 &&
+				that.incomingTree.findIndexOfChildInChildren(that) == that.incomingTree.getClickCount()-1
+			return true
+		else
+			return false
 
 	### linking utilities ###
 	that.setChildrenReferences = ->
@@ -160,60 +212,51 @@ telescopicText.vertex = (spec) ->
 			setIndex += 1
 		that
 
+	that.findIndexOfChildInChildren =(chidVertex)->
+		childIndex = 0
+		for row in spec._children
+			for child in row
+				if child == chidVertex
+					return childIndex
+			childIndex +=1
+		false
+
 	### clicking utilities ###
 	that.forwardClick= ->
 		### catch instance in which it shouldn't be clicked ###
-		# if that.findClicksRemaining() <= 0 or !that.shouldBeVisible()
-		# 	return that
+		if that.findClicksRemaining() <= 0 or !that.shouldBeVisible()
+			return that
 
-		# relevantChildren = spec._children[spec._clickCount]
-		# for child in relevantChildren
-		# 	child.receiveForwardClick(that)
+		relevantChildren = spec._children[spec._clickCount]
+		for child in relevantChildren
+			child.receiveForwardClick(that)
 
 		spec._clickCount +=1
-		@
-	@receiveForwardClick= (incoming_vertex)->
-		@forwardDetermineAndSetIncomingEdge(incoming_vertex)
-		@
+		that
 
-	@reverseClick= ->
-		if !@shouldBeReverseClickable()
-			return @
-		@incoming_tree.receiveReverseClickFromChild(@)
-		@
+	that.receiveForwardClick= (incomingVertex)->
+		that.forwardDetermineAndSetIncomingEdge(incomingVertex)
+		that
 
-
-	@receiveReverseClickFromChild=(child_vertex)->
-		_clickCount += -1
-		child_index = @findIndexOfChildInChildren(child_vertex)
-		for child in @.children[child_index]
-			child.receiveReverseClickFromParent(@)
-		@
-
-	@receiveReverseClickFromParent= (parent_vertex)->
-		if @incoming_tree == parent_vertex
-			@setEdgesToDefault()
-		@
+	that.reverseClick= ->
+		if !that.shouldBeReverseClickable()
+			return that
+		that.incomingTree.receiveReverseClickFromChild(that)
+		that
 
 
-	@setChildrenReferences= ->
-		# can use returnVertexFromKeyOrObject, but at some later point
-		set_index = 0
-		while set_index < @.children.length
-			child_index = 0
-			while child_index < @.children[set_index].length
-				child_key = @.children[set_index][child_index]
-				child = _graph.returnVertexFromKeyOrObject(child_key)  
+	that.receiveReverseClickFromChild=(childVertex)->
+		spec._clickCount += -1
+		childIndex = that.findIndexOfChildInChildren(childVertex)
+		for child in spec._children[childIndex]
+			child.receiveReverseClickFromParent(that)
+		that
 
-				if child !instanceof telescopicText.Vertex
-					console.log 'The key, "'+ child_key+ '", will be removed from vertex\'s child array.'
-					@.children[set_index].splice(child_index,1)
+	that.receiveReverseClickFromParent= (parentVertex)->
+		if that.incomingTree == parentVertex
+			that.setEdgesToDefault()
+		that
 
-				else
-					@.children[set_index][child_index] = child
-					child_index +=1
-				
-			set_index += 1
 
 	### insert node into graph###
 	spec._graph.setNode(spec._name, that)	

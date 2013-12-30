@@ -40,7 +40,7 @@ telescopicText.graph = function(spec) {
     }
     node = _nodes[keyOrVertex];
     if (node === void 0) {
-      console.log('Graph "' + this.getName() + '" is missing a child, with key "' + keyOrVertex + '."');
+      console.log('Graph "' + that.getName() + '" is missing a child, with key "' + keyOrVertex + '."');
       void 0;
     }
     return node;
@@ -50,7 +50,7 @@ telescopicText.graph = function(spec) {
     return that;
   };
   that.makeLinkedList = function(startVertex) {
-    var currentVertex, nextVertex, _results;
+    var currentVertex, nextVertex;
     startVertex = that.getNode(startVertex);
     currentVertex = startVertex;
     nextVertex = that.getNode(currentVertex.getNext());
@@ -58,31 +58,29 @@ telescopicText.graph = function(spec) {
       console.log('Careful! This graph only has one vertex linked.');
       +'and that seems pretty silly to me.';
     }
-    _results = [];
     while (nextVertex) {
       if (nextVertex === startVertex) {
         currentVertex.setNext(null);
         nextVertex.setPrevious(null);
         console.log("Your linked list is cyclical when it should be linear. " + "Did not link the start and end nodes.");
-        _results.push(nextVertex = false);
+        nextVertex = false;
       } else {
         telescopicText.graph.link(currentVertex, nextVertex);
         currentVertex = nextVertex;
-        _results.push(nextVertex = that.getNode(currentVertex.getNext()));
+        nextVertex = that.getNode(currentVertex.getNext());
       }
     }
-    return _results;
+    return that;
   };
   /* linking/children functions*/
 
-  that.setReferencesForChildrenThroughoutGraph = function() {
-    var key, value, _results;
-    _results = [];
+  that.setGraphChildReferences = function() {
+    var key, value;
     for (key in _nodes) {
       value = _nodes[key];
-      _results.push(value.setChildrenReferences());
+      value.setChildrenReferences();
     }
-    return _results;
+    return that;
   };
   return that;
 };
@@ -185,6 +183,12 @@ telescopicText.vertex = function(spec) {
   that.getRemainAfterClick = function() {
     return spec._remainAfterClick;
   };
+  that.setEdgesToDefault = function() {
+    that.incomingTree = false;
+    that.incomingForward = [];
+    that.incomingBack = [];
+    return that.incomingCross = [];
+  };
   /* public functions meta info*/
 
   that.findClicksRemaining = function() {
@@ -199,9 +203,56 @@ telescopicText.vertex = function(spec) {
       return true;
       /* not a starter node*/
 
-    } else if (that.findClicksRemaining() > 0 && that.incoming_tree) {
+    } else if (that.findClicksRemaining() > 0 && that.incomingTree) {
       return true;
-    } else if (that.incoming_tree && that.getRemainAfterClick()) {
+    } else if (that.incomingTree && that.getRemainAfterClick()) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  that.forwardDetermineAndSetIncomingEdge = function(incomingVertex) {
+    /* assumes that incomingVertex is valid*/
+
+    if (!that.incomingTree && !that.getStarter()) {
+      that.incomingTree = incomingVertex;
+    } else if (that.determineIfBackEdge(incomingVertex)) {
+      that.incomingBack.push(incomingVertex);
+    } else if (that.determineIfForwardEdge(incomingVertex)) {
+      that.incomingForward.push(incomingVertex);
+    } else {
+      that.incomingCross.push(incomingVertex);
+    }
+    return that;
+  };
+  that.determineIfBackEdge = function(incomingVertex) {
+    var parentVertex;
+    parentVertex = incomingVertex.incomingTree;
+    while (parentVertex) {
+      if (parentVertex === that) {
+        return true;
+      } else {
+        parentVertex = parentVertex.incomingTree;
+      }
+    }
+    return false;
+  };
+  that.determineIfForwardEdge = function(incomingVertex) {
+    var parentVertex;
+    parentVertex = that.incomingTree;
+    while (parentVertex) {
+      if (parentVertex === incomingVertex) {
+        return true;
+      } else {
+        parentVertex = parentVertex.incomingTree;
+      }
+    }
+    return false;
+  };
+  that.shouldBeReverseClickable = function() {
+    /* need to check to make sure that parent is on the same click index as the child*/
+
+    if (spec._clickCount === 0 && that.shouldBeVisible() && that.incomingTree && spec._clickCount === 0 && that.incomingTree.findIndexOfChildInChildren(that) === that.incomingTree.getClickCount() - 1) {
       return true;
     } else {
       return false;
@@ -229,62 +280,66 @@ telescopicText.vertex = function(spec) {
     }
     return that;
   };
+  that.findIndexOfChildInChildren = function(chidVertex) {
+    var child, childIndex, row, _i, _j, _len, _len1, _ref;
+    childIndex = 0;
+    _ref = spec._children;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      row = _ref[_i];
+      for (_j = 0, _len1 = row.length; _j < _len1; _j++) {
+        child = row[_j];
+        if (child === chidVertex) {
+          return childIndex;
+        }
+      }
+      childIndex += 1;
+    }
+    return false;
+  };
   /* clicking utilities*/
 
   that.forwardClick = function() {
     /* catch instance in which it shouldn't be clicked*/
 
-    spec._clickCount += 1;
-    return this;
-  };
-  this.receiveForwardClick = function(incoming_vertex) {
-    this.forwardDetermineAndSetIncomingEdge(incoming_vertex);
-    return this;
-  };
-  this.reverseClick = function() {
-    if (!this.shouldBeReverseClickable()) {
-      return this;
+    var child, relevantChildren, _i, _len;
+    if (that.findClicksRemaining() <= 0 || !that.shouldBeVisible()) {
+      return that;
     }
-    this.incoming_tree.receiveReverseClickFromChild(this);
-    return this;
+    relevantChildren = spec._children[spec._clickCount];
+    for (_i = 0, _len = relevantChildren.length; _i < _len; _i++) {
+      child = relevantChildren[_i];
+      child.receiveForwardClick(that);
+    }
+    spec._clickCount += 1;
+    return that;
   };
-  this.receiveReverseClickFromChild = function(child_vertex) {
-    var child, child_index, _i, _len, _ref;
-    _clickCount += -1;
-    child_index = this.findIndexOfChildInChildren(child_vertex);
-    _ref = this.children[child_index];
+  that.receiveForwardClick = function(incomingVertex) {
+    that.forwardDetermineAndSetIncomingEdge(incomingVertex);
+    return that;
+  };
+  that.reverseClick = function() {
+    if (!that.shouldBeReverseClickable()) {
+      return that;
+    }
+    that.incomingTree.receiveReverseClickFromChild(that);
+    return that;
+  };
+  that.receiveReverseClickFromChild = function(childVertex) {
+    var child, childIndex, _i, _len, _ref;
+    spec._clickCount += -1;
+    childIndex = that.findIndexOfChildInChildren(childVertex);
+    _ref = spec._children[childIndex];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       child = _ref[_i];
-      child.receiveReverseClickFromParent(this);
+      child.receiveReverseClickFromParent(that);
     }
-    return this;
+    return that;
   };
-  this.receiveReverseClickFromParent = function(parent_vertex) {
-    if (this.incoming_tree === parent_vertex) {
-      this.setEdgesToDefault();
+  that.receiveReverseClickFromParent = function(parentVertex) {
+    if (that.incomingTree === parentVertex) {
+      that.setEdgesToDefault();
     }
-    return this;
-  };
-  this.setChildrenReferences = function() {
-    var child, child_index, child_key, set_index, _results;
-    set_index = 0;
-    _results = [];
-    while (set_index < this.children.length) {
-      child_index = 0;
-      while (child_index < this.children[set_index].length) {
-        child_key = this.children[set_index][child_index];
-        child = _graph.returnVertexFromKeyOrObject(child_key);
-        if (!(child instanceof telescopicText.Vertex)) {
-          console.log('The key, "' + child_key + '", will be removed from vertex\'s child array.');
-          this.children[set_index].splice(child_index, 1);
-        } else {
-          this.children[set_index][child_index] = child;
-          child_index += 1;
-        }
-      }
-      _results.push(set_index += 1);
-    }
-    return _results;
+    return that;
   };
   /* insert node into graph*/
 

@@ -23,9 +23,9 @@ test 'vertex sets child references on command', ->
 	badVertexBMod.setChildrenReferences()
 	equal(badVertexBMod.getChildren()[0][1], vertexK)
 
-test 'Graph.graph1.setReferencesForChildrenThroughoutGraph sets all child references', ->
+test 'Graph.graph1.setGraphChildReferences sets all child references', ->
 	telescopicText.reset()
-	makeTestVerticies().setReferencesForChildrenThroughoutGraph()
+	makeTestVerticies().setGraphChildReferences()
 	equal(1,1)
 	equal(vertexA.getChildren()[0][0], vertexC)
 	equal(vertexA.getChildren()[0][1], vertexB)
