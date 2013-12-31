@@ -6,8 +6,7 @@
 
 telescopicText = {}
 telescopicText.graphs = {}
-telescopicText.reset = ->
-	telescopicText.graph({_name:'telescopicDefaultID'})
+telescopicText.reset = -> telescopicText.graph({_name:'telescopicDefaultID'})
 telescopicText.graph = (spec) ->
 	### set defaults ###
 	spec = spec || {}
@@ -69,7 +68,6 @@ telescopicText.graph.link= (fromVertex, toVertex) ->
 	#link two vertexes. needs to be passed vertex objects, not just their keys
 	fromVertex.setNext(toVertex)
 	toVertex.setPrevious(fromVertex)
-
 telescopicText.graph.dangerousUnlink = (vertex) ->
 	#unlink a vertex. needs to be passed a vertex objects, not just its keys
 		next = vertex.getNext()
@@ -93,7 +91,6 @@ telescopicText.graph.safeUnlink = (vertex) ->
 		next.setPrevious(previous)
 	if previous
 		previous.setNext(next)
-
 
 telescopicText.vertex = (spec) ->
 	### set defaults ###
@@ -237,6 +234,7 @@ telescopicText.vertex = (spec) ->
 		that.forwardDetermineAndSetIncomingEdge(incomingVertex)
 		that
 
+	### reverse clicking utilities ###
 	that.reverseClick= ->
 		if !that.shouldBeReverseClickable()
 			return that
@@ -259,3 +257,45 @@ telescopicText.vertex = (spec) ->
 	### insert node into graph###
 	spec._graph.setNode(spec._name, that)	
 	return that
+
+
+
+telescopicText.markup = (spec) ->
+	that = telescopicText.markup(spec)
+	### set defaults ###
+	spec = spec || {}
+	spec._starter = spec._starter || false
+	spec._children = spec._children || []
+	spec._remainAfterClick = undefined
+	spec._next = spec._next || null
+	### constructor  ###
+	if not telescopicText.graphs[spec._graph]
+		spec._graph = telescopicText.graph({_name: spec._graph})
+	else
+		spec._graph = telescopicText.graphs[spec._graph]
+	
+
+
+	that.forwardClick = undefined
+	
+
+	that.receiveForwardClick= (incomingVertex)->
+		that.forwardDetermineAndSetIncomingEdge(incomingVertex)
+		that
+
+	### reverse clicking utilities ###
+	that.reverseClick= ->
+		null
+
+	that.receiveReverseClickFromChild=(childVertex)->
+		null
+
+	that.receiveReverseClickFromParent= (parentVertex)->
+		null
+
+	that
+
+
+
+
+
