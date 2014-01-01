@@ -143,6 +143,7 @@ test('visibility when forward clicking', function() {
 
 test('find index of child in children', function() {
   var graph1;
+  telescopicText.reset();
   graph1 = makeTestVerticies().setGraphChildReferences();
   graphPatternOne();
   equal(vertexC.findIndexOfChildInChildren(vertexL), 1);
@@ -152,6 +153,7 @@ test('find index of child in children', function() {
 
 test('determine elibility for reverseClick', function() {
   var graph1;
+  telescopicText.reset();
   graph1 = makeTestVerticies().setGraphChildReferences();
   graphPatternOne();
   ok(vertexL.shouldBeReverseClickable() && vertexK.shouldBeReverseClickable);
@@ -160,6 +162,7 @@ test('determine elibility for reverseClick', function() {
 
 test('reverse click', function() {
   var graph1;
+  telescopicText.reset();
   graph1 = makeTestVerticies().setGraphChildReferences();
   graphPatternOne();
   /* sad path. vertexF should not be clickable.*/

@@ -348,29 +348,3 @@ telescopicText.vertex = function(spec) {
   spec._graph.setNode(spec._name, that);
   return that;
 };
-
-telescopicText.markup = function(spec) {
-  var that;
-  that = telescopicText.markup(spec);
-  /* set defaults*/
-
-  spec = spec || {};
-  spec._starter = spec._starter || false;
-  spec._children = spec._children || [];
-  spec._remainAfterClick = spec._remainAfterClick || false;
-  spec._next = spec._next || null;
-  /* constructor*/
-
-  if (!telescopicText.graphs[spec._graph]) {
-    spec._graph = telescopicText.graph({
-      _name: spec._graph
-    });
-  } else {
-    spec._graph = telescopicText.graphs[spec._graph];
-  }
-  that.forwardClick = void 0;
-  that.receiveClickFromParent = function(parentVertex) {
-    return null;
-  };
-  return that;
-};

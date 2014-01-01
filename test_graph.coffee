@@ -161,6 +161,7 @@ test 'visibility when forward clicking', ->
 		!vertexB.shouldBeVisible())
 
 test 'find index of child in children', ->
+	telescopicText.reset()
 	graph1 = makeTestVerticies().setGraphChildReferences()
 	graphPatternOne()
 	equal(vertexC.findIndexOfChildInChildren(vertexL), 1)
@@ -169,6 +170,7 @@ test 'find index of child in children', ->
 
 
 test 'determine elibility for reverseClick', ->
+	telescopicText.reset()
 	graph1 = makeTestVerticies().setGraphChildReferences()
 	graphPatternOne()
 	ok(vertexL.shouldBeReverseClickable() &&
@@ -180,6 +182,7 @@ test 'determine elibility for reverseClick', ->
 		!vertexA.shouldBeReverseClickable())
 
 test 'reverse click', ->
+	telescopicText.reset()
 	graph1 = makeTestVerticies().setGraphChildReferences()
 	graphPatternOne()
 

@@ -159,6 +159,7 @@ makeTestVerticies = ->
 		_next: 'J',
 		_graph: 'graph1',
 		_starter: true})
+
 	
 
 	# graph1.makeLinkedList('A')

@@ -260,42 +260,5 @@ telescopicText.vertex = (spec) ->
 
 
 
-telescopicText.markup = (spec) ->
-	that = telescopicText.markup(spec)
-	### set defaults ###
-	spec = spec || {}
-	spec._starter = spec._starter || false
-	spec._children = spec._children || []
-	spec._remainAfterClick = undefined
-	spec._next = spec._next || null
-	### constructor  ###
-	if not telescopicText.graphs[spec._graph]
-		spec._graph = telescopicText.graph({_name: spec._graph})
-	else
-		spec._graph = telescopicText.graphs[spec._graph]
-	
-
-
-	that.forwardClick = undefined
-	
-
-	that.receiveForwardClick= (incomingVertex)->
-		that.forwardDetermineAndSetIncomingEdge(incomingVertex)
-		that
-
-	### reverse clicking utilities ###
-	that.reverseClick= ->
-		null
-
-	that.receiveReverseClickFromChild=(childVertex)->
-		null
-
-	that.receiveReverseClickFromParent= (parentVertex)->
-		null
-
-	that
-
-
-
 
 
