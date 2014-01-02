@@ -17,7 +17,47 @@ telescopicText.markup = function(spec) {
   };
   /* forward clicks*/
 
-  that.receiveForwardClick = function(incomingVertex) {};
+  that.receiveForwardClick = function(incomingVertex) {
+    var child, key, linkArray, next, nodeDict, set, value, wrapArray, _i, _j, _len, _len1;
+    spec._wraps[incomingVertex] = [];
+    wrapArray = spec._wraps[incomingVertex];
+    set = spec._children[spec._clickCount];
+    nodeDict = {};
+    /* make dict using vertex names. verticies are true
+    		 	if they start a link  or are alone. 
+    		 	false if they are linked later.
+    */
+
+    for (_i = 0, _len = set.length; _i < _len; _i++) {
+      child = set[_i];
+      nodeDict[child.getName()] = true;
+    }
+    for (_j = 0, _len1 = set.length; _j < _len1; _j++) {
+      child = set[_j];
+      if (nodeDict[child.getPrevious().getName()] === void 0) {
+        nodeDict[child] = false;
+      }
+    }
+    /* create arrays of linked lists. push them to
+    			spec._wraps
+    */
+
+    for (key in nodeDict) {
+      value = nodeDict[key];
+      if (value === true) {
+        linkArray = [value];
+        next = spec._graph.getNode(key).getNext().getName();
+        while (nodeDict[next] === false) {
+          linkArray.push(next);
+          next = next.getNext().getName();
+        }
+      }
+      wrapArray.push(linkArray);
+    }
+    spec._clickCount += 1;
+    that._incomingTree.push(incomingVertex);
+    return that;
+  };
   /* reverse clicking utilities*/
 
   that.receiveReverseClickFromChild = function(childVertex) {

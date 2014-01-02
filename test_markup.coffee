@@ -32,8 +32,8 @@ test '.markup has desired attributes', ->
 	equal(markupZ.getRemainAfterClick(), true)
 	equal(markupY.getRemainAfterClick(), true)
 
-	equal(markupZ.incomingTree, false)
-	equal(markupY.incomingTree, false)
+	equal(markupZ.incomingTree[0], false)
+	equal(markupY.incomingTree[0], false)
 
 	equal(markupZ.incomingForward[0], undefined)
 	equal(markupY.incomingForward[0], undefined)

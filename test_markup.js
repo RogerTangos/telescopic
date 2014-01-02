@@ -29,8 +29,8 @@ test('.markup has desired attributes', function() {
   equal(markupY.getChildren()[0][0], 'O');
   equal(markupZ.getRemainAfterClick(), true);
   equal(markupY.getRemainAfterClick(), true);
-  equal(markupZ.incomingTree, false);
-  equal(markupY.incomingTree, false);
+  equal(markupZ.incomingTree[0], false);
+  equal(markupY.incomingTree[0], false);
   equal(markupZ.incomingForward[0], void 0);
   equal(markupY.incomingForward[0], void 0);
   equal(markupZ.incomingBack[0], void 0);
