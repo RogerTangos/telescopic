@@ -184,7 +184,7 @@ telescopicText.vertex = (spec) ->
 		### need to check to make sure that parent is on the same click index as the child ###
 		if spec._clickCount == 0 &&
 				that.shouldBeVisible() && 
-				that.`[0] && 
+				that.incomingTree[0] && 
 				spec._clickCount == 0 &&
 				that.incomingTree[0].findIndexOfChildInChildren(that) == that.incomingTree[0].getClickCount()-1
 			return true

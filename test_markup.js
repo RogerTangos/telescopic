@@ -55,15 +55,22 @@ test('.markup .getWraps() initializes objects based on next. objects.', function
   return ok(isEmpty(markupY.getWraps));
 });
 
+test('.markup separate contigious from non-contigious verticies', function() {
+  makeYAndZ();
+  makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
+  equal(markupY.createStartListForChildren(0)['O'], true);
+  equal(markupY.createStartListForChildren(1)['O'], void 0);
+  equal(markupY.createStartListForChildren(1)['K'], true);
+  equal(markupY.createStartListForChildren(1)['L'], false);
+  return equal(markupY.createStartListForChildren(1)['P'], true);
+});
+
 test('.markup determineWraps returns key-value lists based on the incoming vertex', function() {
   makeYAndZ();
   makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
   markupY.receiveForwardClick(vertexP);
   markupY.receiveForwardClick(vertexR);
-  equal(markupY.getWraps()[vertexP][0][0], vertexO);
-  equal(markupY.getWraps()[vertexR][0][0], vertexK);
-  equal(markupY.getWraps()[vertexR][0][1], vertexL);
-  return equal(markupY.getWraps()[vertexR][1][0], vertexP);
+  return equal(markupY.getWraps()[vertexP][0][0], vertexO);
 });
 
 makeYAndZ = function() {
@@ -71,7 +78,7 @@ makeYAndZ = function() {
   window.markupY = telescopicText.markup({
     _name: 'Y',
     content: '<em></em>',
-    _children: [['O'], ['L', 'K']],
+    _children: [['O'], ['L', 'K', 'P']],
     _graph: 'graph1',
     _starter: true
   });

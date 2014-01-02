@@ -15,6 +15,23 @@ telescopicText.markup = function(spec) {
   that.getWraps = function() {
     return spec._wraps;
   };
+  that.createStartListForChildren = function(childSetIndex) {
+    var child, nodeDict, previous, set, _i, _j, _len, _len1;
+    set = spec._children[childSetIndex];
+    nodeDict = {};
+    for (_i = 0, _len = set.length; _i < _len; _i++) {
+      child = set[_i];
+      nodeDict[child.getName()] = true;
+    }
+    for (_j = 0, _len1 = set.length; _j < _len1; _j++) {
+      child = set[_j];
+      previous = nodeDict[child.getPrevious().getName()];
+      if (previous !== void 0) {
+        nodeDict[child.getName()] = false;
+      }
+    }
+    return nodeDict;
+  };
   /* forward clicks*/
 
   that.receiveForwardClick = function(incomingVertex) {
@@ -39,23 +56,26 @@ telescopicText.markup = function(spec) {
       }
     }
     /* create arrays of linked lists. push them to
-    			spec._wraps
+    			wrapArray. Weird stuff with key not giving objects
+    			correctly. Hence, the .getName() shuffle
     */
 
     for (key in nodeDict) {
       value = nodeDict[key];
       if (value === true) {
-        linkArray = [value];
+        linkArray = [spec._graph.getNode(key)];
         next = spec._graph.getNode(key).getNext().getName();
         while (nodeDict[next] === false) {
-          linkArray.push(next);
+          linkArray.push(spec._graph.getNode(next));
           next = next.getNext().getName();
         }
+        wrapArray.push(linkArray);
       }
-      wrapArray.push(linkArray);
     }
     spec._clickCount += 1;
-    that._incomingTree.push(incomingVertex);
+    /* need to set up a separate method to clear this out*/
+
+    that.incomingTree.push(incomingVertex);
     return that;
   };
   /* reverse clicking utilities*/
