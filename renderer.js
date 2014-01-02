@@ -147,7 +147,8 @@ telescopicText.vertex = function(spec) {
   /* public attributes*/
 
   that.content = spec.content;
-  that.incomingTree = false;
+  that.incomingTree = [];
+  that.incomingTree[0] = false;
   that.incomingForward = [];
   that.incomingBack = [];
   that.incomingCross = [];
@@ -184,7 +185,7 @@ telescopicText.vertex = function(spec) {
     return spec._remainAfterClick;
   };
   that.setEdgesToDefault = function() {
-    that.incomingTree = false;
+    that.incomingTree[0] = false;
     that.incomingForward = [];
     that.incomingBack = [];
     return that.incomingCross = [];
@@ -203,9 +204,9 @@ telescopicText.vertex = function(spec) {
       return true;
       /* not a starter node*/
 
-    } else if (that.findClicksRemaining() > 0 && that.incomingTree) {
+    } else if (that.findClicksRemaining() > 0 && that.incomingTree[0]) {
       return true;
-    } else if (that.incomingTree && that.getRemainAfterClick()) {
+    } else if (that.incomingTree[0] && that.getRemainAfterClick()) {
       return true;
     } else {
       return false;
@@ -214,8 +215,8 @@ telescopicText.vertex = function(spec) {
   that.forwardDetermineAndSetIncomingEdge = function(incomingVertex) {
     /* assumes that incomingVertex is valid*/
 
-    if (!that.incomingTree && !that.getStarter()) {
-      that.incomingTree = incomingVertex;
+    if (!that.incomingTree[0] && !that.getStarter()) {
+      that.incomingTree[0] = incomingVertex;
     } else if (that.determineIfBackEdge(incomingVertex)) {
       that.incomingBack.push(incomingVertex);
     } else if (that.determineIfForwardEdge(incomingVertex)) {
@@ -227,24 +228,24 @@ telescopicText.vertex = function(spec) {
   };
   that.determineIfBackEdge = function(incomingVertex) {
     var parentVertex;
-    parentVertex = incomingVertex.incomingTree;
+    parentVertex = incomingVertex.incomingTree[0];
     while (parentVertex) {
       if (parentVertex === that) {
         return true;
       } else {
-        parentVertex = parentVertex.incomingTree;
+        parentVertex = parentVertex.incomingTree[0];
       }
     }
     return false;
   };
   that.determineIfForwardEdge = function(incomingVertex) {
     var parentVertex;
-    parentVertex = that.incomingTree;
+    parentVertex = that.incomingTree[0];
     while (parentVertex) {
       if (parentVertex === incomingVertex) {
         return true;
       } else {
-        parentVertex = parentVertex.incomingTree;
+        parentVertex = parentVertex.incomingTree[0];
       }
     }
     return false;
@@ -252,7 +253,7 @@ telescopicText.vertex = function(spec) {
   that.shouldBeReverseClickable = function() {
     /* need to check to make sure that parent is on the same click index as the child*/
 
-    if (spec._clickCount === 0 && that.shouldBeVisible() && that.incomingTree && spec._clickCount === 0 && that.incomingTree.findIndexOfChildInChildren(that) === that.incomingTree.getClickCount() - 1) {
+    if (spec._clickCount === 0 && that.shouldBeVisible() && that.incomingTree[0] && spec._clickCount === 0 && that.incomingTree[0].findIndexOfChildInChildren(that) === that.incomingTree[0].getClickCount() - 1) {
       return true;
     } else {
       return false;
@@ -323,7 +324,7 @@ telescopicText.vertex = function(spec) {
     if (!that.shouldBeReverseClickable()) {
       return that;
     }
-    that.incomingTree.receiveReverseClickFromChild(that);
+    that.incomingTree[0].receiveReverseClickFromChild(that);
     return that;
   };
   that.receiveReverseClickFromChild = function(childVertex) {
@@ -338,7 +339,7 @@ telescopicText.vertex = function(spec) {
     return that;
   };
   that.receiveReverseClickFromParent = function(parentVertex) {
-    if (that.incomingTree === parentVertex) {
+    if (that.incomingTree[0] === parentVertex) {
       that.setEdgesToDefault();
     }
     return that;

@@ -7,7 +7,7 @@ test 'Verticies public spec attributes inc. edges are visible', ->
 	telescopicText.reset()
 	nameVertex = makeDefaultVertex1()
 	equal(nameVertex.content, 'myContent')
-	equal(nameVertex.incomingTree, false)
+	equal(nameVertex.incomingTree[0], false)
 	equal(nameVertex.incomingForward[0], undefined)
 	equal(nameVertex.incomingBack[0], undefined)
 	equal(nameVertex.incomingCross[0], undefined)

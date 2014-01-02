@@ -11,7 +11,7 @@ test('Verticies public spec attributes inc. edges are visible', function() {
   telescopicText.reset();
   nameVertex = makeDefaultVertex1();
   equal(nameVertex.content, 'myContent');
-  equal(nameVertex.incomingTree, false);
+  equal(nameVertex.incomingTree[0], false);
   equal(nameVertex.incomingForward[0], void 0);
   equal(nameVertex.incomingBack[0], void 0);
   return equal(nameVertex.incomingCross[0], void 0);

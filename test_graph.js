@@ -34,12 +34,12 @@ test('determine and record incoming tree edges', function() {
   /* tree edges*/
 
   vertexB.forwardDetermineAndSetIncomingEdge(vertexA);
-  equal(vertexB.incomingTree, vertexA);
+  equal(vertexB.incomingTree[0], vertexA);
   equal(vertexB.incomingForward, false);
   equal(vertexB.incomingBack, false);
   equal(vertexB.incomingCross, false);
   vertexC.forwardDetermineAndSetIncomingEdge(vertexA);
-  equal(vertexC.incomingTree, vertexA);
+  equal(vertexC.incomingTree[0], vertexA);
   equal(vertexC.incomingForward, false);
   equal(vertexC.incomingBack, false);
   return equal(vertexC.incomingCross, false);
@@ -54,7 +54,7 @@ test('determine and record cross and back edges', function() {
   /* cross edge*/
 
   vertexC.forwardDetermineAndSetIncomingEdge(vertexB);
-  equal(vertexC.incomingTree, vertexA);
+  equal(vertexC.incomingTree[0], vertexA);
   equal(vertexC.incomingCross[0], vertexB);
   equal(vertexC.incomingBack[0], void 0);
   equal(vertexC.incomingForward[0], void 0);
@@ -62,20 +62,20 @@ test('determine and record cross and back edges', function() {
 
   vertexA.forwardDetermineAndSetIncomingEdge(vertexC);
   equal(vertexA.incomingBack[0], vertexC);
-  equal(vertexA.incomingTree[0], void 0);
+  equal(vertexA.incomingTree[0], false);
   equal(vertexA.incomingForward[0], void 0);
-  return equal(vertexA.incomingTree, false);
+  return equal(vertexA.incomingTree[0], false);
 });
 
 test('determine and record forward edges', function() {
   var graph1;
   telescopicText.reset();
   graph1 = makeTestVerticies().setGraphChildReferences();
-  vertexQ.incomingTree = vertexJ;
-  vertexJ.incomingTree = vertexE;
-  vertexE.incomingTree = vertexD;
+  vertexQ.incomingTree[0] = vertexJ;
+  vertexJ.incomingTree[0] = vertexE;
+  vertexE.incomingTree[0] = vertexD;
   vertexQ.forwardDetermineAndSetIncomingEdge(vertexE);
-  equal(vertexQ.incomingTree, vertexJ);
+  equal(vertexQ.incomingTree[0], vertexJ);
   equal(vertexQ.incomingBack.length, 0);
   equal(vertexQ.incomingCross.length, 0);
   return equal(vertexQ.incomingForward[0], vertexE);
@@ -86,24 +86,28 @@ test('forward click a nodes A, B, C. test edge matching.', function() {
   telescopicText.reset();
   graph1 = makeTestVerticies().setGraphChildReferences();
   vertexA.forwardClick();
-  equal(vertexB.incomingTree, vertexA);
-  equal(vertexC.incomingTree, vertexA);
+  equal(vertexB.incomingTree[0], vertexA, "vertexA as tree edge");
+  equal(vertexC.incomingTree[0], vertexA);
   vertexB.forwardClick();
-  equal(vertexC.incomingCross[0], vertexB);
-  equal(vertexK.incomingTree, vertexB);
+  equal(vertexC.incomingCross[0], vertexB, "vertexB as cross edge");
+  equal(vertexK.incomingTree[0], vertexB);
   vertexC.forwardClick();
-  equal(vertexA.incomingBack[0], vertexC);
-  equal(vertexF.incomingTree, vertexC);
+  equal(vertexA.incomingBack[0], vertexC, "vertexC as tree edge");
+  return equal(vertexF.incomingTree[0], vertexC);
+});
+
+test('forward click notes D, E, J, Q. test edge matching.', function() {
+  var graph1;
   telescopicText.reset();
   graph1 = makeTestVerticies().setGraphChildReferences();
   vertexD.forwardClick();
-  equal(vertexE.incomingTree, vertexD);
+  equal(vertexE.incomingTree[0], vertexD, 'vertexD as incomingTree');
   vertexE.forwardClick();
-  equal(vertexJ.incomingTree, vertexE);
+  equal(vertexJ.incomingTree[0], vertexE, 'vertexE as incomingTree');
   vertexJ.forwardClick();
-  equal(vertexQ.incomingTree, vertexJ);
+  equal(vertexQ.incomingTree[0], vertexJ, 'vertexJ as incomingTree');
   vertexE.forwardClick();
-  return equal(vertexQ.incomingForward[0], vertexE);
+  return equal(vertexQ.incomingForward[0], vertexE, 'vertexQ as incomingForward');
 });
 
 test('visibility when forward clicking', function() {
@@ -168,13 +172,13 @@ test('reverse click', function() {
   /* sad path. vertexF should not be clickable.*/
 
   vertexF.reverseClick();
-  ok(vertexF.shouldBeVisible() && vertexL.shouldBeVisible() && vertexC.shouldBeVisible() && vertexK.shouldBeVisible());
+  ok(vertexF.shouldBeVisible() && vertexL.shouldBeVisible() && vertexC.shouldBeVisible() && vertexK.shouldBeVisible(), 'visibility correct after reverseClick of vertexF');
   ok(!vertexB.shouldBeVisible() && !vertexA.shouldBeVisible());
   /* happy path. vertexL should be clickable*/
 
   vertexL.reverseClick();
-  ok(vertexC.shouldBeVisible() && vertexF.shouldBeVisible() && vertexK.shouldBeVisible());
-  return ok(!vertexA.shouldBeVisible() && !vertexB.shouldBeVisible() && !vertexL.shouldBeVisible());
+  ok(vertexC.shouldBeVisible() && vertexF.shouldBeVisible() && vertexK.shouldBeVisible(), 'visibility correct after reverseClick of vertexL');
+  return ok(!vertexA.shouldBeVisible() && !vertexB.shouldBeVisible() && !vertexL.shouldBeVisible(), 'visibility correct after reverseClick of vertexL');
 });
 
 /* helper function*/

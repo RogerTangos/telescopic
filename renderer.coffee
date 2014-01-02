@@ -110,7 +110,7 @@ telescopicText.vertex = (spec) ->
 	spec._clickCount = 0
 	### public attributes ###
 	that.content = spec.content
-	that.incomingTree = false
+	that.incomingTree = []; that.incomingTree[0] = false
 	that.incomingForward = []
 	that.incomingBack = []
 	that.incomingCross = []
@@ -126,7 +126,7 @@ telescopicText.vertex = (spec) ->
 	that.getChildren = -> spec._children
 	that.getRemainAfterClick = -> spec._remainAfterClick
 	that.setEdgesToDefault = ->
-		that.incomingTree = false
+		that.incomingTree[0] = false
 		that.incomingForward = []
 		that.incomingBack = []
 		that.incomingCross = []
@@ -144,16 +144,16 @@ telescopicText.vertex = (spec) ->
 		else if that.getStarter() && that.getRemainAfterClick()
 			true
 			### not a starter node ###
-		else if that.findClicksRemaining() > 0 && that.incomingTree
+		else if that.findClicksRemaining() > 0 && that.incomingTree[0]
 			true
-		else if that.incomingTree && that.getRemainAfterClick()
+		else if that.incomingTree[0] && that.getRemainAfterClick()
 			true
 		else
 			false		
 	that.forwardDetermineAndSetIncomingEdge= (incomingVertex)->
 		### assumes that incomingVertex is valid ###
-		if !that.incomingTree and !that.getStarter()
-			that.incomingTree = incomingVertex
+		if !that.incomingTree[0] and !that.getStarter()
+			that.incomingTree[0] = incomingVertex
 		else if that.determineIfBackEdge(incomingVertex)
 			that.incomingBack.push(incomingVertex)
 		else if that.determineIfForwardEdge(incomingVertex)
@@ -162,31 +162,31 @@ telescopicText.vertex = (spec) ->
 			that.incomingCross.push(incomingVertex)
 		that
 	that.determineIfBackEdge = (incomingVertex) ->
-		parentVertex = incomingVertex.incomingTree
+		parentVertex = incomingVertex.incomingTree[0]
 
 		while parentVertex
 			if parentVertex == that
 				return true
 			else
-				parentVertex = parentVertex.incomingTree
+				parentVertex = parentVertex.incomingTree[0]
 		false
 	that.determineIfForwardEdge = (incomingVertex) ->
-		parentVertex = that.incomingTree
+		parentVertex = that.incomingTree[0]
 
 		while parentVertex
 			if parentVertex == incomingVertex
 				return true
 			else
-				parentVertex = parentVertex.incomingTree
+				parentVertex = parentVertex.incomingTree[0]
 		false
 
 	that.shouldBeReverseClickable = ->
 		### need to check to make sure that parent is on the same click index as the child ###
 		if spec._clickCount == 0 &&
 				that.shouldBeVisible() && 
-				that.incomingTree && 
+				that.incomingTree[0] && 
 				spec._clickCount == 0 &&
-				that.incomingTree.findIndexOfChildInChildren(that) == that.incomingTree.getClickCount()-1
+				that.incomingTree[0].findIndexOfChildInChildren(that) == that.incomingTree[0].getClickCount()-1
 			return true
 		else
 			return false
@@ -238,7 +238,7 @@ telescopicText.vertex = (spec) ->
 	that.reverseClick= ->
 		if !that.shouldBeReverseClickable()
 			return that
-		that.incomingTree.receiveReverseClickFromChild(that)
+		that.incomingTree[0].receiveReverseClickFromChild(that)
 		that
 
 	that.receiveReverseClickFromChild=(childVertex)->
@@ -249,7 +249,7 @@ telescopicText.vertex = (spec) ->
 		that
 
 	that.receiveReverseClickFromParent= (parentVertex)->
-		if that.incomingTree == parentVertex
+		if that.incomingTree[0] == parentVertex
 			that.setEdgesToDefault()
 		that
 
