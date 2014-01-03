@@ -94,6 +94,26 @@ test '.markup determineWraps returns key-value lists based on the incoming verte
 	equal(markupZ.getWraps()[vertexG][1][0], vertexS)
 	equal(markupZ.getWraps()[vertexG][1][1], vertexT)
 
+test '.markup can upwrap', ->
+	makeYAndZ()
+	makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+
+	markupY.receiveReverseClickFromParent(vertexP)
+		.receiveReverseClickFromParent(vertexR)
+	markupY.receiveReverseClickFromParent(vertexP)
+		.receiveReverseClickFromParent(vertexR)
+
+	equal(markupY.getWraps()[vertexP], undefined, 
+		'receiveReverseClickFromParent worked for vertexY')
+	equal(markupY.getWraps()[vertexR], undefined)
+
+	markupZ.receiveReverseClickFromParent(vertexC)
+		.receiveReverseClickFromParent(vertexG)
+	markupZ.receiveReverseClickFromParent(vertexC)
+		.receiveReverseClickFromParent(vertexG)
+	equal(markupZ.getWraps()[vertexC], undefined, 
+		'receiveReverseClickFromParent worked for vertexZ')
+	equal(markupZ.getWraps()[vertexG], undefined)
 
 
 makeYAndZ = ->

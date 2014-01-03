@@ -84,6 +84,19 @@ test('.markup determineWraps returns key-value lists based on the incoming verte
   return equal(markupZ.getWraps()[vertexG][1][1], vertexT);
 });
 
+test('.markup can upwrap', function() {
+  makeYAndZ();
+  makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
+  markupY.receiveReverseClickFromParent(vertexP).receiveReverseClickFromParent(vertexR);
+  markupY.receiveReverseClickFromParent(vertexP).receiveReverseClickFromParent(vertexR);
+  equal(markupY.getWraps()[vertexP], void 0, 'receiveReverseClickFromParent worked for vertexY');
+  equal(markupY.getWraps()[vertexR], void 0);
+  markupZ.receiveReverseClickFromParent(vertexC).receiveReverseClickFromParent(vertexG);
+  markupZ.receiveReverseClickFromParent(vertexC).receiveReverseClickFromParent(vertexG);
+  equal(markupZ.getWraps()[vertexC], void 0, 'receiveReverseClickFromParent worked for vertexZ');
+  return equal(markupZ.getWraps()[vertexG], void 0);
+});
+
 makeYAndZ = function() {
   telescopicText.reset();
   window.markupY = telescopicText.markup({

@@ -9,6 +9,12 @@ telescopicText.markup = (spec) ->
 
 	### public methods ###
 	that.getWraps = -> spec._wraps
+	that.pushToIncomingTree = (incomingVertex) ->
+		if that.incomingTree[0] == false
+			that.incomingTree[0]= incomingVertex
+		else
+			that.incomingTree.push(incomingVertex)
+		that
 	that.createStartListForChildren = (childSetIndex) ->
 		set = spec._children[childSetIndex]
 		nodeDict = {}
@@ -50,27 +56,25 @@ telescopicText.markup = (spec) ->
 		spec._clickCount += 1
 
 		### need to set up a separate method to clear this out ###
-		that.incomingTree.push(incomingVertex)
-		that
-
-	that.pushToIncomingTree = (incomingVertex) ->
-		if incomingTree[0] == false
-			incomingTree[0]= incomingVertex
-		else
-			incomingTree.push(incomingVertex)
+		that.pushToIncomingTree(incomingVertex)
 		that
 
 	### reverse clicking utilities ###
-	that.receiveReverseClickFromChild=(childVertex)->
-		null
-
 	that.receiveReverseClickFromParent= (parentVertex)->
-		null
+		delete spec._wraps[parentVertex]
+		that.unwrap(parentVertex)
+		that
 
-	### insert node into graph###
-	# spec._graph.setNode(spec._name, that)
 	that
 
+	### DOM manipulation ###
+	that.wrap= (incomingVertex) ->
+		true
+
+	that.unwrap= (incomingVertex) ->
+		true
+
+	that
 
 telescopicText.markup::toString = ->
   "[object telescopicText.markup]"

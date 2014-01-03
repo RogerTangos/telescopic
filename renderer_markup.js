@@ -15,6 +15,14 @@ telescopicText.markup = function(spec) {
   that.getWraps = function() {
     return spec._wraps;
   };
+  that.pushToIncomingTree = function(incomingVertex) {
+    if (that.incomingTree[0] === false) {
+      that.incomingTree[0] = incomingVertex;
+    } else {
+      that.incomingTree.push(incomingVertex);
+    }
+    return that;
+  };
   that.createStartListForChildren = function(childSetIndex) {
     var child, nodeDict, previous, set, _i, _j, _len, _len1;
     set = spec._children[childSetIndex];
@@ -67,27 +75,25 @@ telescopicText.markup = function(spec) {
     spec._clickCount += 1;
     /* need to set up a separate method to clear this out*/
 
-    that.incomingTree.push(incomingVertex);
-    return that;
-  };
-  that.pushToIncomingTree = function(incomingVertex) {
-    if (incomingTree[0] === false) {
-      incomingTree[0] = incomingVertex;
-    } else {
-      incomingTree.push(incomingVertex);
-    }
+    that.pushToIncomingTree(incomingVertex);
     return that;
   };
   /* reverse clicking utilities*/
 
-  that.receiveReverseClickFromChild = function(childVertex) {
-    return null;
-  };
   that.receiveReverseClickFromParent = function(parentVertex) {
-    return null;
+    delete spec._wraps[parentVertex];
+    that.unwrap(parentVertex);
+    return that;
   };
-  /* insert node into graph*/
+  that;
+  /* DOM manipulation*/
 
+  that.wrap = function(incomingVertex) {
+    return true;
+  };
+  that.unwrap = function(incomingVertex) {
+    return true;
+  };
   return that;
 };
 
