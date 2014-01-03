@@ -35,26 +35,10 @@ telescopicText.markup = function(spec) {
   /* forward clicks*/
 
   that.receiveForwardClick = function(incomingVertex) {
-    var child, key, linkArray, next, nodeDict, set, value, wrapArray, _i, _j, _len, _len1;
+    var key, linkArray, next, nextName, nodeDict, value, wrapArray;
     spec._wraps[incomingVertex] = [];
     wrapArray = spec._wraps[incomingVertex];
-    set = spec._children[spec._clickCount];
-    nodeDict = {};
-    /* make dict using vertex names. verticies are true
-    		 	if they start a link  or are alone. 
-    		 	false if they are linked later.
-    */
-
-    for (_i = 0, _len = set.length; _i < _len; _i++) {
-      child = set[_i];
-      nodeDict[child.getName()] = true;
-    }
-    for (_j = 0, _len1 = set.length; _j < _len1; _j++) {
-      child = set[_j];
-      if (nodeDict[child.getPrevious().getName()] === void 0) {
-        nodeDict[child] = false;
-      }
-    }
+    nodeDict = this.createStartListForChildren(spec._clickCount);
     /* create arrays of linked lists. push them to
     			wrapArray. Weird stuff with key not giving objects
     			correctly. Hence, the .getName() shuffle
@@ -64,10 +48,12 @@ telescopicText.markup = function(spec) {
       value = nodeDict[key];
       if (value === true) {
         linkArray = [spec._graph.getNode(key)];
-        next = spec._graph.getNode(key).getNext().getName();
-        while (nodeDict[next] === false) {
+        next = spec._graph.getNode(key).getNext();
+        nextName = next.getName();
+        while (nodeDict[nextName] === false) {
           linkArray.push(spec._graph.getNode(next));
-          next = next.getNext().getName();
+          next = next.getNext();
+          nextName = next.getName();
         }
         wrapArray.push(linkArray);
       }

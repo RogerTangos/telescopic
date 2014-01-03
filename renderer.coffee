@@ -54,7 +54,6 @@ telescopicText.graph = (spec) ->
 				nextVertex = that.getNode(currentVertex.getNext())
 		that
 
-
 	### linking/children functions ###
 	that.setGraphChildReferences = ->
 		for key, value of _nodes
@@ -253,12 +252,14 @@ telescopicText.vertex = (spec) ->
 			that.setEdgesToDefault()
 		that
 
+	### override toString, so that inserting nodes as keys works. ###
+	that.toString= ->
+		"[object telescopicText.vertex " + spec._name + "]"
 
 	### insert node into graph###
 	spec._graph.setNode(spec._name, that)	
 	return that
 
-
-
-
+telescopicText.vertex::toString = ->
+  "[object telescopicText.vertex]"
 

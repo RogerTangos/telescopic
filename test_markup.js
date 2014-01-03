@@ -69,8 +69,10 @@ test('.markup determineWraps returns key-value lists based on the incoming verte
   makeYAndZ();
   makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
   markupY.receiveForwardClick(vertexP);
+  equal(markupY.getWraps()[vertexP][0][0], vertexO, 'vertexO wraps the \
+		first time');
   markupY.receiveForwardClick(vertexR);
-  return equal(markupY.getWraps()[vertexP][0][0], vertexO);
+  return equal(markupY.getWraps()[vertexP][0][0], vertexO, 'vertexO wraps the second time');
 });
 
 makeYAndZ = function() {

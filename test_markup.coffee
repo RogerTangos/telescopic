@@ -79,8 +79,10 @@ test '.markup determineWraps returns key-value lists based on the incoming verte
 	makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 
 	markupY.receiveForwardClick(vertexP)
+	equal(markupY.getWraps()[vertexP][0][0], vertexO, 'vertexO wraps the 
+		first time')
 	markupY.receiveForwardClick(vertexR)
-	equal(markupY.getWraps()[vertexP][0][0], vertexO)
+	equal(markupY.getWraps()[vertexP][0][0], vertexO, 'vertexO wraps the second time')
 	# equal(markupY.getWraps()[vertexR][0][0], vertexK)
 	# equal(markupY.getWraps()[vertexR][0][1], vertexL)
 	# equal(markupY.getWraps()[vertexR][1][0], vertexP)

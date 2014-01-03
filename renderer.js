@@ -344,8 +344,17 @@ telescopicText.vertex = function(spec) {
     }
     return that;
   };
+  /* override toString, so that inserting nodes as keys works.*/
+
+  that.toString = function() {
+    return "[object telescopicText.vertex " + spec._name + "]";
+  };
   /* insert node into graph*/
 
   spec._graph.setNode(spec._name, that);
   return that;
+};
+
+telescopicText.vertex.prototype.toString = function() {
+  return "[object telescopicText.vertex]";
 };

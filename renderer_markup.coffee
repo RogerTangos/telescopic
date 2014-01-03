@@ -27,19 +27,7 @@ telescopicText.markup = (spec) ->
 	that.receiveForwardClick= (incomingVertex)->
 		spec._wraps[incomingVertex] = []
 		wrapArray = spec._wraps[incomingVertex]
-
-		set = spec._children[spec._clickCount]
-		nodeDict = {}
-
-		### make dict using vertex names. verticies are true
-		 	if they start a link  or are alone. 
-		 	false if they are linked later. ###
-		for child in set
-			nodeDict[child.getName()] = true
-
-		for child in set
-			if nodeDict[child.getPrevious().getName()] == undefined
-				nodeDict[child] = false
+		nodeDict = this.createStartListForChildren(spec._clickCount)
 
 		### create arrays of linked lists. push them to
 			wrapArray. Weird stuff with key not giving objects
@@ -47,10 +35,12 @@ telescopicText.markup = (spec) ->
 		for key, value of nodeDict
 			if value == true
 				linkArray = [spec._graph.getNode(key)]
-				next = spec._graph.getNode(key).getNext().getName()
-				while nodeDict[next] == false
+				next = spec._graph.getNode(key).getNext()
+				nextName = next.getName()
+				while nodeDict[nextName] == false
 					linkArray.push(spec._graph.getNode(next))
-					next = next.getNext().getName()
+					next = next.getNext()
+					nextName = next.getName()
 				
 				wrapArray.push(linkArray)
 
@@ -60,8 +50,6 @@ telescopicText.markup = (spec) ->
 		### need to set up a separate method to clear this out ###
 		that.incomingTree.push(incomingVertex)
 		that
-
-
 
 
 	### reverse clicking utilities ###
