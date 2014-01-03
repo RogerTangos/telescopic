@@ -36,14 +36,16 @@ telescopicText.markup = (spec) ->
 			if value == true
 				linkArray = [spec._graph.getNode(key)]
 				next = spec._graph.getNode(key).getNext()
-				nextName = next.getName()
+				if next
+					nextName = next.getName()
 				while nodeDict[nextName] == false
 					linkArray.push(spec._graph.getNode(next))
 					next = next.getNext()
-					nextName = next.getName()
-				
-				wrapArray.push(linkArray)
+					if next
+						nextName = next.getName()
+					else nextName = false
 
+				wrapArray.push(linkArray)
 
 		spec._clickCount += 1
 
@@ -51,6 +53,12 @@ telescopicText.markup = (spec) ->
 		that.incomingTree.push(incomingVertex)
 		that
 
+	that.pushToIncomingTree = (incomingVertex) ->
+		if incomingTree[0] == false
+			incomingTree[0]= incomingVertex
+		else
+			incomingTree.push(incomingVertex)
+		that
 
 	### reverse clicking utilities ###
 	that.receiveReverseClickFromChild=(childVertex)->
@@ -64,6 +72,8 @@ telescopicText.markup = (spec) ->
 	that
 
 
+telescopicText.markup::toString = ->
+  "[object telescopicText.markup]"
 
 
 

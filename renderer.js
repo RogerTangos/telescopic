@@ -129,7 +129,7 @@ telescopicText.vertex = function(spec) {
   spec._starter = spec._starter || false;
   spec._children = spec._children || [];
   spec._remainAfterClick = spec._remainAfterClick || false;
-  spec._next = spec._next || null;
+  spec._next = spec._next || false;
   /* constructor*/
 
   if (!telescopicText.graphs[spec._graph]) {

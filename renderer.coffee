@@ -97,7 +97,7 @@ telescopicText.vertex = (spec) ->
 	spec._starter = spec._starter || false
 	spec._children = spec._children || []
 	spec._remainAfterClick = spec._remainAfterClick  || false
-	spec._next = spec._next || null
+	spec._next = spec._next || false
 	### constructor  ###
 	if not telescopicText.graphs[spec._graph]
 		spec._graph = telescopicText.graph({_name: spec._graph})

@@ -79,14 +79,20 @@ test '.markup determineWraps returns key-value lists based on the incoming verte
 	makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 
 	markupY.receiveForwardClick(vertexP)
-	equal(markupY.getWraps()[vertexP][0][0], vertexO, 'vertexO wraps the 
+	equal(markupY.getWraps()[vertexP][0][0], vertexO, 'markupY wraps vertexO the 
 		first time')
 	markupY.receiveForwardClick(vertexR)
-	equal(markupY.getWraps()[vertexP][0][0], vertexO, 'vertexO wraps the second time')
-	# equal(markupY.getWraps()[vertexR][0][0], vertexK)
-	# equal(markupY.getWraps()[vertexR][0][1], vertexL)
-	# equal(markupY.getWraps()[vertexR][1][0], vertexP)
+	equal(markupY.getWraps()[vertexP][0][0], vertexO, 'markupY still wraps vertexO the second time')
+	equal(markupY.getWraps()[vertexR][0][0], vertexK, 'markupK warps correctly')
+	equal(markupY.getWraps()[vertexR][0][1], vertexL)
+	equal(markupY.getWraps()[vertexR][1][0], vertexP)
 
+	markupZ.receiveForwardClick(vertexC)
+	equal(markupZ.getWraps()[vertexC][0][0], vertexH, 'markupZ is activated the first time')
+	markupZ.receiveForwardClick(vertexG)
+	equal(markupZ.getWraps()[vertexG][0][0], vertexQ, 'markupZ is activated the second time')
+	equal(markupZ.getWraps()[vertexG][1][0], vertexS)
+	equal(markupZ.getWraps()[vertexG][1][1], vertexT)
 
 
 

@@ -49,11 +49,17 @@ telescopicText.markup = function(spec) {
       if (value === true) {
         linkArray = [spec._graph.getNode(key)];
         next = spec._graph.getNode(key).getNext();
-        nextName = next.getName();
+        if (next) {
+          nextName = next.getName();
+        }
         while (nodeDict[nextName] === false) {
           linkArray.push(spec._graph.getNode(next));
           next = next.getNext();
-          nextName = next.getName();
+          if (next) {
+            nextName = next.getName();
+          } else {
+            nextName = false;
+          }
         }
         wrapArray.push(linkArray);
       }
@@ -62,6 +68,14 @@ telescopicText.markup = function(spec) {
     /* need to set up a separate method to clear this out*/
 
     that.incomingTree.push(incomingVertex);
+    return that;
+  };
+  that.pushToIncomingTree = function(incomingVertex) {
+    if (incomingTree[0] === false) {
+      incomingTree[0] = incomingVertex;
+    } else {
+      incomingTree.push(incomingVertex);
+    }
     return that;
   };
   /* reverse clicking utilities*/
@@ -75,4 +89,8 @@ telescopicText.markup = function(spec) {
   /* insert node into graph*/
 
   return that;
+};
+
+telescopicText.markup.prototype.toString = function() {
+  return "[object telescopicText.markup]";
 };
