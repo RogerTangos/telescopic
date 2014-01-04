@@ -1,9 +1,3 @@
-#note to self: setChildrenReferences uses this, but should use that.
-# for some reason it works. That's fucked up.
-# you are also working on edge assignment w/ forward
-
-### add all private attributes to spec by convention.### 
-
 telescopicText = {}
 telescopicText.graphs = {}
 telescopicText.reset = -> telescopicText.graph({_name:'telescopicDefaultID'})
@@ -52,7 +46,32 @@ telescopicText.graph = (spec) ->
 				telescopicText.graph.link(currentVertex, nextVertex)
 				currentVertex = nextVertex
 				nextVertex = that.getNode(currentVertex.getNext())
+
+		that.setUpDom(startVertex)
 		that
+
+	that.setUpDom = (startVertex) ->
+		### define and clear target div ###
+		id = 'tText-' + this.getName()
+		tagElement = $('#'+id)
+		tagElement.empty()
+
+		### add first vertex ###
+		vertex = startVertex
+		startSpan = '<span style="display: none;" id = "'+ vertex.findDomId() + '">'
+		endSpan = '</span>'
+		tagElement.append(startSpan + vertex.content + endSpan)
+		vertex.setDomVisibility()
+
+		while vertex.getNext()
+			vertex = vertex.getNext()
+			startSpan = '<span style="display: none;" id = "'+ vertex.findDomId() + '">'
+			endSpan = '</span>'
+			tagElement.append(startSpan + vertex.content + endSpan)
+
+			vertex.setDomVisibility()
+			
+
 
 	### linking/children functions ###
 	that.setGraphChildReferences = ->
@@ -134,6 +153,9 @@ telescopicText.vertex = (spec) ->
 	that.findClicksRemaining =->
 		### ignore _remainAfterClick b/c it's not a click ###
 		spec._children.length - spec._clickCount
+	that.findDomId = -> 
+		str = 'tText_' + spec._name
+		str
 	that.shouldBeVisible = ->
 		# ### starter case ###
 		# if that.children.length == 0
@@ -227,10 +249,12 @@ telescopicText.vertex = (spec) ->
 			child.receiveForwardClick(that)
 
 		spec._clickCount +=1
+		that.setDomVisibility()
 		that
 
 	that.receiveForwardClick= (incomingVertex)->
 		that.forwardDetermineAndSetIncomingEdge(incomingVertex)
+		that.setDomVisibility()
 		that
 
 	### reverse clicking utilities ###
@@ -251,6 +275,16 @@ telescopicText.vertex = (spec) ->
 		if that.incomingTree[0] == parentVertex
 			that.setEdgesToDefault()
 		that
+
+	### DOM manipulation ###
+	that.setDomVisibility= ->
+		jquerySelector = $('#'+that.findDomId())
+		if that.shouldBeVisible()
+			jquerySelector.show()
+		else
+			jquerySelector.hide()
+
+
 
 	### override toString, so that inserting nodes as keys works. ###
 	that.toString= ->

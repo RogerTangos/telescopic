@@ -74,6 +74,7 @@ telescopicText.markup = (spec) ->
 	that.unwrap= (incomingVertex) ->
 		true
 
+	delete that.setDomVisibility
 	that
 
 telescopicText.markup::toString = ->

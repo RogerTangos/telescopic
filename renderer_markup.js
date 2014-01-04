@@ -94,6 +94,7 @@ telescopicText.markup = function(spec) {
   that.unwrap = function(incomingVertex) {
     return true;
   };
+  delete that.setDomVisibility;
   return that;
 };
 
