@@ -24,5 +24,16 @@ test 'appropriate nodes dissapear, reappear after forwardClick()', ->
 	equal($('#tText_B').is(':visible'), true, 'B appears after A click')
 	equal($('#tText_C').is(':visible'), true, 'C appears after A click')
 
-# test 'appropriate nodes appear after receiveForwardClick()', ->
-# 	equal(1,1)
+test 'appropriate nodes reappear, dissapear after reverseClick() - test 1', ->
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+	vertexA.forwardClick()
+	equal($('#tText_B').is(':visible'), true)
+	
+	vertexB.forwardClick()
+	equal($('#tText_B').is(':visible'), false)
+	equal($('#tText_C').is(':visible'), true)
+	
+	vertexC.reverseClick()
+	equal($('#tText_C').is(':visible'), false, 'a and be forward clicked. c reverse clicked.')
+	equal($('#tText_B').is(':visible'), false)
+	equal($('#tText_A').is(':visible'), true)

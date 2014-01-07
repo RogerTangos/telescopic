@@ -360,6 +360,7 @@ telescopicText.vertex = function(spec) {
   that.receiveReverseClickFromChild = function(childVertex) {
     var child, childIndex, _i, _len, _ref;
     spec._clickCount += -1;
+    that.setDomVisibility();
     childIndex = that.findIndexOfChildInChildren(childVertex);
     _ref = spec._children[childIndex];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -371,6 +372,7 @@ telescopicText.vertex = function(spec) {
   that.receiveReverseClickFromParent = function(parentVertex) {
     if (that.incomingTree[0] === parentVertex) {
       that.setEdgesToDefault();
+      that.setDomVisibility();
     }
     return that;
   };
@@ -380,6 +382,11 @@ telescopicText.vertex = function(spec) {
     var jquerySelector;
     jquerySelector = $('#' + that.findDomId());
     if (that.shouldBeVisible()) {
+      if (that.findClicksRemaining() > 0) {
+        jquerySelector.addClass('tText_clickable');
+      } else {
+        jquerySelector.removeClass('tText_clickable');
+      }
       return jquerySelector.show();
     } else {
       return jquerySelector.hide();

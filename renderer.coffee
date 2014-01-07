@@ -266,6 +266,7 @@ telescopicText.vertex = (spec) ->
 
 	that.receiveReverseClickFromChild=(childVertex)->
 		spec._clickCount += -1
+		that.setDomVisibility()
 		childIndex = that.findIndexOfChildInChildren(childVertex)
 		for child in spec._children[childIndex]
 			child.receiveReverseClickFromParent(that)
@@ -274,12 +275,19 @@ telescopicText.vertex = (spec) ->
 	that.receiveReverseClickFromParent= (parentVertex)->
 		if that.incomingTree[0] == parentVertex
 			that.setEdgesToDefault()
+			that.setDomVisibility()
 		that
 
 	### DOM manipulation ###
 	that.setDomVisibility= ->
 		jquerySelector = $('#'+that.findDomId())
 		if that.shouldBeVisible()
+
+			if that.findClicksRemaining() > 0
+				jquerySelector.addClass('tText_clickable')
+			else
+				jquerySelector.removeClass('tText_clickable')
+
 			jquerySelector.show()
 		else
 			jquerySelector.hide()
