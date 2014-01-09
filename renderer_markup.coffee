@@ -83,8 +83,8 @@ telescopicText.markup = (spec) ->
 
 	### reverse clicking utilities ###
 	that.receiveReverseClickFromParent= (parentVertex)->
-		delete spec._wraps[parentVertex]
 		that.unwrap(parentVertex)
+		delete spec._wraps[parentVertex]
 		that
 
 	that
@@ -106,10 +106,15 @@ telescopicText.markup = (spec) ->
 		verticies = spec._wraps[incomingVertex]
 
 		for set in verticies
-			selector = '.tText_clickable #tText_' + set.join(', #tText_')
+			vertexArray = []
+			for vertex in set
+				vertexArray.push(vertex.getName())
+			selector = '#tText_' + vertexArray.join(', #tText_')
+			
 			i = 0
 			while i<spec._wrapLevel
 				$(selector).unwrap()
+				i++
 		that
 
 	

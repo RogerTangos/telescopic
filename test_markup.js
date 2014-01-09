@@ -85,8 +85,9 @@ test('.markup createStartListForChildren returns key-value lists based on the in
 });
 
 test('.markup determineWrapLevel determines number of wraps will need to be undone', function() {
+  var graph1;
   makeYAndZ();
-  makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
+  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
   equal(markupY.determineWrapLevel(), 1);
   equal(markupZ.determineWrapLevel(), 1);
   markupY.content = '<div><p></p></div>';
@@ -94,8 +95,9 @@ test('.markup determineWrapLevel determines number of wraps will need to be undo
 });
 
 test('.markup can wrap', function() {
+  var graph1;
   makeYAndZ();
-  makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
+  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
   markupZ.receiveForwardClick(vertexC);
   equal($('#tText_H').parent()[0].tagName, 'P');
   /* test adjacent nodes*/
@@ -110,14 +112,13 @@ test('.markup can wrap', function() {
 test('.markup can upwrap', function() {
   makeYAndZ();
   makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
-  markupY.receiveReverseClickFromParent(vertexP).receiveReverseClickFromParent(vertexR);
-  markupY.receiveReverseClickFromParent(vertexP).receiveReverseClickFromParent(vertexR);
-  equal(markupY.getWraps()[vertexP], void 0, 'receiveReverseClickFromParent worked for vertexY');
-  equal(markupY.getWraps()[vertexR], void 0);
-  markupZ.receiveReverseClickFromParent(vertexC).receiveReverseClickFromParent(vertexG);
-  markupZ.receiveReverseClickFromParent(vertexC).receiveReverseClickFromParent(vertexG);
-  equal(markupZ.getWraps()[vertexC], void 0, 'receiveReverseClickFromParent worked for vertexZ');
-  return equal(markupZ.getWraps()[vertexG], void 0);
+  markupZ.receiveForwardClick(vertexC);
+  markupZ.receiveForwardClick(vertexG);
+  markupZ.receiveReverseClickFromParent(vertexC);
+  equal($('#tText_Q').parent()[0].tagName, 'DIV');
+  equal($('#tText_S').parent()[0].tagName, 'DIV');
+  equal($('#tText_T').parent()[0].tagName, 'DIV');
+  return equal(1, 1);
 });
 
 makeYAndZ = function() {

@@ -102,8 +102,8 @@ telescopicText.markup = function(spec) {
   /* reverse clicking utilities*/
 
   that.receiveReverseClickFromParent = function(parentVertex) {
-    delete spec._wraps[parentVertex];
     that.unwrap(parentVertex);
+    delete spec._wraps[parentVertex];
     return that;
   };
   that;
@@ -125,14 +125,20 @@ telescopicText.markup = function(spec) {
     return that;
   };
   that.unwrap = function(incomingVertex) {
-    var i, selector, set, verticies, _i, _len;
+    var i, selector, set, vertex, vertexArray, verticies, _i, _j, _len, _len1;
     verticies = spec._wraps[incomingVertex];
     for (_i = 0, _len = verticies.length; _i < _len; _i++) {
       set = verticies[_i];
-      selector = '.tText_clickable #tText_' + set.join(', #tText_');
+      vertexArray = [];
+      for (_j = 0, _len1 = set.length; _j < _len1; _j++) {
+        vertex = set[_j];
+        vertexArray.push(vertex.getName());
+      }
+      selector = '#tText_' + vertexArray.join(', #tText_');
       i = 0;
       while (i < spec._wrapLevel) {
         $(selector).unwrap();
+        i++;
       }
     }
     return that;
