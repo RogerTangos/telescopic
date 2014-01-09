@@ -65,7 +65,7 @@ test('.markup separate contigious from non-contigious verticies', function() {
   return equal(markupY.createStartListForChildren(1)['P'], true);
 });
 
-test('.markup determineWraps returns key-value lists based on the incoming vertex', function() {
+test('.markup createStartListForChildren returns key-value lists based on the incoming vertex', function() {
   makeYAndZ();
   makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
   markupY.receiveForwardClick(vertexP);
@@ -82,6 +82,29 @@ test('.markup determineWraps returns key-value lists based on the incoming verte
   equal(markupZ.getWraps()[vertexG][0][0], vertexQ, 'markupZ is activated the second time');
   equal(markupZ.getWraps()[vertexG][1][0], vertexS);
   return equal(markupZ.getWraps()[vertexG][1][1], vertexT);
+});
+
+test('.markup determineWrapLevel determines number of wraps will need to be undone', function() {
+  makeYAndZ();
+  makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
+  equal(markupY.determineWrapLevel(), 1);
+  equal(markupZ.determineWrapLevel(), 1);
+  markupY.content = '<div><p></p></div>';
+  return equal(markupY.determineWrapLevel(), 2);
+});
+
+test('.markup can wrap', function() {
+  makeYAndZ();
+  makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
+  markupZ.receiveForwardClick(vertexC);
+  equal($('#tText_H').parent()[0].tagName, 'P');
+  /* test adjacent nodes*/
+
+  markupZ.receiveForwardClick(vertexG);
+  equal($('#tText_Q').parent()[0].tagName, 'P', 'wrapped adjacent nodes should have the same parent.');
+  equal($('#tText_S').parent()[0].tagName, 'P');
+  equal($('#tText_T').parent()[0].tagName, 'P');
+  return ok($('#tText_T').parent()[0] === $('#tText_S').parent()[0]);
 });
 
 test('.markup can upwrap', function() {

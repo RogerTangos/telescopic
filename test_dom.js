@@ -43,9 +43,10 @@ test('appropriate nodes reappear, dissapear after reverseClick() - test 1', func
   return equal($('#tText_A').is(':visible'), true);
 });
 
-test('appropriate nodes reappear, dissapear after reverseClick() - test 1', function() {
+test('verticies are wrapped after foward click', function() {
   var graph1;
   graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
-  vertexG.forwardClick();
-  return vertexE.forwardClick();
+  vertexA.forwardClick();
+  vertexC.forwardClick();
+  return equal(1, 1);
 });

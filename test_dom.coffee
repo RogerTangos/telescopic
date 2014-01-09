@@ -37,3 +37,10 @@ test 'appropriate nodes reappear, dissapear after reverseClick() - test 1', ->
 	equal($('#tText_C').is(':visible'), false, 'a and be forward clicked. c reverse clicked.')
 	equal($('#tText_B').is(':visible'), false)
 	equal($('#tText_A').is(':visible'), true)
+
+test 'verticies are wrapped after foward click', ->
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+	vertexA.forwardClick()
+	vertexC.forwardClick()
+
+	equal(1,1)

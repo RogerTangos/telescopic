@@ -3,13 +3,17 @@ telescopicText.markup = function(spec) {
   var that;
   that = telescopicText.vertex(spec);
   spec._wraps = {};
+  spec._wrapLevel = 0;
   /* overridden*/
 
   that.getRemainAfterClick = function() {
     return true;
   };
-  that.forwardClick = void 0;
-  that.reverseClick = void 0;
+  /* remove unnecessary functions*/
+
+  delete that.setDomVisibility;
+  delete that.forwardClick;
+  delete that.reverseClick;
   /* public methods*/
 
   that.getWraps = function() {
@@ -40,18 +44,36 @@ telescopicText.markup = function(spec) {
     }
     return nodeDict;
   };
+  that.determineWrapLevel = function() {
+    var current, htmlArray, isHtmlString;
+    isHtmlString = /^\<.+\>/.test(that.content);
+    if (isHtmlString) {
+      /* convert to html using jquery*/
+
+      htmlArray = $(that.content);
+      current = htmlArray[0];
+      while (current) {
+        spec._wrapLevel += 1;
+        current = current[0];
+      }
+    } else {
+      spec._wrapLevel = $(that.content).length;
+    }
+    return spec._wrapLevel;
+  };
   /* forward clicks*/
 
   that.receiveForwardClick = function(incomingVertex) {
     var key, linkArray, next, nextName, nodeDict, value, wrapArray;
-    spec._wraps[incomingVertex] = [];
-    wrapArray = spec._wraps[incomingVertex];
-    nodeDict = this.createStartListForChildren(spec._clickCount);
+    that.determineWrapLevel(that.content);
     /* create arrays of linked lists. push them to
     			wrapArray. Weird stuff with key not giving objects
     			correctly. Hence, the .getName() shuffle
     */
 
+    spec._wraps[incomingVertex] = [];
+    wrapArray = spec._wraps[incomingVertex];
+    nodeDict = this.createStartListForChildren(spec._clickCount);
     for (key in nodeDict) {
       value = nodeDict[key];
       if (value === true) {
@@ -73,8 +95,7 @@ telescopicText.markup = function(spec) {
       }
     }
     spec._clickCount += 1;
-    /* need to set up a separate method to clear this out*/
-
+    that.wrap(incomingVertex);
     that.pushToIncomingTree(incomingVertex);
     return that;
   };
@@ -89,12 +110,33 @@ telescopicText.markup = function(spec) {
   /* DOM manipulation*/
 
   that.wrap = function(incomingVertex) {
-    return true;
+    var selector, set, vertex, vertexArray, verticies, _i, _j, _len, _len1;
+    verticies = spec._wraps[incomingVertex];
+    for (_i = 0, _len = verticies.length; _i < _len; _i++) {
+      set = verticies[_i];
+      vertexArray = [];
+      for (_j = 0, _len1 = set.length; _j < _len1; _j++) {
+        vertex = set[_j];
+        vertexArray.push(vertex.getName());
+      }
+      selector = '#tText_' + vertexArray.join(', #tText_');
+      $(selector).wrapAll(that.content);
+    }
+    return that;
   };
   that.unwrap = function(incomingVertex) {
-    return true;
+    var i, selector, set, verticies, _i, _len;
+    verticies = spec._wraps[incomingVertex];
+    for (_i = 0, _len = verticies.length; _i < _len; _i++) {
+      set = verticies[_i];
+      selector = '.tText_clickable #tText_' + set.join(', #tText_');
+      i = 0;
+      while (i < spec._wrapLevel) {
+        $(selector).unwrap();
+      }
+    }
+    return that;
   };
-  delete that.setDomVisibility;
   return that;
 };
 
