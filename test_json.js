@@ -24,7 +24,7 @@ makeTestVerticies = function() {
   window.vertexC = telescopicText.vertex({
     _name: 'C',
     content: 'c',
-    _children: [['A', 'F'], ['L']],
+    _children: [['A', 'F', 'Z'], ['L']],
     _remainAfterClick: true,
     _next: 'E',
     _graph: 'graph1'
@@ -57,7 +57,7 @@ makeTestVerticies = function() {
   window.vertexG = telescopicText.vertex({
     _name: 'G',
     content: 'g',
-    _children: [['E']],
+    _children: [['E', 'Z']],
     _remainAfterClick: true,
     _next: 'C',
     _graph: 'graph1',
@@ -130,7 +130,7 @@ makeTestVerticies = function() {
   window.vertexP = telescopicText.vertex({
     _name: 'P',
     content: 'p',
-    _children: [['K']],
+    _children: [['K', 'Y']],
     _remainAfterClick: false,
     _next: 'Q',
     _graph: 'graph1'
@@ -146,7 +146,7 @@ makeTestVerticies = function() {
   window.vertexR = telescopicText.vertex({
     _name: 'R',
     content: 'r',
-    _children: [['S']],
+    _children: [['S', 'Y']],
     _remainAfterClick: false,
     _next: 'S',
     _graph: 'graph1'
@@ -183,6 +183,20 @@ makeTestVerticies = function() {
     _next: 'J',
     _graph: 'graph1',
     _starter: true
+  });
+  window.markupY = telescopicText.markup({
+    _name: 'Y',
+    content: '<em></em>',
+    _children: [['O'], ['L', 'K', 'P']],
+    _graph: 'graph1',
+    _starter: true
+  });
+  window.markupZ = telescopicText.markup({
+    _name: 'Z',
+    content: '<p><div></div></p>',
+    _children: [['H'], ['Q', 'S', 'T']],
+    _graph: 'graph1',
+    _starter: false
   });
   graph1 = telescopicText.graphs['graph1'];
   return graph1;

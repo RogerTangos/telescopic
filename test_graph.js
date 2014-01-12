@@ -84,7 +84,7 @@ test('determine and record forward edges', function() {
 test('forward click a nodes A, B, C. test edge matching.', function() {
   var graph1;
   telescopicText.reset();
-  graph1 = makeTestVerticies().setGraphChildReferences();
+  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
   vertexA.forwardClick();
   equal(vertexB.incomingTree[0], vertexA, "vertexA as tree edge");
   equal(vertexC.incomingTree[0], vertexA);
@@ -113,7 +113,7 @@ test('forward click notes D, E, J, Q. test edge matching.', function() {
 test('visibility when forward clicking', function() {
   var graph1;
   telescopicText.reset();
-  graph1 = makeTestVerticies().setGraphChildReferences();
+  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
   ok(!vertexB.shouldBeVisible() && !vertexC.shouldBeVisible() && !vertexK.shouldBeVisible() && !vertexF.shouldBeVisible());
   /* happy path. vertexA "clicked" while visible*/
 
@@ -148,7 +148,7 @@ test('visibility when forward clicking', function() {
 test('find index of child in children', function() {
   var graph1;
   telescopicText.reset();
-  graph1 = makeTestVerticies().setGraphChildReferences();
+  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
   graphPatternOne();
   equal(vertexC.findIndexOfChildInChildren(vertexL), 1);
   equal(vertexC.findIndexOfChildInChildren(vertexF), 0);
@@ -158,7 +158,7 @@ test('find index of child in children', function() {
 test('determine elibility for reverseClick', function() {
   var graph1;
   telescopicText.reset();
-  graph1 = makeTestVerticies().setGraphChildReferences();
+  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
   graphPatternOne();
   ok(vertexL.shouldBeReverseClickable() && vertexK.shouldBeReverseClickable);
   return ok(!vertexF.shouldBeReverseClickable() && !vertexC.shouldBeReverseClickable() && !vertexA.shouldBeReverseClickable() && !vertexB.shouldBeReverseClickable() && !vertexA.shouldBeReverseClickable());
@@ -167,7 +167,7 @@ test('determine elibility for reverseClick', function() {
 test('reverse click', function() {
   var graph1;
   telescopicText.reset();
-  graph1 = makeTestVerticies().setGraphChildReferences();
+  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
   graphPatternOne();
   /* sad path. vertexF should not be clickable.*/
 

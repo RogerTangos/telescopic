@@ -76,7 +76,7 @@ test 'determine and record forward edges', ->
 
 test 'forward click a nodes A, B, C. test edge matching.', ->
 	telescopicText.reset()
-	graph1 = makeTestVerticies().setGraphChildReferences()
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 	
 	vertexA.forwardClick()
 	equal(vertexB.incomingTree[0], vertexA, "vertexA as tree edge")
@@ -109,7 +109,7 @@ test 'forward click notes D, E, J, Q. test edge matching.', ->
 
 test 'visibility when forward clicking', ->
 	telescopicText.reset()
-	graph1 = makeTestVerticies().setGraphChildReferences()
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 
 	ok(!vertexB.shouldBeVisible() && 
 		!vertexC.shouldBeVisible() && 
@@ -162,7 +162,7 @@ test 'visibility when forward clicking', ->
 
 test 'find index of child in children', ->
 	telescopicText.reset()
-	graph1 = makeTestVerticies().setGraphChildReferences()
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 	graphPatternOne()
 	equal(vertexC.findIndexOfChildInChildren(vertexL), 1)
 	equal(vertexC.findIndexOfChildInChildren(vertexF), 0)
@@ -171,7 +171,7 @@ test 'find index of child in children', ->
 
 test 'determine elibility for reverseClick', ->
 	telescopicText.reset()
-	graph1 = makeTestVerticies().setGraphChildReferences()
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 	graphPatternOne()
 	ok(vertexL.shouldBeReverseClickable() &&
 		vertexK.shouldBeReverseClickable)
@@ -183,7 +183,7 @@ test 'determine elibility for reverseClick', ->
 
 test 'reverse click', ->
 	telescopicText.reset()
-	graph1 = makeTestVerticies().setGraphChildReferences()
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 	graphPatternOne()
 
 	### sad path. vertexF should not be clickable. ###
