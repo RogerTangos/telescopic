@@ -17,6 +17,7 @@ telescopicText.markup = function(spec) {
   delete that.setDomVisibility;
   delete that.forwardClick;
   delete that.reverseClick;
+  delete that.userClick;
   /* public methods*/
 
   that.getWraps = function() {

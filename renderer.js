@@ -3,6 +3,8 @@ var telescopicText;
 
 telescopicText = {};
 
+telescopicText.forward = true;
+
 telescopicText.graphs = {};
 
 telescopicText.reset = function() {
@@ -74,7 +76,7 @@ telescopicText.graph = function(spec) {
   that.setUpDom = function(startVertex) {
     /* define and clear target div*/
 
-    var endSpan, id, startSpan, tagElement, vertex, _results;
+    var endSpan, id, spanObject, startSpan, tagElement, vertex, _results;
     id = 'tText-' + this.getName();
     tagElement = $('#' + id);
     tagElement.empty();
@@ -83,15 +85,16 @@ telescopicText.graph = function(spec) {
     vertex = startVertex;
     startSpan = '<span style="display: none;" id = "' + vertex.findDomId() + '">';
     endSpan = '</span>';
-    tagElement.append(startSpan + vertex.content + endSpan);
-    vertex.setDomVisibility();
+    spanObject = $(startSpan + vertex.content + endSpan);
+    tagElement.append(spanObject);
+    vertex.setDomVisibility(spanObject);
     _results = [];
     while (vertex.getNext()) {
       vertex = vertex.getNext();
       startSpan = '<span style="display: none;" id = "' + vertex.findDomId() + '">';
-      endSpan = '</span>';
-      tagElement.append(startSpan + vertex.content + endSpan);
-      _results.push(vertex.setDomVisibility());
+      spanObject = $(startSpan + vertex.content + endSpan);
+      tagElement.append(spanObject);
+      _results.push(vertex.setDomVisibility(spanObject));
     }
     return _results;
   };
@@ -327,6 +330,13 @@ telescopicText.vertex = function(spec) {
   };
   /* clicking utilities*/
 
+  that.userClick = function() {
+    if (telescopicText.forward) {
+      return that.forwardClick();
+    } else {
+      return that.reverseClick();
+    }
+  };
   that.forwardClick = function() {
     /* catch instance in which it shouldn't be clicked*/
 
@@ -378,19 +388,24 @@ telescopicText.vertex = function(spec) {
   };
   /* DOM manipulation*/
 
-  that.setDomVisibility = function() {
-    var jquerySelector;
-    jquerySelector = $('#' + that.findDomId());
+  that.setDomVisibility = function(jQueryObject) {
+    if (!jQueryObject) {
+      jQueryObject = $('#' + that.findDomId());
+    }
+    jQueryObject.click(function() {
+      return that.userClick();
+    });
     if (that.shouldBeVisible()) {
       if (that.findClicksRemaining() > 0) {
-        jquerySelector.addClass('tText_clickable');
+        jQueryObject.addClass('tText_clickable');
       } else {
-        jquerySelector.removeClass('tText_clickable');
+        jQueryObject.removeClass('tText_clickable');
       }
-      return jquerySelector.show();
+      jQueryObject.show();
     } else {
-      return jquerySelector.hide();
+      jQueryObject.hide();
     }
+    return that;
   };
   /* override toString, so that inserting nodes as keys works.*/
 

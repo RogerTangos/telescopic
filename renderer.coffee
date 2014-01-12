@@ -1,4 +1,5 @@
 telescopicText = {}
+telescopicText.forward = true
 telescopicText.graphs = {}
 telescopicText.reset = -> telescopicText.graph({_name:'telescopicDefaultID'})
 telescopicText.graph = (spec) ->
@@ -60,18 +61,16 @@ telescopicText.graph = (spec) ->
 		vertex = startVertex
 		startSpan = '<span style="display: none;" id = "'+ vertex.findDomId() + '">'
 		endSpan = '</span>'
-		tagElement.append(startSpan + vertex.content + endSpan)
-		vertex.setDomVisibility()
+		spanObject = $(startSpan+ vertex.content + endSpan)
+		tagElement.append(spanObject)
+		vertex.setDomVisibility(spanObject)
 
 		while vertex.getNext()
 			vertex = vertex.getNext()
 			startSpan = '<span style="display: none;" id = "'+ vertex.findDomId() + '">'
-			endSpan = '</span>'
-			tagElement.append(startSpan + vertex.content + endSpan)
-
-			vertex.setDomVisibility()
-			
-
+			spanObject = $(startSpan+ vertex.content + endSpan)
+			tagElement.append(spanObject)
+			vertex.setDomVisibility(spanObject)
 
 	### linking/children functions ###
 	that.setGraphChildReferences = ->
@@ -200,7 +199,6 @@ telescopicText.vertex = (spec) ->
 			else
 				parentVertex = parentVertex.incomingTree[0]
 		false
-
 	that.shouldBeReverseClickable = ->
 		### need to check to make sure that parent is on the same click index as the child ###
 		if spec._clickCount == 0 &&
@@ -239,6 +237,12 @@ telescopicText.vertex = (spec) ->
 		false
 
 	### clicking utilities ###
+	that.userClick = ->
+		if telescopicText.forward
+			that.forwardClick()
+		else
+			that.reverseClick()
+
 	that.forwardClick= ->
 		### catch instance in which it shouldn't be clicked ###
 		if that.findClicksRemaining() <= 0 or !that.shouldBeVisible()
@@ -279,18 +283,24 @@ telescopicText.vertex = (spec) ->
 		that
 
 	### DOM manipulation ###
-	that.setDomVisibility= ->
-		jquerySelector = $('#'+that.findDomId())
+	that.setDomVisibility= (jQueryObject)->
+		if ! jQueryObject
+			jQueryObject = $('#'+that.findDomId())
+		
+		jQueryObject.click ->
+			that.userClick()
 		if that.shouldBeVisible()
 
 			if that.findClicksRemaining() > 0
-				jquerySelector.addClass('tText_clickable')
+				jQueryObject.addClass('tText_clickable')
 			else
-				jquerySelector.removeClass('tText_clickable')
+				jQueryObject.removeClass('tText_clickable')
 
-			jquerySelector.show()
+			jQueryObject.show()
 		else
-			jquerySelector.hide()
+			jQueryObject.hide()
+
+		that
 
 
 

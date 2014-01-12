@@ -44,3 +44,15 @@ test 'verticies are wrapped after foward click', ->
 	vertexC.forwardClick()
 
 	equal(1,1)
+
+
+test 'user clicks an individual vertex', ->
+	$('#tText_A').click()
+	equal($('#tText_A').is(':visible'), false)
+	equal($('#tText_B').is(':visible'), true)
+	equal($('#tText_C').is(':visible'), true)
+
+
+
+
+
