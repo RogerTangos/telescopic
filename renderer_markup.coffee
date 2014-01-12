@@ -2,9 +2,10 @@ telescopicText.markup = (spec) ->
 	that = telescopicText.vertex(spec)
 
 	spec._wraps = {}
-	spec._wrapLevel = 0 #number of times wrap will need to be unwrapped.
+	spec._wrapLevel = {} #number of times wrap will need to be unwrapped.
 	### overridden ###
 	that.getRemainAfterClick = -> true
+	that.getWrapLevel= (key) -> spec._wrapLevel[key]
 	### remove unnecessary functions ###
 	delete that.setDomVisibility 
 	delete that.forwardClick
@@ -31,28 +32,29 @@ telescopicText.markup = (spec) ->
 				nodeDict[child.getName()] = false
 		nodeDict
 
-	that.determineWrapLevel = ->
+	that.setWrapLevel= (incomingVertex) ->
+		
 
 		#determine if element or html string
 		isHtmlString = /^\<.+\>/.test(that.content)
-
 		if isHtmlString
+			spec._wrapLevel[incomingVertex]= 1
 			### convert to html using jquery ### 
 			htmlArray = $(that.content)
-			current = htmlArray[0]
+			current = htmlArray.children()
 
-			while current
-				spec._wrapLevel += 1
-				current = current[0]		
+			while current[0]
+				spec._wrapLevel[incomingVertex] += 1
+				current = current.children()	
 			
 		else
-			spec._wrapLevel = $(that.content).length
+			spec._wrapLevel[incomingVertex] = $(that.content).length
 
-		spec._wrapLevel
+	that
 
 	### forward clicks ###
 	that.receiveForwardClick= (incomingVertex)->
-		that.determineWrapLevel(that.content)
+		that.setWrapLevel(incomingVertex)
 		### create arrays of linked lists. push them to
 			wrapArray. Weird stuff with key not giving objects
 			correctly. Hence, the .getName() shuffle ###
@@ -112,7 +114,7 @@ telescopicText.markup = (spec) ->
 			selector = '#tText_' + vertexArray.join(', #tText_')
 			
 			i = 0
-			while i<spec._wrapLevel
+			while i<spec._wrapLevel[incomingVertex]
 				$(selector).unwrap()
 				i++
 		that

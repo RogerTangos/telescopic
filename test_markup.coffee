@@ -94,15 +94,6 @@ test '.markup createStartListForChildren returns key-value lists based on the in
 	equal(markupZ.getWraps()[vertexG][1][0], vertexS)
 	equal(markupZ.getWraps()[vertexG][1][1], vertexT)
 
-test '.markup determineWrapLevel determines number of wraps will need to be undone', ->
-	makeYAndZ()
-	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
-	equal(markupY.determineWrapLevel(), 1)
-	equal(markupZ.determineWrapLevel(), 1)
-	markupY.content = '<div><p></p></div>'
-	equal(markupY.determineWrapLevel(), 2)
-
-
 test '.markup can wrap', ->
 	makeYAndZ()
 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
@@ -118,14 +109,49 @@ test '.markup can wrap', ->
 	ok($('#tText_T').parent()[0] == $('#tText_S').parent()[0])
 
 
+
+test '.markup setWrapLevel determines number of wraps will need to be undone', ->
+	makeYAndZ()
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+	
+	### test with default of one wrapper.  ###
+	markupY.content = '<em></em>'
+	markupY.setWrapLevel(vertexP)
+	equal(markupY.getWrapLevel(vertexP), 1, 'happy path. One wrapper')
+	
+	### test with two wrappers ###
+	markupY.content = '<div><p></p></div>'
+	markupY.setWrapLevel(vertexR)
+	equal(markupY.getWrapLevel(vertexR), 2, 'happy path. nested wrappers')
+
+	makeYAndZ()
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+
+	### messed up path. html is not good for wrapping ###
+	markupZ.content = '<p><div></div></p>'
+	markupZ.setWrapLevel(vertexC)
+	equal(markupZ.getWrapLevel(vertexC), 1)
+
+	### selector path ###
+	markupZ.content = 'div'
+	markupZ.setWrapLevel(vertexG)
+	ok(markupZ.getWrapLevel(vertexG) > 1, 'uses selector to wrap. depends on what\'s in html')
+
+
 test '.markup can upwrap', ->
+	### this is wrong.  The reason is that spec._wrapLevel only
+	store the wrap-level for one key. It should store both.###
+
 	makeYAndZ()
 	makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 	markupZ.receiveForwardClick(vertexC)
 	markupZ.receiveForwardClick(vertexG)
 
 	markupZ.receiveReverseClickFromParent(vertexC)
-	equal($('#tText_Q').parent()[0].tagName, 'DIV')
+	equal($('#tText_H').parent()[0].tagName, 'DIV', 'test wrapping on H from Z')
+
+	markupZ.receiveReverseClickFromParent(vertexG)	
+	equal($('#tText_Q').parent()[0].tagName, 'DIV', 'testWrapping on Q from none')
 	equal($('#tText_S').parent()[0].tagName, 'DIV')
 	equal($('#tText_T').parent()[0].tagName, 'DIV')
 
@@ -150,4 +176,5 @@ isEmpty = (obj) ->
   for key of obj
     return false  if obj.hasOwnProperty(key)
   true
+
 

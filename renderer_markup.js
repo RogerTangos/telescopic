@@ -3,11 +3,14 @@ telescopicText.markup = function(spec) {
   var that;
   that = telescopicText.vertex(spec);
   spec._wraps = {};
-  spec._wrapLevel = 0;
+  spec._wrapLevel = {};
   /* overridden*/
 
   that.getRemainAfterClick = function() {
     return true;
+  };
+  that.getWrapLevel = function(key) {
+    return spec._wrapLevel[key];
   };
   /* remove unnecessary functions*/
 
@@ -44,28 +47,31 @@ telescopicText.markup = function(spec) {
     }
     return nodeDict;
   };
-  that.determineWrapLevel = function() {
-    var current, htmlArray, isHtmlString;
+  that.setWrapLevel = function(incomingVertex) {
+    var current, htmlArray, isHtmlString, _results;
     isHtmlString = /^\<.+\>/.test(that.content);
     if (isHtmlString) {
+      spec._wrapLevel[incomingVertex] = 1;
       /* convert to html using jquery*/
 
       htmlArray = $(that.content);
-      current = htmlArray[0];
-      while (current) {
-        spec._wrapLevel += 1;
-        current = current[0];
+      current = htmlArray.children();
+      _results = [];
+      while (current[0]) {
+        spec._wrapLevel[incomingVertex] += 1;
+        _results.push(current = current.children());
       }
+      return _results;
     } else {
-      spec._wrapLevel = $(that.content).length;
+      return spec._wrapLevel[incomingVertex] = $(that.content).length;
     }
-    return spec._wrapLevel;
   };
+  that;
   /* forward clicks*/
 
   that.receiveForwardClick = function(incomingVertex) {
     var key, linkArray, next, nextName, nodeDict, value, wrapArray;
-    that.determineWrapLevel(that.content);
+    that.setWrapLevel(incomingVertex);
     /* create arrays of linked lists. push them to
     			wrapArray. Weird stuff with key not giving objects
     			correctly. Hence, the .getName() shuffle
@@ -136,7 +142,7 @@ telescopicText.markup = function(spec) {
       }
       selector = '#tText_' + vertexArray.join(', #tText_');
       i = 0;
-      while (i < spec._wrapLevel) {
+      while (i < spec._wrapLevel[incomingVertex]) {
         $(selector).unwrap();
         i++;
       }
