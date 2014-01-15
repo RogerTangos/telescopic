@@ -329,6 +329,8 @@ telescopicText.vertex = (spec) ->
 	that.setDomVisibility= (jQueryObject)->
 		if !jQueryObject
 			jQueryObject = $('#'+that.findDomId())		
+		
+		### not particularly happy that this happens every time###
 		jQueryObject.click ->
 			that.userClick()
 
@@ -340,19 +342,22 @@ telescopicText.vertex = (spec) ->
 			that.setDomForwardVisibility(jQueryObject)
 		else if !telescopicText.forward
 			that.setDomReverseVisibility(jQueryObject)
-
+		jQueryObject.show()
 		that
 
 	that.setDomForwardVisibility = (jQueryObject) ->
+		jQueryObject.removeClass('tText_reversable')
 		if that.findClicksRemaining() > 0
 			jQueryObject.addClass('tText_clickable')
 		else
 			jQueryObject.removeClass('tText_clickable')
-		jQueryObject.show()
+		that
 
 	that.setDomReverseVisibility = (jQueryObject) ->
-		console.log 'setDomReverseVisibility'
-		true
+		jQueryObject.removeClass('tText_clickable')
+		if that.shouldBeReverseClickable()
+			jQueryObject.addClass('tText_reversable')
+		that
 
 	### override toString, so that inserting nodes as keys works. ###
 	that.toString= ->

@@ -71,13 +71,16 @@ test 'graph.forward is true when alt keyup', ->
 
 test 'verticies are correctly highlighted during keydown', ->
 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+	$('#tText_A').click()
+
 	equal(telescopicText.forward, true)
 	e = jQuery.Event("keydown")
 	e.altKey = true
 	$(document).trigger(e)
 
-	$('#tText_A').click()
+	
 	ok($('#tText_B').hasClass('tText_reversable'))
+	ok(!$('#tText_A').hasClass('tText_clickable'))
 
 
 

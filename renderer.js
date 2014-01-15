@@ -428,6 +428,8 @@ telescopicText.vertex = function(spec) {
     if (!jQueryObject) {
       jQueryObject = $('#' + that.findDomId());
     }
+    /* not particularly happy that this happens every time*/
+
     jQueryObject.click(function() {
       return that.userClick();
     });
@@ -440,19 +442,24 @@ telescopicText.vertex = function(spec) {
     } else if (!telescopicText.forward) {
       that.setDomReverseVisibility(jQueryObject);
     }
+    jQueryObject.show();
     return that;
   };
   that.setDomForwardVisibility = function(jQueryObject) {
+    jQueryObject.removeClass('tText_reversable');
     if (that.findClicksRemaining() > 0) {
       jQueryObject.addClass('tText_clickable');
     } else {
       jQueryObject.removeClass('tText_clickable');
     }
-    return jQueryObject.show();
+    return that;
   };
   that.setDomReverseVisibility = function(jQueryObject) {
-    console.log('setDomReverseVisibility');
-    return true;
+    jQueryObject.removeClass('tText_clickable');
+    if (that.shouldBeReverseClickable()) {
+      jQueryObject.addClass('tText_reversable');
+    }
+    return that;
   };
   /* override toString, so that inserting nodes as keys works.*/
 
