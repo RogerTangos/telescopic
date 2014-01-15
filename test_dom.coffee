@@ -45,12 +45,44 @@ test 'verticies are wrapped after foward click', ->
 
 	equal(1,1)
 
-
 test 'user clicks an individual vertex', ->
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 	$('#tText_A').click()
 	equal($('#tText_A').is(':visible'), false)
 	equal($('#tText_B').is(':visible'), true)
 	equal($('#tText_C').is(':visible'), true)
+
+test 'graph.forward is false when alt downkey', ->
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+	equal(telescopicText.forward, true)
+	e = jQuery.Event("keydown")
+	e.altKey = true
+	$(document).trigger(e)
+	equal(telescopicText.forward, false)
+
+
+test 'graph.forward is true when alt keyup', ->
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+	telescopicText.forward = false
+	e = jQuery.Event("keyup")
+	e.altKey = true
+	$(document).trigger(e)
+	equal(telescopicText.forward, true)
+
+test 'verticies are correctly highlighted during keydown', ->
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+	equal(telescopicText.forward, true)
+	e = jQuery.Event("keydown")
+	e.altKey = true
+	$(document).trigger(e)
+
+	$('#tText_A').click()
+	ok($('#tText_B').hasClass('tText_reversable'))
+
+
+
+
+
 
 
 

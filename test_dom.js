@@ -50,3 +50,43 @@ test('verticies are wrapped after foward click', function() {
   vertexC.forwardClick();
   return equal(1, 1);
 });
+
+test('user clicks an individual vertex', function() {
+  var graph1;
+  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
+  $('#tText_A').click();
+  equal($('#tText_A').is(':visible'), false);
+  equal($('#tText_B').is(':visible'), true);
+  return equal($('#tText_C').is(':visible'), true);
+});
+
+test('graph.forward is false when alt downkey', function() {
+  var e, graph1;
+  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
+  equal(telescopicText.forward, true);
+  e = jQuery.Event("keydown");
+  e.altKey = true;
+  $(document).trigger(e);
+  return equal(telescopicText.forward, false);
+});
+
+test('graph.forward is true when alt keyup', function() {
+  var e, graph1;
+  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
+  telescopicText.forward = false;
+  e = jQuery.Event("keyup");
+  e.altKey = true;
+  $(document).trigger(e);
+  return equal(telescopicText.forward, true);
+});
+
+test('verticies are correctly highlighted during keydown', function() {
+  var e, graph1;
+  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
+  equal(telescopicText.forward, true);
+  e = jQuery.Event("keydown");
+  e.altKey = true;
+  $(document).trigger(e);
+  $('#tText_A').click();
+  return ok($('#tText_B').hasClass('tText_reversable'));
+});

@@ -1,0 +1,19 @@
+.tText_clickable {
+	background-color:#C6E8E8;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+.tText_reversable {
+	background-color:#DFE4E4;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+.tText_reversable:hover{
+	backgrond-color:#66FF99;
+}
+
+.tText_clickable:hover {
+	background-color:#8BA2A2;
+}

@@ -1,12 +1,27 @@
 telescopicText = {}
 telescopicText.forward = true
 telescopicText.graphs = {}
+telescopicText.enableReversable = ->
+	console.log 'reverse mode enabled'
+	for key, value of this.graphs
+		if /\[object\ telescopicText\.graph/.test(value.toString)
+			value.reverseMode()
+	console.log 'reverse mode enabled'
+	this
+telescopicText.enableForward = ->
+	for key, value of this.graphs
+		if /\[object\ telescopicText\.graph/.test(value.toString)
+			value.forwardMode()
+	console.log 'forward mode enabled'
+	this
+
 telescopicText.reset = -> telescopicText.graph({_name:'telescopicDefaultID'})
 telescopicText.graph = (spec) ->
 	### set defaults ###
 	spec = spec || {}
 	spec._name = spec._name || 'telescopicDefaultID' 
 	### private attributes ###
+	spec._startVertex
 	that = {}
 	_nodes = {}
 	### constructor. default text, and insert into graphs ###
@@ -28,11 +43,11 @@ telescopicText.graph = (spec) ->
 		that
 
 	that.makeLinkedList = (startVertex) ->
-		startVertex = that.getNode(startVertex)
-		currentVertex = startVertex
+		spec._startVertex = that.getNode(startVertex)
+		currentVertex = spec._startVertex
 		nextVertex = that.getNode(currentVertex.getNext())
 
-		if !startVertex.getNext()
+		if !spec._startVertex.getNext()
 			console.log 'Careful! This graph only has one vertex linked.' 
 			+ 'and that seems pretty silly to me.'
 
@@ -48,7 +63,7 @@ telescopicText.graph = (spec) ->
 				currentVertex = nextVertex
 				nextVertex = that.getNode(currentVertex.getNext())
 
-		that.setUpDom(startVertex)
+		that.setUpDom(spec._startVertex)
 		that
 
 	that.setUpDom = (startVertex) ->
@@ -78,9 +93,26 @@ telescopicText.graph = (spec) ->
 			value.setChildrenReferences()
 		that
 
+	that.reverseMode= ->
+		vertex = spec._startVertex
+
+
+
+		console.log that.toString() + 'reverseMode enabled'
+
+	that.forwardMode= ->
+		console.log that.toString() + 'forwardMode enabled'
+
+
+	that.toString= ->
+		"[object telescopicText.graph " + spec._name + "]"
+
 	return that
 
-### object level functions ###
+telescopicText.graph::toString = ->
+	'[object telescopicText.graph]'
+
+### class level functions ###
 telescopicText.graph.link= (fromVertex, toVertex) ->
 	#link two vertexes. needs to be passed vertex objects, not just their keys
 	fromVertex.setNext(toVertex)
@@ -108,6 +140,12 @@ telescopicText.graph.safeUnlink = (vertex) ->
 		next.setPrevious(previous)
 	if previous
 		previous.setNext(next)
+
+
+###################################
+############# VERTEX ##############
+###################################
+
 
 telescopicText.vertex = (spec) ->
 	### set defaults ###
@@ -284,25 +322,36 @@ telescopicText.vertex = (spec) ->
 
 	### DOM manipulation ###
 	that.setDomVisibility= (jQueryObject)->
-		if ! jQueryObject
+		if !jQueryObject
 			jQueryObject = $('#'+that.findDomId())
 		
 		jQueryObject.click ->
 			that.userClick()
-		if that.shouldBeVisible()
+			
+		if that.shouldBeVisible() && telescopicText.forward
+			# that.setDomForwardVisibility(jQueryObject)
 
 			if that.findClicksRemaining() > 0
 				jQueryObject.addClass('tText_clickable')
 			else
 				jQueryObject.removeClass('tText_clickable')
-
 			jQueryObject.show()
+
 		else
 			jQueryObject.hide()
 
 		that
 
+	that.setDomForwardVisibility = (jQueryObject) ->
+		if that.findClicksRemaining() > 0
+				jQueryObject.addClass('tText_clickable')
+		else
+			jQueryObject.removeClass('tText_clickable')
+		jQueryObject.show()
 
+
+	that.setDomReverseVisibility = (jQueryObject) ->
+		true
 
 	### override toString, so that inserting nodes as keys works. ###
 	that.toString= ->
@@ -315,3 +364,14 @@ telescopicText.vertex = (spec) ->
 telescopicText.vertex::toString = ->
   "[object telescopicText.vertex]"
 
+
+document.onkeyup= (event) ->
+	if event.altKey
+		telescopicText.forward = true
+		telescopicText.enableForward()
+
+document.onkeydown = (event) ->
+	if telescopicText.forward && event.altKey 
+		telescopicText.forward = false
+		telescopicText.enableReversable()
+	

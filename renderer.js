@@ -7,6 +7,33 @@ telescopicText.forward = true;
 
 telescopicText.graphs = {};
 
+telescopicText.enableReversable = function() {
+  var key, value, _ref;
+  console.log('reverse mode enabled');
+  _ref = this.graphs;
+  for (key in _ref) {
+    value = _ref[key];
+    if (/\[object\ telescopicText\.graph/.test(value.toString)) {
+      value.reverseMode();
+    }
+  }
+  console.log('reverse mode enabled');
+  return this;
+};
+
+telescopicText.enableForward = function() {
+  var key, value, _ref;
+  _ref = this.graphs;
+  for (key in _ref) {
+    value = _ref[key];
+    if (/\[object\ telescopicText\.graph/.test(value.toString)) {
+      value.forwardMode();
+    }
+  }
+  console.log('forward mode enabled');
+  return this;
+};
+
 telescopicText.reset = function() {
   return telescopicText.graph({
     _name: 'telescopicDefaultID'
@@ -108,10 +135,23 @@ telescopicText.graph = function(spec) {
     }
     return that;
   };
+  that.reverseMode = function() {
+    return console.log(that.toString() + 'reverseMode enabled');
+  };
+  that.forwardMode = function() {
+    return console.log(that.toString() + 'forwardMode enabled');
+  };
+  that.toString = function() {
+    return "[object telescopicText.graph " + spec._name + "]";
+  };
   return that;
 };
 
-/* object level functions*/
+telescopicText.graph.prototype.toString = function() {
+  return '[object telescopicText.graph]';
+};
+
+/* class level functions*/
 
 
 telescopicText.graph.link = function(fromVertex, toVertex) {
@@ -420,4 +460,18 @@ telescopicText.vertex = function(spec) {
 
 telescopicText.vertex.prototype.toString = function() {
   return "[object telescopicText.vertex]";
+};
+
+document.onkeyup = function(event) {
+  if (event.altKey) {
+    telescopicText.forward = true;
+    return telescopicText.enableForward();
+  }
+};
+
+document.onkeydown = function(event) {
+  if (telescopicText.forward && event.altKey) {
+    telescopicText.forward = false;
+    return telescopicText.enableReversable();
+  }
 };
