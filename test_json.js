@@ -3,6 +3,7 @@ var makeTestVerticies;
 
 makeTestVerticies = function() {
   var graph1;
+  telescopicText.reset();
   window.vertexA = telescopicText.vertex({
     _name: 'A',
     content: 'a',

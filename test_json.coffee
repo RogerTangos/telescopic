@@ -1,4 +1,5 @@
 makeTestVerticies = ->
+	telescopicText.reset()
 	window.vertexA = telescopicText.vertex(
 		_name: 'A',
 		content: 'a',

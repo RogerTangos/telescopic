@@ -7,37 +7,24 @@ telescopicText.forward = true;
 
 telescopicText.graphs = {};
 
-telescopicText.enableReversable = function() {
-  var key, value, _ref;
-  console.log('reverse mode enabled');
-  _ref = this.graphs;
-  for (key in _ref) {
-    value = _ref[key];
-    if (/\[object\ telescopicText\.graph/.test(value.toString)) {
-      value.reverseMode();
-    }
-  }
-  console.log('reverse mode enabled');
-  return this;
-};
-
-telescopicText.enableForward = function() {
+telescopicText.toggleDirection = function() {
   var key, value, _ref;
   _ref = this.graphs;
   for (key in _ref) {
     value = _ref[key];
     if (/\[object\ telescopicText\.graph/.test(value.toString)) {
-      value.forwardMode();
+      value.toggleDirectionMode();
     }
   }
-  console.log('forward mode enabled');
+  console.log('direction toggled');
   return this;
 };
 
 telescopicText.reset = function() {
-  return telescopicText.graph({
+  telescopicText.graph({
     _name: 'telescopicDefaultID'
   });
+  return telescopicText.forward = true;
 };
 
 telescopicText.graph = function(spec) {
@@ -48,6 +35,7 @@ telescopicText.graph = function(spec) {
   spec._name = spec._name || 'telescopicDefaultID';
   /* private attributes*/
 
+  spec._startVertex = null;
   that = {};
   _nodes = {};
   /* constructor. default text, and insert into graphs*/
@@ -78,10 +66,10 @@ telescopicText.graph = function(spec) {
   };
   that.makeLinkedList = function(startVertex) {
     var currentVertex, nextVertex;
-    startVertex = that.getNode(startVertex);
-    currentVertex = startVertex;
+    spec._startVertex = that.getNode(startVertex);
+    currentVertex = spec._startVertex;
     nextVertex = that.getNode(currentVertex.getNext());
-    if (!startVertex.getNext()) {
+    if (!spec._startVertex.getNext()) {
       console.log('Careful! This graph only has one vertex linked.');
       +'and that seems pretty silly to me.';
     }
@@ -97,7 +85,7 @@ telescopicText.graph = function(spec) {
         nextVertex = that.getNode(currentVertex.getNext());
       }
     }
-    that.setUpDom(startVertex);
+    that.setUpDom(spec._startVertex);
     return that;
   };
   that.setUpDom = function(startVertex) {
@@ -135,11 +123,19 @@ telescopicText.graph = function(spec) {
     }
     return that;
   };
-  that.reverseMode = function() {
-    return console.log(that.toString() + 'reverseMode enabled');
-  };
-  that.forwardMode = function() {
-    return console.log(that.toString() + 'forwardMode enabled');
+  that.toggleDirectionMode = function() {
+    var vertex;
+    if (!spec._startVertex) {
+      console.log(this.toString() + 'has not been made into ' + 'a linked list. You must call .makeLinkedList(startVertex) ' + 'before attempting to reverse this graph.');
+      return this;
+    }
+    vertex = spec._startVertex;
+    while (vertex.getNext()) {
+      vertex.setDomVisibility();
+      vertex = vertex.getNext();
+    }
+    console.log(that.toString() + 'toggleDirectionMode run');
+    return this;
   };
   that.toString = function() {
     return "[object telescopicText.graph " + spec._name + "]";
@@ -435,17 +431,28 @@ telescopicText.vertex = function(spec) {
     jQueryObject.click(function() {
       return that.userClick();
     });
-    if (that.shouldBeVisible()) {
-      if (that.findClicksRemaining() > 0) {
-        jQueryObject.addClass('tText_clickable');
-      } else {
-        jQueryObject.removeClass('tText_clickable');
-      }
-      jQueryObject.show();
-    } else {
+    if (!that.shouldBeVisible()) {
       jQueryObject.hide();
+      return that;
+    }
+    if (telescopicText.forward) {
+      that.setDomForwardVisibility(jQueryObject);
+    } else if (!telescopicText.forward) {
+      that.setDomReverseVisibility(jQueryObject);
     }
     return that;
+  };
+  that.setDomForwardVisibility = function(jQueryObject) {
+    if (that.findClicksRemaining() > 0) {
+      jQueryObject.addClass('tText_clickable');
+    } else {
+      jQueryObject.removeClass('tText_clickable');
+    }
+    return jQueryObject.show();
+  };
+  that.setDomReverseVisibility = function(jQueryObject) {
+    console.log('setDomReverseVisibility');
+    return true;
   };
   /* override toString, so that inserting nodes as keys works.*/
 
@@ -463,15 +470,17 @@ telescopicText.vertex.prototype.toString = function() {
 };
 
 document.onkeyup = function(event) {
-  if (event.altKey) {
+  /* event.altkey doesn't work on all browser*/
+
+  if (event.altKey || event.keyCode === 18) {
     telescopicText.forward = true;
-    return telescopicText.enableForward();
+    return telescopicText.toggleDirection();
   }
 };
 
 document.onkeydown = function(event) {
-  if (telescopicText.forward && event.altKey) {
+  if (telescopicText.forward && (event.altKey || event.keyCode === 18)) {
     telescopicText.forward = false;
-    return telescopicText.enableReversable();
+    return telescopicText.toggleDirection();
   }
 };

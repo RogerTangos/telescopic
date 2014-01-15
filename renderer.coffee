@@ -1,27 +1,29 @@
 telescopicText = {}
 telescopicText.forward = true
 telescopicText.graphs = {}
-telescopicText.enableReversable = ->
-	console.log 'reverse mode enabled'
+telescopicText.toggleDirection = ->
 	for key, value of this.graphs
 		if /\[object\ telescopicText\.graph/.test(value.toString)
-			value.reverseMode()
-	console.log 'reverse mode enabled'
+			value.toggleDirectionMode()
+	console.log 'direction toggled'
 	this
-telescopicText.enableForward = ->
-	for key, value of this.graphs
-		if /\[object\ telescopicText\.graph/.test(value.toString)
-			value.forwardMode()
-	console.log 'forward mode enabled'
-	this
+# telescopicText.enableForward = ->
+# 	for key, value of this.graphs
+# 		if /\[object\ telescopicText\.graph/.test(value.toString)
+# 			value.forwardMode()
+# 	console.log 'forward mode enabled'
+# 	this
 
-telescopicText.reset = -> telescopicText.graph({_name:'telescopicDefaultID'})
+telescopicText.reset = -> 
+	telescopicText.graph({_name:'telescopicDefaultID'})
+	telescopicText.forward = true
+
 telescopicText.graph = (spec) ->
 	### set defaults ###
 	spec = spec || {}
 	spec._name = spec._name || 'telescopicDefaultID' 
 	### private attributes ###
-	spec._startVertex
+	spec._startVertex = null
 	that = {}
 	_nodes = {}
 	### constructor. default text, and insert into graphs ###
@@ -93,16 +95,19 @@ telescopicText.graph = (spec) ->
 			value.setChildrenReferences()
 		that
 
-	that.reverseMode= ->
+	that.toggleDirectionMode= ->
+		if !spec._startVertex
+			console.log this.toString() + 'has not been made into ' +
+			'a linked list. You must call .makeLinkedList(startVertex) ' +
+			'before attempting to reverse this graph.'
+			return this  
+
 		vertex = spec._startVertex
-
-
-
-		console.log that.toString() + 'reverseMode enabled'
-
-	that.forwardMode= ->
-		console.log that.toString() + 'forwardMode enabled'
-
+		while vertex.getNext()
+			vertex.setDomVisibility()
+			vertex = vertex.getNext()
+		console.log that.toString() + 'toggleDirectionMode run'
+		this
 
 	that.toString= ->
 		"[object telescopicText.graph " + spec._name + "]"
@@ -323,34 +328,30 @@ telescopicText.vertex = (spec) ->
 	### DOM manipulation ###
 	that.setDomVisibility= (jQueryObject)->
 		if !jQueryObject
-			jQueryObject = $('#'+that.findDomId())
-		
+			jQueryObject = $('#'+that.findDomId())		
 		jQueryObject.click ->
 			that.userClick()
-			
-		if that.shouldBeVisible() && telescopicText.forward
-			# that.setDomForwardVisibility(jQueryObject)
 
-			if that.findClicksRemaining() > 0
-				jQueryObject.addClass('tText_clickable')
-			else
-				jQueryObject.removeClass('tText_clickable')
-			jQueryObject.show()
-
-		else
+		if !that.shouldBeVisible()
 			jQueryObject.hide()
+			return that
+			
+		if telescopicText.forward
+			that.setDomForwardVisibility(jQueryObject)
+		else if !telescopicText.forward
+			that.setDomReverseVisibility(jQueryObject)
 
 		that
 
 	that.setDomForwardVisibility = (jQueryObject) ->
 		if that.findClicksRemaining() > 0
-				jQueryObject.addClass('tText_clickable')
+			jQueryObject.addClass('tText_clickable')
 		else
 			jQueryObject.removeClass('tText_clickable')
 		jQueryObject.show()
 
-
 	that.setDomReverseVisibility = (jQueryObject) ->
+		console.log 'setDomReverseVisibility'
 		true
 
 	### override toString, so that inserting nodes as keys works. ###
@@ -364,14 +365,14 @@ telescopicText.vertex = (spec) ->
 telescopicText.vertex::toString = ->
   "[object telescopicText.vertex]"
 
-
 document.onkeyup= (event) ->
-	if event.altKey
+	### event.altkey doesn't work on all browser ###
+	if event.altKey || event.keyCode == 18
 		telescopicText.forward = true
-		telescopicText.enableForward()
+		telescopicText.toggleDirection()
 
 document.onkeydown = (event) ->
-	if telescopicText.forward && event.altKey 
+	if telescopicText.forward && (event.altKey || event.keyCode ==18) 
 		telescopicText.forward = false
-		telescopicText.enableReversable()
+		telescopicText.toggleDirection()
 	
