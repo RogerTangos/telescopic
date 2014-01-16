@@ -132,7 +132,7 @@ telescopicText.graph = function(spec) {
       return this;
     }
     vertex = spec._startVertex;
-    while (vertex.getNext()) {
+    while (vertex) {
       vertex.setDomVisibility();
       vertex = vertex.getNext();
     }
