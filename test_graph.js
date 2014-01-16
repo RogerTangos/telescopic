@@ -13,10 +13,10 @@ test('forward click a node, vertexA. Test vertexA visibility and clicks remainin
   var graph1;
   telescopicText.reset();
   graph1 = makeTestVerticies().setGraphChildReferences();
-  equal(vertexA.findClicksRemaining(), 1);
+  equal(vertexA.findClicksRemaining(), 1, 'vertexA visible on start');
   vertexA.forwardClick();
-  equal(vertexA.findClicksRemaining(), 0);
-  return equal(vertexA.shouldBeVisible(), false);
+  equal(vertexA.findClicksRemaining(), 0, 'vertexA has one less click remaining after click');
+  return equal(vertexA.shouldBeVisible(), false, 'vertexA should be hidden after click');
 });
 
 test('make sure hidden nodes give correct visibility.', function() {

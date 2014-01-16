@@ -200,19 +200,18 @@ telescopicText.vertex = (spec) ->
 		str
 	that.shouldBeVisible = ->
 		# ### starter case ###
-		# if that.children.length == 0
-		# 	true
-		if that.getStarter() && that.findClicksRemaining() > 0
-			true
-		else if that.getStarter() && that.getRemainAfterClick()
-			true
-			### not a starter node ###
-		else if that.findClicksRemaining() > 0 && that.incomingTree[0]
-			true
-		else if that.incomingTree[0] && that.getRemainAfterClick()
-			true
+		if spec._starter || that.incomingTree[0]
+			if spec._children.length == 0
+				true
+			else if spec._remainAfterClick
+				true
+			else if that.findClicksRemaining() > 0
+				true
+			else
+				false
 		else
-			false		
+			false
+		
 	that.forwardDetermineAndSetIncomingEdge= (incomingVertex)->
 		### assumes that incomingVertex is valid ###
 		if !that.incomingTree[0] and !that.getStarter()

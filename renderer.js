@@ -265,16 +265,16 @@ telescopicText.vertex = function(spec) {
     return str;
   };
   that.shouldBeVisible = function() {
-    if (that.getStarter() && that.findClicksRemaining() > 0) {
-      return true;
-    } else if (that.getStarter() && that.getRemainAfterClick()) {
-      return true;
-      /* not a starter node*/
-
-    } else if (that.findClicksRemaining() > 0 && that.incomingTree[0]) {
-      return true;
-    } else if (that.incomingTree[0] && that.getRemainAfterClick()) {
-      return true;
+    if (spec._starter || that.incomingTree[0]) {
+      if (spec._children.length === 0) {
+        return true;
+      } else if (spec._remainAfterClick) {
+        return true;
+      } else if (that.findClicksRemaining() > 0) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }

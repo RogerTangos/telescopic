@@ -89,5 +89,5 @@ test('verticies are correctly highlighted during keydown', function() {
   e.altKey = true;
   $(document).trigger(e);
   ok($('#tText_B').hasClass('tText_reversable'));
-  return ok(!$('#tText_A').hasClass('tText_clickable'));
+  return equal($('#tText_A').is(':visible'), false);
 });

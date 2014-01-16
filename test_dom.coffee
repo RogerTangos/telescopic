@@ -80,7 +80,7 @@ test 'verticies are correctly highlighted during keydown', ->
 
 	
 	ok($('#tText_B').hasClass('tText_reversable'))
-	ok(!$('#tText_A').hasClass('tText_clickable'))
+	equal($('#tText_A').is(':visible'), false)
 
 
 
