@@ -1,3 +1,6 @@
+### based on the concept developed by Joe Davis at telescopictext.com ###
+### GNU GPL lisence. Fork this at https://github.com/RogerTangos/telescopic ###
+
 telescopicText = {}
 telescopicText.forward = true
 telescopicText.graphs = {}
