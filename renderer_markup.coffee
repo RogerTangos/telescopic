@@ -87,10 +87,10 @@ telescopicText.markup = (spec) ->
 	### reverse clicking utilities ###
 	that.receiveReverseClickFromParent= (parentVertex)->
 		that.unwrap(parentVertex)
-		delete spec._wraps[parentVertex]
-		delete spec._wrapLevel[parentVertex]
 		
 		### reset defaults ###
+		delete spec._wraps[parentVertex]
+		delete spec._wrapLevel[parentVertex]
 		that.setEdgesToDefault()
 		spec._clickCount += -1
 		that
