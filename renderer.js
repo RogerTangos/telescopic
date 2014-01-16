@@ -102,6 +102,7 @@ telescopicText.graph = function(spec) {
     endSpan = '</span>';
     spanObject = $(startSpan + vertex.content + endSpan);
     tagElement.append(spanObject);
+    vertex.bindClick(spanObject);
     vertex.setDomVisibility(spanObject);
     _results = [];
     while (vertex.getNext()) {
@@ -109,6 +110,7 @@ telescopicText.graph = function(spec) {
       startSpan = '<span style="display: none;" id = "' + vertex.findDomId() + '">';
       spanObject = $(startSpan + vertex.content + endSpan);
       tagElement.append(spanObject);
+      vertex.bindClick(spanObject);
       _results.push(vertex.setDomVisibility(spanObject));
     }
     return _results;
@@ -424,15 +426,18 @@ telescopicText.vertex = function(spec) {
   };
   /* DOM manipulation*/
 
+  that.bindClick = function(jQueryObject) {
+    if (!jQueryObject) {
+      jQueryObject = $('#' + that.findDomId());
+    }
+    return jQueryObject.click(function() {
+      return that.userClick();
+    });
+  };
   that.setDomVisibility = function(jQueryObject) {
     if (!jQueryObject) {
       jQueryObject = $('#' + that.findDomId());
     }
-    /* not particularly happy that this happens every time*/
-
-    jQueryObject.click(function() {
-      return that.userClick();
-    });
     if (!that.shouldBeVisible()) {
       jQueryObject.hide();
       return that;

@@ -7,12 +7,6 @@ telescopicText.toggleDirection = ->
 			value.toggleDirectionMode()
 	console.log 'direction toggled'
 	this
-# telescopicText.enableForward = ->
-# 	for key, value of this.graphs
-# 		if /\[object\ telescopicText\.graph/.test(value.toString)
-# 			value.forwardMode()
-# 	console.log 'forward mode enabled'
-# 	this
 
 telescopicText.reset = -> 
 	telescopicText.graph({_name:'telescopicDefaultID'})
@@ -80,6 +74,7 @@ telescopicText.graph = (spec) ->
 		endSpan = '</span>'
 		spanObject = $(startSpan+ vertex.content + endSpan)
 		tagElement.append(spanObject)
+		vertex.bindClick(spanObject)
 		vertex.setDomVisibility(spanObject)
 
 		while vertex.getNext()
@@ -87,6 +82,7 @@ telescopicText.graph = (spec) ->
 			startSpan = '<span style="display: none;" id = "'+ vertex.findDomId() + '">'
 			spanObject = $(startSpan+ vertex.content + endSpan)
 			tagElement.append(spanObject)
+			vertex.bindClick(spanObject)
 			vertex.setDomVisibility(spanObject)
 
 	### linking/children functions ###
@@ -325,14 +321,17 @@ telescopicText.vertex = (spec) ->
 		that
 
 	### DOM manipulation ###
+	that.bindClick = (jQueryObject) ->
+		if !jQueryObject
+			jQueryObject = $('#'+that.findDomId())		
+		
+		jQueryObject.click ->
+			that.userClick()
+
 	that.setDomVisibility= (jQueryObject)->
 		if !jQueryObject
 			jQueryObject = $('#'+that.findDomId())		
 		
-		### not particularly happy that this happens every time###
-		jQueryObject.click ->
-			that.userClick()
-
 		if !that.shouldBeVisible()
 			jQueryObject.hide()
 			return that

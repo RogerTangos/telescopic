@@ -148,7 +148,7 @@ makeTestVerticies = ->
 	window.vertexU = telescopicText.vertex({
 		_name: 'U',
 		content:'u',
-		_children: [['V']],
+		_children: [['V','T']],
 		_remainAfterClick: false,
 		_next: 'K',
 		_graph: 'graph1'})
