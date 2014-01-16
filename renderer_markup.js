@@ -110,10 +110,10 @@ telescopicText.markup = function(spec) {
 
   that.receiveReverseClickFromParent = function(parentVertex) {
     that.unwrap(parentVertex);
-    delete spec._wraps[parentVertex];
-    delete spec._wrapLevel[parentVertex];
     /* reset defaults*/
 
+    delete spec._wraps[parentVertex];
+    delete spec._wrapLevel[parentVertex];
     that.setEdgesToDefault();
     spec._clickCount += -1;
     return that;
