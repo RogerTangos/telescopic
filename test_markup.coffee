@@ -111,7 +111,6 @@ test '.markup can wrap', ->
 
 
 test '.markup setWrapLevel determines number of wraps will need to be undone', ->
-	makeYAndZ()
 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 	
 	### test with default of one wrapper.  ###
@@ -124,7 +123,6 @@ test '.markup setWrapLevel determines number of wraps will need to be undone', -
 	markupY.setWrapLevel(vertexR)
 	equal(markupY.getWrapLevel(vertexR), 2, 'happy path. nested wrappers')
 
-	makeYAndZ()
 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 
 	### messed up path. html is not good for wrapping ###
@@ -138,11 +136,9 @@ test '.markup setWrapLevel determines number of wraps will need to be undone', -
 	ok(markupZ.getWrapLevel(vertexG) > 1, 'uses selector to wrap. depends on what\'s in html')
 
 
-test '.markup can upwrap', ->
+test '.markup can unwrap', ->
 	### this is wrong.  The reason is that spec._wrapLevel only
 	store the wrap-level for one key. It should store both.###
-
-	makeYAndZ()
 	makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 	markupZ.receiveForwardClick(vertexC)
 	markupZ.receiveForwardClick(vertexG)
