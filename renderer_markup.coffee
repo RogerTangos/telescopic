@@ -1,5 +1,7 @@
 telescopicText.markup = (spec) ->
 	that = telescopicText.vertex(spec)
+	## hacky way to identify whether a vertex is type markup or not.
+	that.isMarkup = true
 
 	spec._wraps = {}
 	spec._wrapLevel = {} #number of times wrap will need to be unwrapped.

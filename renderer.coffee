@@ -323,6 +323,18 @@ telescopicText.vertex = (spec) ->
 		if that.incomingTree[0] == parentVertex
 			that.setEdgesToDefault()
 			that.setDomVisibility()
+
+			## loop to reset markup verticies in case 'that' 
+			## wasn't reverse clicked, but its sibling was
+			## assume that parent's reverse click is a valid request
+			## (so reset everything)
+
+			## make sure to test that it was clicked.
+			if that.getClickCount() > 0
+				for child_set in spec._children
+					for child in child_set
+						if child.isMarkup
+							child.receiveReverseClickFromParent(this) 
 		that
 
 	### DOM manipulation ###

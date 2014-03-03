@@ -422,9 +422,22 @@ telescopicText.vertex = function(spec) {
     return that;
   };
   that.receiveReverseClickFromParent = function(parentVertex) {
+    var child, child_set, _i, _j, _len, _len1, _ref;
     if (that.incomingTree[0] === parentVertex) {
       that.setEdgesToDefault();
       that.setDomVisibility();
+      if (that.getClickCount() > 0) {
+        _ref = spec._children;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          child_set = _ref[_i];
+          for (_j = 0, _len1 = child_set.length; _j < _len1; _j++) {
+            child = child_set[_j];
+            if (child.isMarkup) {
+              child.receiveReverseClickFromParent(this);
+            }
+          }
+        }
+      }
     }
     return that;
   };

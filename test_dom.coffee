@@ -70,6 +70,7 @@ test 'graph.forward is true when alt keyup', ->
 	equal(telescopicText.forward, true)
 
 test 'verticies are correctly highlighted during keydown', ->
+	telescopicText.reset()
 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 	$('#tText_A').click()
 
@@ -81,7 +82,6 @@ test 'verticies are correctly highlighted during keydown', ->
 	
 	ok($('#tText_B').hasClass('tText_reversable'))
 	equal($('#tText_A').is(':visible'), false)
-
 
 
 

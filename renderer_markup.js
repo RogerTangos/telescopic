@@ -2,6 +2,7 @@
 telescopicText.markup = function(spec) {
   var that;
   that = telescopicText.vertex(spec);
+  that.isMarkup = true;
   spec._wraps = {};
   spec._wrapLevel = {};
   /* overridden*/
