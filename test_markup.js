@@ -39,15 +39,6 @@ test('.markup has desired attributes', function() {
   return equal(markupY.incomingCross[0], void 0);
 });
 
-test('.markup has no forwardClick or reverseClick', function() {
-  makeYAndZ();
-  makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
-  equal(markupY.forwardClick, void 0, 'forward click is undefined');
-  equal(markupZ.forwardClick, void 0);
-  equal(markupY.reverseClick, void 0, 'reverse click is undefined');
-  return equal(markupZ.reverseClick, void 0);
-});
-
 test('.markup .getWraps() initializes objects based on next. objects.', function() {
   makeYAndZ();
   makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
@@ -123,22 +114,6 @@ test('.markup setWrapLevel determines number of wraps will need to be undone', f
   markupZ.content = 'div';
   markupZ.setWrapLevel(vertexG);
   return ok(markupZ.getWrapLevel(vertexG) > 1, 'uses selector to wrap. depends on what\'s in html');
-});
-
-test('.markup can unwrap', function() {
-  /* this is wrong.  The reason is that spec._wrapLevel only
-  	store the wrap-level for one key. It should store both.
-  */
-
-  makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
-  markupZ.receiveForwardClick(vertexC);
-  markupZ.receiveForwardClick(vertexG);
-  markupZ.receiveReverseClickFromParent(vertexC);
-  equal($('#tText_H').parent()[0].tagName, 'DIV', 'test wrapping on H from Z');
-  markupZ.receiveReverseClickFromParent(vertexG);
-  equal($('#tText_Q').parent()[0].tagName, 'DIV', 'testWrapping on Q from none');
-  equal($('#tText_S').parent()[0].tagName, 'DIV');
-  return equal($('#tText_T').parent()[0].tagName, 'DIV');
 });
 
 makeYAndZ = function() {

@@ -201,7 +201,7 @@ telescopicText.vertex = (spec) ->
 		str
 	that.shouldBeVisible = ->
 		# ### starter case ###
-		if spec._starter || that.incomingTree[0]
+		if spec._starter || that.incomingTree[0] || that.incomingCross[0]
 			if spec._children.length == 0
 				true
 			else if spec._remainAfterClick
@@ -361,7 +361,7 @@ telescopicText.vertex = (spec) ->
 		that
 
 	that.setDomForwardVisibility = (jQueryObject) ->
-		jQueryObject.removeClass('tText_reversable')
+		jQueryObject.removeClass('tText_backClickable')
 		if that.findClicksRemaining() > 0
 			jQueryObject.addClass('tText_clickable')
 		else
@@ -371,7 +371,7 @@ telescopicText.vertex = (spec) ->
 	that.setDomReverseVisibility = (jQueryObject) ->
 		jQueryObject.removeClass('tText_clickable')
 		if that.shouldBeReverseClickable()
-			jQueryObject.addClass('tText_reversable')
+			jQueryObject.addClass('tText_backClickable')
 		that
 
 	### override toString, so that inserting nodes as keys works. ###

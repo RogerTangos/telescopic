@@ -271,7 +271,7 @@ telescopicText.vertex = function(spec) {
     return str;
   };
   that.shouldBeVisible = function() {
-    if (spec._starter || that.incomingTree[0]) {
+    if (spec._starter || that.incomingTree[0] || that.incomingCross[0]) {
       if (spec._children.length === 0) {
         return true;
       } else if (spec._remainAfterClick) {
@@ -468,7 +468,7 @@ telescopicText.vertex = function(spec) {
     return that;
   };
   that.setDomForwardVisibility = function(jQueryObject) {
-    jQueryObject.removeClass('tText_reversable');
+    jQueryObject.removeClass('tText_backClickable');
     if (that.findClicksRemaining() > 0) {
       jQueryObject.addClass('tText_clickable');
     } else {
@@ -479,7 +479,7 @@ telescopicText.vertex = function(spec) {
   that.setDomReverseVisibility = function(jQueryObject) {
     jQueryObject.removeClass('tText_clickable');
     if (that.shouldBeReverseClickable()) {
-      jQueryObject.addClass('tText_reversable');
+      jQueryObject.addClass('tText_backClickable');
     }
     return that;
   };

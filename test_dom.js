@@ -29,20 +29,6 @@ test('appropriate nodes dissapear, reappear after forwardClick()', function() {
   return equal($('#tText_C').is(':visible'), true, 'C appears after A click');
 });
 
-test('appropriate nodes reappear, dissapear after reverseClick() - test 1', function() {
-  var graph1;
-  graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
-  vertexA.forwardClick();
-  equal($('#tText_B').is(':visible'), true);
-  vertexB.forwardClick();
-  equal($('#tText_B').is(':visible'), false);
-  equal($('#tText_C').is(':visible'), true);
-  vertexC.reverseClick();
-  equal($('#tText_C').is(':visible'), false, 'a and be forward clicked. c reverse clicked.');
-  equal($('#tText_B').is(':visible'), false);
-  return equal($('#tText_A').is(':visible'), true);
-});
-
 test('verticies are wrapped after foward click', function() {
   var graph1;
   graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
@@ -82,12 +68,13 @@ test('graph.forward is true when alt keyup', function() {
 
 test('verticies are correctly highlighted during keydown', function() {
   var e, graph1;
+  telescopicText.reset();
   graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA);
   $('#tText_A').click();
   equal(telescopicText.forward, true);
   e = jQuery.Event("keydown");
   e.altKey = true;
   $(document).trigger(e);
-  ok($('#tText_B').hasClass('tText_reversable'));
+  ok($('#tText_B').hasClass('tText_backClickable'));
   return equal($('#tText_A').is(':visible'), false);
 });

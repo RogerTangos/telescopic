@@ -1,0 +1,25 @@
+telescopic
+==========
+
+graph based JSON-driven text reader
+
+
+- parents go into a stack. Cross -1, cross -2, cross -n, incoming edge.
+
+- a node is reverse-clickable only if its parent has no expanded children for which it is the only parent.
+	- Test the last cross parent first.
+
+- reverse-clicking a node removes the last edge in its parent stack from itself, and all of its siblings.
+
+
+
+ben's phrasing
+==============
+
+note ben means that we reverse the node above the leaf in a tree
+
+- a node is reversable if has no expanded children for which it is the only parent
+- Reversing is the process of removing all outbound edges
+- a node is visible if it has inbound edges and no outbound edges.
+- backward-clicking on a node will try to reverse the parent node on top of its stack.
+

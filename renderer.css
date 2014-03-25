@@ -4,13 +4,13 @@
 	border-radius: 4px;
 }
 
-.tText_reversable {
+.tText_backClickable {
 	background-color:#DFE4E4;
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 }
 
-.tText_reversable:hover{
+.tText_backClickable:hover{
 	backgrond-color:#66FF99;
 }
 
