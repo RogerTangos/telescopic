@@ -52,36 +52,36 @@ test 'user clicks an individual vertex', ->
 	equal($('#tText_B').is(':visible'), true)
 	equal($('#tText_C').is(':visible'), true)
 
-test 'graph.forward is false when alt downkey', ->
-	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
-	equal(telescopicText.forward, true)
-	e = jQuery.Event("keydown")
-	e.altKey = true
-	$(document).trigger(e)
-	equal(telescopicText.forward, false)
+# test 'graph.forward is false when alt downkey', ->
+# 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+# 	equal(telescopicText.forward, true)
+# 	e = jQuery.Event("keydown")
+# 	e.altKey = true
+# 	$(document).trigger(e)
+# 	equal(telescopicText.forward, false)
 
 
-test 'graph.forward is true when alt keyup', ->
-	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
-	telescopicText.forward = false
-	e = jQuery.Event("keyup")
-	e.altKey = true
-	$(document).trigger(e)
-	equal(telescopicText.forward, true)
+# test 'graph.forward is true when alt keyup', ->
+# 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+# 	telescopicText.forward = false
+# 	e = jQuery.Event("keyup")
+# 	e.altKey = true
+# 	$(document).trigger(e)
+# 	equal(telescopicText.forward, true)
 
-test 'verticies are correctly highlighted during keydown', ->
-	telescopicText.reset()
-	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
-	$('#tText_A').click()
+# test 'verticies are correctly highlighted during keydown', ->
+# 	telescopicText.reset()
+# 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+# 	$('#tText_A').click()
 
-	equal(telescopicText.forward, true)
-	e = jQuery.Event("keydown")
-	e.altKey = true
-	$(document).trigger(e)
+# 	equal(telescopicText.forward, true)
+# 	e = jQuery.Event("keydown")
+# 	e.altKey = true
+# 	$(document).trigger(e)
 
 	
-	ok($('#tText_B').hasClass('tText_backClickable'))
-	equal($('#tText_A').is(':visible'), false)
+# 	ok($('#tText_B').hasClass('tText_backClickable'))
+# 	equal($('#tText_A').is(':visible'), false)
 
 
 

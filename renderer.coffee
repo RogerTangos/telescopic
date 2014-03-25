@@ -199,7 +199,7 @@ telescopicText.vertex = (spec) ->
 	that.findDomId = -> 
 		str = 'tText_' + spec._name
 		str
-	that.shouldBeVisible = ->
+	that.isVisible = ->
 		# ### starter case ###
 		if spec._starter || that.incomingTree[0] || that.incomingCross[0]
 			if spec._children.length == 0
@@ -242,10 +242,10 @@ telescopicText.vertex = (spec) ->
 			else
 				parentVertex = parentVertex.incomingTree[0]
 		false
-	that.shouldBeReverseClickable = ->
+	that.isBackClickable = ->
 		### need to check to make sure that parent is on the same click index as the child ###
 		if spec._clickCount == 0 &&
-				that.shouldBeVisible() && 
+				that.isVisible() && 
 				that.incomingTree[0] && 
 				spec._clickCount == 0 &&
 				that.incomingTree[0].findIndexOfChildInChildren(that) == that.incomingTree[0].getClickCount()-1
@@ -288,7 +288,7 @@ telescopicText.vertex = (spec) ->
 
 	that.forwardClick= ->
 		### catch instance in which it shouldn't be clicked ###
-		if that.findClicksRemaining() <= 0 or !that.shouldBeVisible()
+		if that.findClicksRemaining() <= 0 or !that.isVisible()
 			return that
 
 		relevantChildren = spec._children[spec._clickCount]
@@ -306,7 +306,7 @@ telescopicText.vertex = (spec) ->
 
 	### reverse clicking utilities ###
 	that.reverseClick= ->
-		if !that.shouldBeReverseClickable()
+		if !that.isBackClickable()
 			return that
 		that.incomingTree[0].receiveReverseClickFromChild(that)
 		that
@@ -349,7 +349,7 @@ telescopicText.vertex = (spec) ->
 		if !jQueryObject
 			jQueryObject = $('#'+that.findDomId())		
 		
-		if !that.shouldBeVisible()
+		if !that.isVisible()
 			jQueryObject.hide()
 			return that
 			
@@ -370,7 +370,7 @@ telescopicText.vertex = (spec) ->
 
 	that.setDomReverseVisibility = (jQueryObject) ->
 		jQueryObject.removeClass('tText_clickable')
-		if that.shouldBeReverseClickable()
+		if that.isBackClickable()
 			jQueryObject.addClass('tText_backClickable')
 		that
 

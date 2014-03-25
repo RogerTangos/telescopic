@@ -270,7 +270,7 @@ telescopicText.vertex = function(spec) {
     str = 'tText_' + spec._name;
     return str;
   };
-  that.shouldBeVisible = function() {
+  that.isVisible = function() {
     if (spec._starter || that.incomingTree[0] || that.incomingCross[0]) {
       if (spec._children.length === 0) {
         return true;
@@ -323,15 +323,6 @@ telescopicText.vertex = function(spec) {
     }
     return false;
   };
-  that.shouldBeReverseClickable = function() {
-    /* need to check to make sure that parent is on the same click index as the child*/
-
-    if (spec._clickCount === 0 && that.shouldBeVisible() && that.incomingTree[0] && spec._clickCount === 0 && that.incomingTree[0].findIndexOfChildInChildren(that) === that.incomingTree[0].getClickCount() - 1) {
-      return true;
-    } else {
-      return false;
-    }
-  };
   /* linking utilities*/
 
   that.setChildrenReferences = function() {
@@ -383,7 +374,7 @@ telescopicText.vertex = function(spec) {
     /* catch instance in which it shouldn't be clicked*/
 
     var child, relevantChildren, _i, _len;
-    if (that.findClicksRemaining() <= 0 || !that.shouldBeVisible()) {
+    if (that.findClicksRemaining() <= 0 || !that.isVisible()) {
       return that;
     }
     relevantChildren = spec._children[spec._clickCount];
@@ -403,7 +394,7 @@ telescopicText.vertex = function(spec) {
   /* reverse clicking utilities*/
 
   that.reverseClick = function() {
-    if (!that.shouldBeReverseClickable()) {
+    if (!that.isReverseClickable()) {
       return that;
     }
     that.incomingTree[0].receiveReverseClickFromChild(that);
@@ -455,7 +446,7 @@ telescopicText.vertex = function(spec) {
     if (!jQueryObject) {
       jQueryObject = $('#' + that.findDomId());
     }
-    if (!that.shouldBeVisible()) {
+    if (!that.isVisible()) {
       jQueryObject.hide();
       return that;
     }
@@ -478,7 +469,7 @@ telescopicText.vertex = function(spec) {
   };
   that.setDomReverseVisibility = function(jQueryObject) {
     jQueryObject.removeClass('tText_clickable');
-    if (that.shouldBeReverseClickable()) {
+    if (that.isReverseClickable()) {
       jQueryObject.addClass('tText_backClickable');
     }
     return that;

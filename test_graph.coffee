@@ -14,14 +14,14 @@ test 'forward click a node, vertexA. Test vertexA visibility and clicks remainin
 
 	vertexA.forwardClick()
 	equal(vertexA.findClicksRemaining(), 0, 'vertexA has one less click remaining after click')
-	equal(vertexA.shouldBeVisible(), false, 'vertexA should be hidden after click')
+	equal(vertexA.isVisible(), false, 'vertexA should be hidden after click')
 
 test 'make sure hidden nodes give correct visibility.', ->
 	telescopicText.reset()
 	graph1 = makeTestVerticies().setGraphChildReferences()
 	
-	equal(vertexC.shouldBeVisible(), false)
-	equal(vertexK.shouldBeVisible(), false)
+	equal(vertexC.isVisible(), false)
+	equal(vertexK.isVisible(), false)
 
 test 'determine and record incoming tree edges', ->
 	telescopicText.reset()
@@ -111,54 +111,54 @@ test 'visibility when forward clicking', ->
 	telescopicText.reset()
 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 
-	ok(!vertexB.shouldBeVisible() && 
-		!vertexC.shouldBeVisible() && 
-		!vertexK.shouldBeVisible() && 
-		!vertexF.shouldBeVisible())
+	ok(!vertexB.isVisible() && 
+		!vertexC.isVisible() && 
+		!vertexK.isVisible() && 
+		!vertexF.isVisible())
 
 	### happy path. vertexA "clicked" while visible ###
 	vertexA.forwardClick()
-	ok(vertexB.shouldBeVisible() && vertexC.shouldBeVisible())
-	ok(!vertexA.shouldBeVisible() && !vertexK.shouldBeVisible() && 
-		!vertexF.shouldBeVisible())
+	ok(vertexB.isVisible() && vertexC.isVisible())
+	ok(!vertexA.isVisible() && !vertexK.isVisible() && 
+		!vertexF.isVisible())
 
 	### sad path. vertexA "clicked" while it should be invisible ###
 	vertexA.forwardClick()
-	ok(vertexB.shouldBeVisible() && vertexC.shouldBeVisible())
-	ok(!vertexA.shouldBeVisible() && 
-		!vertexK.shouldBeVisible() && 
-		!vertexF.shouldBeVisible() && 
-		!vertexL.shouldBeVisible())
+	ok(vertexB.isVisible() && vertexC.isVisible())
+	ok(!vertexA.isVisible() && 
+		!vertexK.isVisible() && 
+		!vertexF.isVisible() && 
+		!vertexL.isVisible())
 
 	###sad path. vertexL "clicked" while it should be invisible ###
 	vertexL.forwardClick()
-	ok(vertexB.shouldBeVisible() && vertexC.shouldBeVisible())
-	ok(!vertexA.shouldBeVisible() && 
-		!vertexK.shouldBeVisible() && 
-		!vertexF.shouldBeVisible() && 
-		!vertexL.shouldBeVisible())
+	ok(vertexB.isVisible() && vertexC.isVisible())
+	ok(!vertexA.isVisible() && 
+		!vertexK.isVisible() && 
+		!vertexF.isVisible() && 
+		!vertexL.isVisible())
 
 	vertexB.forwardClick()
-	ok(vertexK.shouldBeVisible(), vertexC.shouldBeVisible())
-	ok(!vertexA.shouldBeVisible() && 
-		!vertexB.shouldBeVisible() &&
-		!vertexF.shouldBeVisible() &&
-		!vertexL.shouldBeVisible())
+	ok(vertexK.isVisible(), vertexC.isVisible())
+	ok(!vertexA.isVisible() && 
+		!vertexB.isVisible() &&
+		!vertexF.isVisible() &&
+		!vertexL.isVisible())
 
 	### test case for vertex with multiple sets of children ###
 	vertexC.forwardClick()
-	ok(vertexC.shouldBeVisible() && vertexF.shouldBeVisible())
-	ok(!vertexA.shouldBeVisible() && 
-		!vertexB.shouldBeVisible() &&
-		!vertexL.shouldBeVisible())
+	ok(vertexC.isVisible() && vertexF.isVisible())
+	ok(!vertexA.isVisible() && 
+		!vertexB.isVisible() &&
+		!vertexL.isVisible())
 
 	### test set [1] of children and _remain_after_click### 
 	vertexC.forwardClick()
-	ok(vertexC.shouldBeVisible() && 
-		vertexF.shouldBeVisible() && 
-		vertexL.shouldBeVisible())
-		ok(!vertexA.shouldBeVisible() && 
-		!vertexB.shouldBeVisible())
+	ok(vertexC.isVisible() && 
+		vertexF.isVisible() && 
+		vertexL.isVisible())
+		ok(!vertexA.isVisible() && 
+		!vertexB.isVisible())
 
 test 'find index of child in children', ->
 	telescopicText.reset()
@@ -176,13 +176,13 @@ test 'determine elibility for backClick', ->
 # 	telescopicText.reset()
 # 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
 # 	graphPatternOne()
-# 	ok(vertexL.shouldBeReverseClickable() &&
-# 		vertexK.shouldBeReverseClickable)
-# 	ok(!vertexF.shouldBeReverseClickable() &&
-# 		!vertexC.shouldBeReverseClickable() &&
-# 		!vertexA.shouldBeReverseClickable() &&
-# 		!vertexB.shouldBeReverseClickable() &&
-# 		!vertexA.shouldBeReverseClickable())
+# 	ok(vertexL.isReverseClickable() &&
+# 		vertexK.isReverseClickable)
+# 	ok(!vertexF.isReverseClickable() &&
+# 		!vertexC.isReverseClickable() &&
+# 		!vertexA.isReverseClickable() &&
+# 		!vertexB.isReverseClickable() &&
+# 		!vertexA.isReverseClickable())
 
 # test 'reverse click', ->
 # 	telescopicText.reset()
@@ -191,22 +191,22 @@ test 'determine elibility for backClick', ->
 
 # 	### sad path. vertexF should not be clickable. ###
 # 	vertexF.reverseClick()
-# 	ok(vertexF.shouldBeVisible() &&
-# 		vertexL.shouldBeVisible() &&
-# 		vertexC.shouldBeVisible() &&
-# 		vertexK.shouldBeVisible(), 'visibility correct after reverseClick of vertexF')
-# 	ok(!vertexB.shouldBeVisible() &&
-# 		!vertexA.shouldBeVisible())
+# 	ok(vertexF.isVisible() &&
+# 		vertexL.isVisible() &&
+# 		vertexC.isVisible() &&
+# 		vertexK.isVisible(), 'visibility correct after reverseClick of vertexF')
+# 	ok(!vertexB.isVisible() &&
+# 		!vertexA.isVisible())
 
 # 	### happy path. vertexL should be clickable ###
 # 	vertexL.reverseClick()
-# 	ok(vertexC.shouldBeVisible() && 
-# 		vertexF.shouldBeVisible() &&
-# 		vertexK.shouldBeVisible(), 'visibility correct after reverseClick of vertexL')
+# 	ok(vertexC.isVisible() && 
+# 		vertexF.isVisible() &&
+# 		vertexK.isVisible(), 'visibility correct after reverseClick of vertexL')
 
-# 	ok(!vertexA.shouldBeVisible() &&
-# 		!vertexB.shouldBeVisible() &&
-# 		!vertexL.shouldBeVisible(), 'visibility correct after reverseClick of vertexL')
+# 	ok(!vertexA.isVisible() &&
+# 		!vertexB.isVisible() &&
+# 		!vertexL.isVisible(), 'visibility correct after reverseClick of vertexL')
 
 
 ### helper function ###

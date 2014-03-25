@@ -49,7 +49,7 @@
 # 		$('#tText_D').is(':visible') && 
 # 		$('#tText_G').is(':visible') &&
 # 		$('#tText_V').is(':visible' &&
-# 		markupY.shouldBeVisible())
+# 		markupY.isVisible())
 
 # 	hiddenCorrect = ! ($('#tText_B').is(':visible') ||
 # 		$('#tText_C').is(':visible') ||
@@ -69,6 +69,6 @@
 # 		$('#tText_S').is(':visible') ||
 # 		$('#tText_T').is(':visible') ||
 # 		$('#tText_U').is(':visible') ||
-# 		markupZ.shouldBeVisible() )
+# 		markupZ.isVisible() )
 
 # 	visibleCorrect && hiddenCorrect
