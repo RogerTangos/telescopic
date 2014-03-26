@@ -184,7 +184,21 @@ telescopicText.vertex = (spec) ->
 	that.getPrevious = -> spec._previous
 	that.setPrevious = (newPrevious) -> spec._previous = newPrevious
 	that.getClickCount = -> spec._clickCount
-	that.getChildren = -> spec._children
+	that.getChildren = (node)-> # need to implemenet schema of "graph" or "tree" 
+		if !node
+			spec._children 
+		else if typeof node == "number"
+			spec._children[node]
+		else 
+			groupIndex = 0
+			for group in spec._children
+				for child in group
+					if child == node || child == node.getName()
+						return this.getChildren(groupIndex)
+						break
+				groupIndex += 1 
+
+
 	that.getRemainAfterClick = -> spec._remainAfterClick
 	that.setEdgesToDefault = ->
 		that.incomingTree[0] = false
@@ -199,6 +213,21 @@ telescopicText.vertex = (spec) ->
 	that.findDomId = -> 
 		str = 'tText_' + spec._name
 		str
+
+	that.findEdgeType =(node)->
+		node = that.getGraph().getNode(node)
+		if this.incomingTree.indexOf(node) + 1
+			"tree"
+		else if this.incomingCross.indexOf(node) + 1
+			"cross"
+		else if this.incomingForward.indexOf(node) + 1
+			"forward"
+		else if this.incomingBack.indexOf(node) + 1
+			"back"
+
+
+
+
 	that.isVisible = ->
 		# ### starter case ###
 		if spec._starter || that.incomingTree[0] || that.incomingCross[0]

@@ -33,7 +33,6 @@ test 'Vertex attributes default correctly.', ->
 	equal(nameVertex.getGraph(), telescopicText.graphs['telescopicDefaultID'])
 	equal(nameVertex.getStarter(), false)
 
-
 test 'graph can get nodes from key or object', ->
 	telescopicText.reset()
 	makeTestVerticies()
@@ -45,6 +44,34 @@ test 'graph default characteristics', ->
 	newGraph = telescopicText.graph()
 	equal(newGraph.getName(), 'telescopicDefaultID')
 	equal(newGraph.getNode('foo'), undefined)
+
+test 'getChildren returns array based on index or child given, with default graph schema', ->
+	telescopicText.reset()
+	makeTestVerticies()
+	ok(vertexC.getChildren(1) instanceof Array, "returns an array when passed an index")
+	ok(vertexC.getChildren(1)[0] == "L", "array contains correct letter when passed an index")
+
+	ok(vertexC.getChildren(vertexL) instanceof Array, "returns an array when passed a node object")
+	ok(vertexC.getChildren(vertexL)[0] == "L", "array is correct letter when passed a node object")
+
+test 'findEdgeType returns the type of edge a node\'s parent represents', ->
+	telescopicText.reset()
+	makeTestVerticies()
+	vertexC.incomingTree = [vertexA]
+	vertexC.incomingCross = [vertexF, vertexB]
+	vertexC.incomingForward = [vertexE]
+	vertexC.incomingBack = [vertexM]
+
+	ok(vertexC.findEdgeType(vertexA) == "tree", "tree edge identified")
+	ok(vertexC.findEdgeType(vertexB) == "cross", "cross edge identified")
+	ok(vertexC.findEdgeType(vertexE) == "forward", "forward edge identified")
+	ok(vertexC.findEdgeType(vertexM) == "back", "back edge identified")
+
+test 'getChildren returns a shortened array, with tree schema', ->
+	telescopicText.reset()
+	makeTestVerticies()
+
+
 
 makeDefaultVertex1 = ->
 	nameVertexSpec = {
@@ -69,5 +96,13 @@ makeDefaultVertex2 = ->
 	}
 	return telescopicText.vertex(nameVertexSpec)
 
-
-
+makeDefaultVertex3 = ->
+	nameVertexSpec = {
+		_name: 'myName',
+		content: 'myContent',
+		_children: [[a, b, c], [d, e]],
+		_remainAfterClick: true,
+		_next: true, 
+		_graph: 'defaultID2',
+		_starter: true}
+	telescopicText.vertex(nameVertexSpec)

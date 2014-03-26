@@ -246,8 +246,27 @@ telescopicText.vertex = function(spec) {
   that.getClickCount = function() {
     return spec._clickCount;
   };
-  that.getChildren = function() {
-    return spec._children;
+  that.getChildren = function(node) {
+    var child, group, groupIndex, _i, _j, _len, _len1, _ref;
+    if (!node) {
+      return spec._children;
+    } else if (typeof node === "number") {
+      return spec._children[node];
+    } else {
+      groupIndex = 0;
+      _ref = spec._children;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        group = _ref[_i];
+        for (_j = 0, _len1 = group.length; _j < _len1; _j++) {
+          child = group[_j];
+          if (child === node || child === node.getName()) {
+            return this.getChildren(groupIndex);
+            break;
+          }
+        }
+        groupIndex += 1;
+      }
+    }
   };
   that.getRemainAfterClick = function() {
     return spec._remainAfterClick;
@@ -269,6 +288,18 @@ telescopicText.vertex = function(spec) {
     var str;
     str = 'tText_' + spec._name;
     return str;
+  };
+  that.findEdgeType = function(node) {
+    node = that.getGraph().getNode(node);
+    if (this.incomingTree.indexOf(node) + 1) {
+      return "tree";
+    } else if (this.incomingCross.indexOf(node) + 1) {
+      return "cross";
+    } else if (this.incomingForward.indexOf(node) + 1) {
+      return "forward";
+    } else if (this.incomingBack.indexOf(node) + 1) {
+      return "back";
+    }
   };
   that.isVisible = function() {
     if (spec._starter || that.incomingTree[0] || that.incomingCross[0]) {
@@ -322,6 +353,15 @@ telescopicText.vertex = function(spec) {
       }
     }
     return false;
+  };
+  that.isBackClickable = function() {
+    /* need to check to make sure that parent is on the same click index as the child*/
+
+    if (spec._clickCount === 0 && that.isVisible() && that.incomingTree[0] && spec._clickCount === 0 && that.incomingTree[0].findIndexOfChildInChildren(that) === that.incomingTree[0].getClickCount() - 1) {
+      return true;
+    } else {
+      return false;
+    }
   };
   /* linking utilities*/
 
@@ -394,7 +434,7 @@ telescopicText.vertex = function(spec) {
   /* reverse clicking utilities*/
 
   that.reverseClick = function() {
-    if (!that.isReverseClickable()) {
+    if (!that.isBackClickable()) {
       return that;
     }
     that.incomingTree[0].receiveReverseClickFromChild(that);
@@ -469,7 +509,7 @@ telescopicText.vertex = function(spec) {
   };
   that.setDomReverseVisibility = function(jQueryObject) {
     jQueryObject.removeClass('tText_clickable');
-    if (that.isReverseClickable()) {
+    if (that.isBackClickable()) {
       jQueryObject.addClass('tText_backClickable');
     }
     return that;
