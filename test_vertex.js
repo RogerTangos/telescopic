@@ -79,7 +79,15 @@ test('findEdgeType returns the type of edge a node\'s parent represents', functi
 
 test('getChildren returns a shortened array, with tree schema', function() {
   telescopicText.reset();
-  return makeTestVerticies();
+  makeTestVerticies();
+  vertexJ.incomingTree = [vertexE];
+  vertexI.incomingTree = [vertexE];
+  vertexH.incomingTree = [vertexE];
+  vertexF.incomingTree = [vertexC];
+  vertexF.incomingCross = [vertexE];
+  ok(vertexE.getChildren(vertexJ, "tree") instanceof Array);
+  ok(vertexD.getChildren(vertexJ, "tree").length() === 3);
+  return ok(vertexD.getChildren(vertexJ, "tree").indexOf(f) === -1);
 });
 
 makeDefaultVertex1 = function() {

@@ -246,26 +246,57 @@ telescopicText.vertex = function(spec) {
   that.getClickCount = function() {
     return spec._clickCount;
   };
-  that.getChildren = function(node) {
-    var child, group, groupIndex, _i, _j, _len, _len1, _ref;
+  that.getChildren = function(node, schema) {
+    var child, edgeType, filteredChildren, graphChildren, group, groupIndex, _i, _j, _k, _len, _len1, _len2, _ref;
     if (!node) {
       return spec._children;
     } else if (typeof node === "number") {
       return spec._children[node];
     } else {
+      node = this.getGraph().getNode(node);
       groupIndex = 0;
+      graphChildren = [];
       _ref = spec._children;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         group = _ref[_i];
         for (_j = 0, _len1 = group.length; _j < _len1; _j++) {
           child = group[_j];
-          if (child === node || child === node.getName()) {
-            return this.getChildren(groupIndex);
+          child = this.getGraph().getNode(child);
+          if (child === node) {
+            graphChildren = this.getChildren(groupIndex);
             break;
           }
         }
         groupIndex += 1;
       }
+      if (!schema || schema === "graph") {
+        return graphChildren;
+      } else if (schema.toLowerCase() === "tree") {
+        edgeType = child.findEdgeType(this);
+        filteredChildren = [];
+        for (_k = 0, _len2 = graphChildren.length; _k < _len2; _k++) {
+          child = graphChildren[_k];
+          child = this.getGraph().getNode(child);
+          if (edgeType === "tree") {
+            if (child.incomingTree.indexOf(this) + 1) {
+              filteredChildren.push(child);
+            }
+          } else if (edgeType === "cross") {
+            if (child.incomingCross.indexOf(this) + 1) {
+              filteredChildren.push(child);
+            }
+          } else if (edgeType === "forward") {
+            if (child.incomingForward.indexOf(this) + 1) {
+              filteredChildren.push(child);
+            }
+          } else if (edgeType === "back") {
+            if (child.incomingForward.indexOf(this) + 1) {
+              filteredChildren.push(child);
+            }
+          }
+        }
+      }
+      return graphChildren;
     }
   };
   that.getRemainAfterClick = function() {

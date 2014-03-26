@@ -71,6 +71,17 @@ test 'getChildren returns a shortened array, with tree schema', ->
 	telescopicText.reset()
 	makeTestVerticies()
 
+	vertexJ.incomingTree = [vertexE]
+	vertexI.incomingTree = [vertexE]
+	vertexH.incomingTree = [vertexE]
+	
+	vertexF.incomingTree = [vertexC]
+	vertexF.incomingCross = [vertexE]
+
+	ok(vertexE.getChildren(vertexJ, "tree") instanceof Array)
+	ok(vertexD.getChildren(vertexJ, "tree").length() == 3)
+	ok(vertexD.getChildren(vertexJ, "tree").indexOf(f) == -1)
+
 
 
 makeDefaultVertex1 = ->

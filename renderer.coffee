@@ -184,19 +184,53 @@ telescopicText.vertex = (spec) ->
 	that.getPrevious = -> spec._previous
 	that.setPrevious = (newPrevious) -> spec._previous = newPrevious
 	that.getClickCount = -> spec._clickCount
-	that.getChildren = (node)-> # need to implemenet schema of "graph" or "tree" 
+	that.getChildren = (node, schema)-> # need to implemenet schema of "graph" or "tree" 
 		if !node
 			spec._children 
 		else if typeof node == "number"
-			spec._children[node]
-		else 
+			spec._children[node]		
+		else
+			node = this.getGraph().getNode(node) 
 			groupIndex = 0
+			graphChildren = []
 			for group in spec._children
 				for child in group
-					if child == node || child == node.getName()
-						return this.getChildren(groupIndex)
+					child = this.getGraph().getNode(child)
+					if child == node
+						graphChildren = this.getChildren(groupIndex)
 						break
 				groupIndex += 1 
+
+			if !schema || schema == "graph"
+				return graphChildren
+			else if schema.toLowerCase() == "tree"
+				edgeType = child.findEdgeType(this)
+				filteredChildren = []
+
+				for child in graphChildren
+					child = this.getGraph().getNode(child)
+
+					if edgeType == "tree"
+						if child.incomingTree.indexOf(this) + 1
+							filteredChildren.push(child)
+					else if edgeType == "cross"
+						if child.incomingCross.indexOf(this) + 1
+							filteredChildren.push(child)
+					else if edgeType == "forward"
+						if child.incomingForward.indexOf(this) + 1
+							filteredChildren.push(child)
+					else if edgeType == "back"
+						if child.incomingForward.indexOf(this) + 1
+							filteredChildren.push(child)
+
+
+
+
+				# find the type of parent this is
+				# filter graphChildren for that type of parent
+
+			graphChildren
+
 
 
 	that.getRemainAfterClick = -> spec._remainAfterClick
