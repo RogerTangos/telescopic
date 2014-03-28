@@ -221,7 +221,7 @@ telescopicText.vertex = (spec) ->
 		that.incomingBack = []
 		that.incomingCross = []
 
-	that.getSiblings = (edgeType) ->
+	that.getSiblings = (edgeType, includeOriginal) ->
 		if !edgeType
 			edgeType = "tree"
 
@@ -235,6 +235,11 @@ telescopicText.vertex = (spec) ->
 		convertedSiblings = []
 		for sibling in siblings
 			convertedSiblings.push(this.getGraph().getNode(sibling))
+
+		#remove the original, if requested
+		if includeOriginal == false
+			index = convertedSiblings.indexOf(that)
+			convertedSiblings.splice(index, 1)
 
 		convertedSiblings
 	 

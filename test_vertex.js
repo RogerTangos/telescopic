@@ -122,7 +122,8 @@ test('getSiblings returns siblings from a tree or graph', function() {
   ok(vertexF.getSiblings("cross").indexOf(vertexA) < 0, "vertexA is a tree sibling, not a cross sibling");
   ok(vertexF.getSiblings("cross").indexOf(vertexA) < 0, "vertexA is a tree sibling, not a cross sibling");
   ok(vertexF.getSiblings("cross").indexOf(vertexF) > -1, "vertexF should appear");
-  return ok(vertexF.getSiblings("cross").indexOf(vertexJ) > -1, "vertexJ should appear");
+  ok(vertexF.getSiblings("cross").indexOf(vertexJ) > -1, "vertexJ should appear");
+  return ok(vertexF.getSiblings("cross", false).indexOf(vertexF) < 0, "vertexF should not appear is we request the original vertex not to be included");
 });
 
 makeDefaultVertex1 = function() {

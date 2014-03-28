@@ -296,8 +296,8 @@ telescopicText.vertex = function(spec) {
     that.incomingBack = [];
     return that.incomingCross = [];
   };
-  that.getSiblings = function(edgeType) {
-    var convertedSiblings, sibling, siblings, _i, _len;
+  that.getSiblings = function(edgeType, includeOriginal) {
+    var convertedSiblings, index, sibling, siblings, _i, _len;
     if (!edgeType) {
       edgeType = "tree";
     }
@@ -311,6 +311,10 @@ telescopicText.vertex = function(spec) {
     for (_i = 0, _len = siblings.length; _i < _len; _i++) {
       sibling = siblings[_i];
       convertedSiblings.push(this.getGraph().getNode(sibling));
+    }
+    if (includeOriginal === false) {
+      index = convertedSiblings.indexOf(that);
+      convertedSiblings.splice(index, 1);
     }
     return convertedSiblings;
   };
