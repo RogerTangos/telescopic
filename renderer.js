@@ -246,58 +246,46 @@ telescopicText.vertex = function(spec) {
   that.getClickCount = function() {
     return spec._clickCount;
   };
-  that.getChildren = function(node, schema) {
-    var child, edgeType, filteredChildren, graphChildren, group, groupIndex, _i, _j, _k, _len, _len1, _len2, _ref;
-    if (!node) {
-      return spec._children;
-    } else if (typeof node === "number") {
-      return spec._children[node];
+  /* returns the children in whatever the user specifies.
+  	if the user sends a string, it reutrns a string. if they send an object
+  	it returns an object
+  */
+
+  that.getChildren = function(child, schema) {
+    var graphChildren, group, node, _i, _len, _ref;
+    graphChildren = [];
+    if (child === void 0) {
+      graphChildren = spec._children;
+    } else if (typeof child === "number") {
+      graphChildren = spec._children[child];
     } else {
-      node = this.getGraph().getNode(node);
-      groupIndex = 0;
-      graphChildren = [];
+      node = this.getGraph().getNode(child);
+      child = node.getName();
       _ref = spec._children;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         group = _ref[_i];
-        for (_j = 0, _len1 = group.length; _j < _len1; _j++) {
-          child = group[_j];
-          child = this.getGraph().getNode(child);
-          if (child === node) {
-            graphChildren = this.getChildren(groupIndex);
-            break;
-          }
-        }
-        groupIndex += 1;
-      }
-      if (!schema || schema === "graph") {
-        return graphChildren;
-      } else if (schema.toLowerCase() === "tree") {
-        edgeType = child.findEdgeType(this);
-        filteredChildren = [];
-        for (_k = 0, _len2 = graphChildren.length; _k < _len2; _k++) {
-          child = graphChildren[_k];
-          child = this.getGraph().getNode(child);
-          if (edgeType === "tree") {
-            if (child.incomingTree.indexOf(this) + 1) {
-              filteredChildren.push(child);
-            }
-          } else if (edgeType === "cross") {
-            if (child.incomingCross.indexOf(this) + 1) {
-              filteredChildren.push(child);
-            }
-          } else if (edgeType === "forward") {
-            if (child.incomingForward.indexOf(this) + 1) {
-              filteredChildren.push(child);
-            }
-          } else if (edgeType === "back") {
-            if (child.incomingForward.indexOf(this) + 1) {
-              filteredChildren.push(child);
-            }
-          }
+        if ((group.indexOf(child) > -1) || (group.indexOf(node)) > -1) {
+          graphChildren = group;
+          break;
         }
       }
-      return graphChildren;
     }
+    if (schema && (schema.toLowerCase() === "tree")) {
+      graphChildren = that.filterChildrenForTree(graphChildren);
+    }
+    return graphChildren;
+  };
+  that.filterChildrenForTree = function(arr) {
+    var child, node, treeChildren, _i, _len;
+    treeChildren = [];
+    for (_i = 0, _len = arr.length; _i < _len; _i++) {
+      child = arr[_i];
+      node = this.getGraph().getNode(child);
+      if (node.incomingTree[0] === that) {
+        treeChildren.push(child);
+      }
+    }
+    return treeChildren;
   };
   that.getRemainAfterClick = function() {
     return spec._remainAfterClick;

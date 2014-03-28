@@ -45,15 +45,6 @@ test 'graph default characteristics', ->
 	equal(newGraph.getName(), 'telescopicDefaultID')
 	equal(newGraph.getNode('foo'), undefined)
 
-test 'getChildren returns array based on index or child given, with default graph schema', ->
-	telescopicText.reset()
-	makeTestVerticies()
-	ok(vertexC.getChildren(1) instanceof Array, "returns an array when passed an index")
-	ok(vertexC.getChildren(1)[0] == "L", "array contains correct letter when passed an index")
-
-	ok(vertexC.getChildren(vertexL) instanceof Array, "returns an array when passed a node object")
-	ok(vertexC.getChildren(vertexL)[0] == "L", "array is correct letter when passed a node object")
-
 test 'findEdgeType returns the type of edge a node\'s parent represents', ->
 	telescopicText.reset()
 	makeTestVerticies()
@@ -67,7 +58,7 @@ test 'findEdgeType returns the type of edge a node\'s parent represents', ->
 	ok(vertexC.findEdgeType(vertexE) == "forward", "forward edge identified")
 	ok(vertexC.findEdgeType(vertexM) == "back", "back edge identified")
 
-test 'getChildren returns a shortened array, with tree schema', ->
+test 'filterChildrenForTree returns a shortened array when using a tree schema', ->
 	telescopicText.reset()
 	makeTestVerticies()
 
@@ -78,9 +69,35 @@ test 'getChildren returns a shortened array, with tree schema', ->
 	vertexF.incomingTree = [vertexC]
 	vertexF.incomingCross = [vertexE]
 
+	childArray = [vertexF, vertexJ, vertexI, vertexH]
+
+	ok(vertexE.filterChildrenForTree(childArray) instanceof Array, "returns an array")
+	equal(vertexE.filterChildrenForTree(childArray).indexOf(vertexF), -1, "vertexF does not have a tree edge")
+
+test 'getChildren returns array based on index or child given, with default graph schema', ->
+	telescopicText.reset()
+	makeTestVerticies()
+	ok(vertexC.getChildren(1) instanceof Array, "returns an array when passed an index")
+	ok(vertexC.getChildren(1)[0] == "L", "array contains correct letter when passed an index")
+
+	ok(vertexC.getChildren(vertexL) instanceof Array, "returns an array when passed a node object")
+	ok(vertexC.getChildren(vertexL)[0] == "L", "array is correct letter when passed a node object")
+
+
+test 'getChildren returns array based on index or child given, with tree schema', ->
+	telescopicText.reset()
+	makeTestVerticies()
+	vertexJ.incomingTree = [vertexE]
+	vertexI.incomingTree = [vertexE]
+	vertexH.incomingTree = [vertexE]
+	
+	vertexF.incomingTree = [vertexC]
+	vertexF.incomingCross = [vertexE]
+
 	ok(vertexE.getChildren(vertexJ, "tree") instanceof Array)
-	ok(vertexD.getChildren(vertexJ, "tree").length() == 3)
-	ok(vertexD.getChildren(vertexJ, "tree").indexOf(f) == -1)
+	ok(vertexE.getChildren(vertexJ, "tree").length == 3)
+	ok(vertexE.getChildren(vertexJ, "tree").indexOf(vertexF) == -1)
+	ok(vertexE.getChildren(vertexJ, "tree").indexOf("F") == -1)
 
 
 

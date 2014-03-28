@@ -184,52 +184,36 @@ telescopicText.vertex = (spec) ->
 	that.getPrevious = -> spec._previous
 	that.setPrevious = (newPrevious) -> spec._previous = newPrevious
 	that.getClickCount = -> spec._clickCount
-	that.getChildren = (node, schema)-> # need to implemenet schema of "graph" or "tree" 
-		if !node
-			spec._children 
-		else if typeof node == "number"
-			spec._children[node]		
+	### returns the children in whatever the user specifies.
+	if the user sends a string, it reutrns a string. if they send an object
+	it returns an object ###
+	that.getChildren = (child, schema)->
+		graphChildren = []
+		if child == undefined
+			graphChildren = spec._children 
+		else if typeof child == "number"
+			graphChildren = spec._children[child]		
 		else
-			node = this.getGraph().getNode(node) 
-			groupIndex = 0
-			graphChildren = []
+			node = this.getGraph().getNode(child) 
+			child = node.getName()
 			for group in spec._children
-				for child in group
-					child = this.getGraph().getNode(child)
-					if child == node
-						graphChildren = this.getChildren(groupIndex)
-						break
-				groupIndex += 1 
+				if (group.indexOf(child) > -1) || (group.indexOf(node)) > -1
+					graphChildren = group
+					break
 
-			if !schema || schema == "graph"
-				return graphChildren
-			else if schema.toLowerCase() == "tree"
-				edgeType = child.findEdgeType(this)
-				filteredChildren = []
+		if schema && (schema.toLowerCase() == "tree")
+			graphChildren = that.filterChildrenForTree(graphChildren)
+		graphChildren
 
-				for child in graphChildren
-					child = this.getGraph().getNode(child)
+	#gets children that have tree edges to this node.
+	that.filterChildrenForTree= (arr) ->
+		treeChildren = []
+		for child in arr
+			node = this.getGraph().getNode(child)
+			if node.incomingTree[0] == that
+				treeChildren.push(child)
+		treeChildren
 
-					if edgeType == "tree"
-						if child.incomingTree.indexOf(this) + 1
-							filteredChildren.push(child)
-					else if edgeType == "cross"
-						if child.incomingCross.indexOf(this) + 1
-							filteredChildren.push(child)
-					else if edgeType == "forward"
-						if child.incomingForward.indexOf(this) + 1
-							filteredChildren.push(child)
-					else if edgeType == "back"
-						if child.incomingForward.indexOf(this) + 1
-							filteredChildren.push(child)
-
-
-
-
-				# find the type of parent this is
-				# filter graphChildren for that type of parent
-
-			graphChildren
 
 
 

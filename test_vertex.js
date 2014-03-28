@@ -55,15 +55,6 @@ test('graph default characteristics', function() {
   return equal(newGraph.getNode('foo'), void 0);
 });
 
-test('getChildren returns array based on index or child given, with default graph schema', function() {
-  telescopicText.reset();
-  makeTestVerticies();
-  ok(vertexC.getChildren(1) instanceof Array, "returns an array when passed an index");
-  ok(vertexC.getChildren(1)[0] === "L", "array contains correct letter when passed an index");
-  ok(vertexC.getChildren(vertexL) instanceof Array, "returns an array when passed a node object");
-  return ok(vertexC.getChildren(vertexL)[0] === "L", "array is correct letter when passed a node object");
-});
-
 test('findEdgeType returns the type of edge a node\'s parent represents', function() {
   telescopicText.reset();
   makeTestVerticies();
@@ -77,7 +68,30 @@ test('findEdgeType returns the type of edge a node\'s parent represents', functi
   return ok(vertexC.findEdgeType(vertexM) === "back", "back edge identified");
 });
 
-test('getChildren returns a shortened array, with tree schema', function() {
+test('filterChildrenForTree returns a shortened array when using a tree schema', function() {
+  var childArray;
+  telescopicText.reset();
+  makeTestVerticies();
+  vertexJ.incomingTree = [vertexE];
+  vertexI.incomingTree = [vertexE];
+  vertexH.incomingTree = [vertexE];
+  vertexF.incomingTree = [vertexC];
+  vertexF.incomingCross = [vertexE];
+  childArray = [vertexF, vertexJ, vertexI, vertexH];
+  ok(vertexE.filterChildrenForTree(childArray) instanceof Array, "returns an array");
+  return equal(vertexE.filterChildrenForTree(childArray).indexOf(vertexF), -1, "vertexF does not have a tree edge");
+});
+
+test('getChildren returns array based on index or child given, with default graph schema', function() {
+  telescopicText.reset();
+  makeTestVerticies();
+  ok(vertexC.getChildren(1) instanceof Array, "returns an array when passed an index");
+  ok(vertexC.getChildren(1)[0] === "L", "array contains correct letter when passed an index");
+  ok(vertexC.getChildren(vertexL) instanceof Array, "returns an array when passed a node object");
+  return ok(vertexC.getChildren(vertexL)[0] === "L", "array is correct letter when passed a node object");
+});
+
+test('getChildren returns array based on index or child given, with tree schema', function() {
   telescopicText.reset();
   makeTestVerticies();
   vertexJ.incomingTree = [vertexE];
@@ -86,8 +100,9 @@ test('getChildren returns a shortened array, with tree schema', function() {
   vertexF.incomingTree = [vertexC];
   vertexF.incomingCross = [vertexE];
   ok(vertexE.getChildren(vertexJ, "tree") instanceof Array);
-  ok(vertexD.getChildren(vertexJ, "tree").length() === 3);
-  return ok(vertexD.getChildren(vertexJ, "tree").indexOf(f) === -1);
+  ok(vertexE.getChildren(vertexJ, "tree").length === 3);
+  ok(vertexE.getChildren(vertexJ, "tree").indexOf(vertexF) === -1);
+  return ok(vertexE.getChildren(vertexJ, "tree").indexOf("F") === -1);
 });
 
 makeDefaultVertex1 = function() {
