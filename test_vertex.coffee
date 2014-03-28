@@ -99,6 +99,35 @@ test 'getChildren returns array based on index or child given, with tree schema'
 	ok(vertexE.getChildren(vertexJ, "tree").indexOf(vertexF) == -1)
 	ok(vertexE.getChildren(vertexJ, "tree").indexOf("F") == -1)
 
+test 'getSiblings returns siblings from a tree or graph', ->
+	telescopicText.reset()
+	makeTestVerticies()
+
+	vertexJ.incomingTree = [vertexE]
+	vertexI.incomingTree = [vertexE]
+	vertexH.incomingTree = [vertexE]
+	
+	vertexF.incomingTree = [vertexC]
+	vertexF.incomingCross = [vertexE]
+
+	# equal(vertexF.getSiblings("tree").length == 3, "F", "vertexF has F A Z as tree siblings")
+	# equal(vertexF.getSiblings("tree").length == 3, "F", "the default behavior is to search for tree siblings")
+
+	# ok(vertexF.getSiblings("cross").length == 4, "vertexF should have A F Z as siblings")
+	# ok(vertexF.getSiblings().length == 4)
+
+
+	ok(vertexJ.getSiblings("tree").length == 3)
+	ok(vertexJ.getSiblings("tree")[1] == vertexJ.getSiblings()[1], "default behavior is to search for tree crossings")
+	ok(vertexJ.getSiblings("tree").indexOf(vertexF) < 0)
+	ok(vertexJ.getSiblings("tree").indexOf(vertexF) < 0)
+	ok(vertexJ.getSiblings("tree").indexOf(vertexH) > -1, "VertexH should appear, because it is a tree crossing")
+
+	ok(vertexF.getSiblings("cross").length == 4, "cross siblings are children from a parent tree")
+	ok(vertexF.getSiblings("cross").indexOf(vertexA) < 0, "vertexA is a tree sibling, not a cross sibling")
+	ok(vertexF.getSiblings("cross").indexOf(vertexA) < 0, "vertexA is a tree sibling, not a cross sibling")
+	ok(vertexF.getSiblings("cross").indexOf(vertexF) > -1, "vertexF should appear")
+	ok(vertexF.getSiblings("cross").indexOf(vertexJ) > -1, "vertexJ should appear")
 
 
 makeDefaultVertex1 = ->

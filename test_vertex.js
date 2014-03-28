@@ -105,6 +105,26 @@ test('getChildren returns array based on index or child given, with tree schema'
   return ok(vertexE.getChildren(vertexJ, "tree").indexOf("F") === -1);
 });
 
+test('getSiblings returns siblings from a tree or graph', function() {
+  telescopicText.reset();
+  makeTestVerticies();
+  vertexJ.incomingTree = [vertexE];
+  vertexI.incomingTree = [vertexE];
+  vertexH.incomingTree = [vertexE];
+  vertexF.incomingTree = [vertexC];
+  vertexF.incomingCross = [vertexE];
+  ok(vertexJ.getSiblings("tree").length === 3);
+  ok(vertexJ.getSiblings("tree")[1] === vertexJ.getSiblings()[1], "default behavior is to search for tree crossings");
+  ok(vertexJ.getSiblings("tree").indexOf(vertexF) < 0);
+  ok(vertexJ.getSiblings("tree").indexOf(vertexF) < 0);
+  ok(vertexJ.getSiblings("tree").indexOf(vertexH) > -1, "VertexH should appear, because it is a tree crossing");
+  ok(vertexF.getSiblings("cross").length === 4, "cross siblings are children from a parent tree");
+  ok(vertexF.getSiblings("cross").indexOf(vertexA) < 0, "vertexA is a tree sibling, not a cross sibling");
+  ok(vertexF.getSiblings("cross").indexOf(vertexA) < 0, "vertexA is a tree sibling, not a cross sibling");
+  ok(vertexF.getSiblings("cross").indexOf(vertexF) > -1, "vertexF should appear");
+  return ok(vertexF.getSiblings("cross").indexOf(vertexJ) > -1, "vertexJ should appear");
+});
+
 makeDefaultVertex1 = function() {
   var nameVertexSpec;
   nameVertexSpec = {

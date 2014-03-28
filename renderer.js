@@ -296,6 +296,24 @@ telescopicText.vertex = function(spec) {
     that.incomingBack = [];
     return that.incomingCross = [];
   };
+  that.getSiblings = function(edgeType) {
+    var convertedSiblings, sibling, siblings, _i, _len;
+    if (!edgeType) {
+      edgeType = "tree";
+    }
+    if (edgeType.toLowerCase() === "tree") {
+      siblings = that.incomingTree[0].getChildren(that, edgeType);
+    } else if (edgeType.toLowerCase() === "cross") {
+      siblings = that.incomingCross[0].getChildren(that, "tree");
+      siblings.push(this);
+    }
+    convertedSiblings = [];
+    for (_i = 0, _len = siblings.length; _i < _len; _i++) {
+      sibling = siblings[_i];
+      convertedSiblings.push(this.getGraph().getNode(sibling));
+    }
+    return convertedSiblings;
+  };
   /* public functions meta info*/
 
   that.findClicksRemaining = function() {

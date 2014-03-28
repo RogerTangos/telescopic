@@ -214,15 +214,29 @@ telescopicText.vertex = (spec) ->
 				treeChildren.push(child)
 		treeChildren
 
-
-
-
 	that.getRemainAfterClick = -> spec._remainAfterClick
 	that.setEdgesToDefault = ->
 		that.incomingTree[0] = false
 		that.incomingForward = []
 		that.incomingBack = []
 		that.incomingCross = []
+
+	that.getSiblings = (edgeType) ->
+		if !edgeType
+			edgeType = "tree"
+
+		if edgeType.toLowerCase() == "tree"
+		 	siblings = that.incomingTree[0].getChildren(that, edgeType)
+		else if edgeType.toLowerCase() == "cross"
+			siblings = that.incomingCross[0].getChildren(that, "tree")
+			siblings.push(this)
+
+		# convert siblings to nodes, because supporting letters is too hard.
+		convertedSiblings = []
+		for sibling in siblings
+			convertedSiblings.push(this.getGraph().getNode(sibling))
+
+		convertedSiblings
 	 
 	### public functions meta info ###
 	that.findClicksRemaining =->
