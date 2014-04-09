@@ -242,7 +242,41 @@ telescopicText.vertex = (spec) ->
 			convertedSiblings.splice(index, 1)
 
 		convertedSiblings
-	 
+	
+	that.clearEdge = (typeOrNode) ->
+		node = false
+		type = false
+		if ["tree","cross","back","forward"].indexOf(typeOrNode) > -1
+			type = typeOrNode.toLowerCase()
+		else
+			node = that.getGraph().getNode(typeOrNode)
+
+		if node
+			treeIndex = this.incomingTree.indexOf(node)
+			crossIndex = this.incomingCross.indexOf(node) 
+			forwardIndex = this.incomingForward.indexOf(node) 
+			backIndex = this.incomingBack.indexOf(node) 
+
+			if treeIndex > -1
+				this.incomingTree.splice(treeIndex, 1)
+			if crossIndex > -1
+				this.incomingCross.splice(crossIndex, 1)
+			if forwardIndex > -1
+				this.incomingForward.splice(forwardIndex, 1)	
+			if backIndex > -1
+				this.incomingTree.splice(backIndex, 1)			
+
+		else # remove it from the edge type
+			switch type
+				when "tree" then this.incomingTree = []
+				when "cross" then this.incomingCross = []
+				when "forward" then this.incomingForward = []
+				when "back" then this.incomingBack = []
+
+		
+
+
+
 	### public functions meta info ###
 	that.findClicksRemaining =->
 		### ignore _remainAfterClick b/c it's not a click ###

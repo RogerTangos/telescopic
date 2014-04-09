@@ -107,29 +107,60 @@ test 'getSiblings returns siblings from a tree or graph', ->
 	vertexI.incomingTree = [vertexE]
 	vertexH.incomingTree = [vertexE]
 	
+	vertexA.incomingTree = [vertexC]
 	vertexF.incomingTree = [vertexC]
 	vertexF.incomingCross = [vertexE]
 
-	# equal(vertexF.getSiblings("tree").length == 3, "F", "vertexF has F A Z as tree siblings")
-	# equal(vertexF.getSiblings("tree").length == 3, "F", "the default behavior is to search for tree siblings")
-
-	# ok(vertexF.getSiblings("cross").length == 4, "vertexF should have A F Z as siblings")
-	# ok(vertexF.getSiblings().length == 4)
-
-
 	ok(vertexJ.getSiblings("tree").length == 3)
 	ok(vertexJ.getSiblings("tree")[1] == vertexJ.getSiblings()[1], "default behavior is to search for tree crossings")
-	ok(vertexJ.getSiblings("tree").indexOf(vertexF) < 0)
-	ok(vertexJ.getSiblings("tree").indexOf(vertexF) < 0)
+	ok(vertexJ.getSiblings("tree").indexOf(vertexF) < 0, 'F should not be a tree sibling')
+	ok(vertexJ.getSiblings("tree").indexOf(vertexI) > -1, 'I should appear, because it is a tree crossing')
 	ok(vertexJ.getSiblings("tree").indexOf(vertexH) > -1, "VertexH should appear, because it is a tree crossing")
 
+	ok(vertexJ.getSiblings("tree").indexOf(vertexJ) > -1, "vertexJ should appear as its own tree sibling. Default behavior is to request this.")
+	ok(vertexJ.getSiblings("tree", true).indexOf(vertexJ) > -1, "vertexJ should appear as its own tree sibling. explicit behavior should also work")	
+	ok(vertexJ.getSiblings("tree", false).indexOf(vertexJ) < 0, "vertexJ should appear not appear if we explicitly request it not to")
+
 	ok(vertexF.getSiblings("cross").length == 4, "cross siblings are children from a parent tree")
-	ok(vertexF.getSiblings("cross").indexOf(vertexA) < 0, "vertexA is a tree sibling, not a cross sibling")
-	ok(vertexF.getSiblings("cross").indexOf(vertexA) < 0, "vertexA is a tree sibling, not a cross sibling")
-	ok(vertexF.getSiblings("cross").indexOf(vertexF) > -1, "vertexF should appear")
-	ok(vertexF.getSiblings("cross").indexOf(vertexJ) > -1, "vertexJ should appear")
+	ok(vertexF.getSiblings("cross").indexOf(vertexA) < 0, "vertexA is vertexF's tree sibling, not a cross sibling")
+	ok(vertexF.getSiblings("cross").indexOf(vertexF) > -1, "vertexF is its own cross sibling. Default behavior is to request it.")
+	ok(vertexF.getSiblings("cross").indexOf(vertexJ) > -1, "vertexJ is vertexF's cross sibling")
 
 	ok(vertexF.getSiblings("cross", false).indexOf(vertexF) < 0, "vertexF should not appear is we request the original vertex not to be included")
+	ok(vertexF.getSiblings("cross", true).indexOf(vertexF) > -1, "vertexF should appear is we explicitly request it to be included")
+
+test 'clearEdge searches a node\'s edges, and removes the given edge', ->
+	telescopicText.reset()
+	makeTestVerticies()
+
+	vertexJ.incomingTree = [vertexE]
+	vertexI.incomingTree = [vertexE]
+	vertexH.incomingTree = [vertexE]
+	
+	vertexA.incomingTree = [vertexC]
+	vertexF.incomingTree = [vertexC]
+	vertexF.incomingCross = [vertexE]
+
+	vertexF.clearEdge(vertexE)
+	ok(vertexF.incomingCross.indexOf(vertexE) < 0, "vertexF should not have E as a cross parent")
+
+	vertexF.clearEdge(vertexC)
+	ok(vertexF.incomingTree.indexOf(vertexC) < 0, "vertexF should not have C as a tree parent")	
+
+
+	vertexF.incomingTree = [vertexC]
+	vertexF.incomingCross = [vertexE]
+	vertexF.incomingCross.push(vertexB)
+
+	vertexF.clearEdge("cross")
+	ok(vertexF.incomingCross.length == 0, "we can clear all cross edges")
+
+	vertexF.clearEdge("tree")
+	ok(vertexF.incomingTree.length == 0, "we can clear all tree edges")	
+
+
+
+
 
 makeDefaultVertex1 = ->
 	nameVertexSpec = {

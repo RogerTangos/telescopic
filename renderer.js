@@ -318,6 +318,45 @@ telescopicText.vertex = function(spec) {
     }
     return convertedSiblings;
   };
+  that.clearEdge = function(typeOrNode) {
+    var backIndex, crossIndex, forwardIndex, node, treeIndex, type;
+    node = false;
+    type = false;
+    if (["tree", "cross", "back", "forward"].indexOf(typeOrNode) > -1) {
+      type = typeOrNode.toLowerCase();
+    } else {
+      node = that.getGraph().getNode(typeOrNode);
+    }
+    if (node) {
+      treeIndex = this.incomingTree.indexOf(node);
+      crossIndex = this.incomingCross.indexOf(node);
+      forwardIndex = this.incomingForward.indexOf(node);
+      backIndex = this.incomingBack.indexOf(node);
+      if (treeIndex > -1) {
+        this.incomingTree.splice(treeIndex, 1);
+      }
+      if (crossIndex > -1) {
+        this.incomingCross.splice(crossIndex, 1);
+      }
+      if (forwardIndex > -1) {
+        this.incomingForward.splice(forwardIndex, 1);
+      }
+      if (backIndex > -1) {
+        return this.incomingTree.splice(backIndex, 1);
+      }
+    } else {
+      switch (type) {
+        case "tree":
+          return this.incomingTree = [];
+        case "cross":
+          return this.incomingCross = [];
+        case "forward":
+          return this.incomingForward = [];
+        case "back":
+          return this.incomingBack = [];
+      }
+    }
+  };
   /* public functions meta info*/
 
   that.findClicksRemaining = function() {
