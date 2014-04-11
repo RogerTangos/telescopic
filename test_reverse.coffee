@@ -1,3 +1,46 @@
+test 'determine elibility for backClick; click A', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+
+	vertexA.forwardClick()
+	telescopicText.forward = false
+
+	equal(vertexC.isBackClickable(), true, "C should be back clickable")
+	equal(vertexB.isBackClickable(), true, "B should be back clickable")
+
+test 'determine elibility for backClick; click D G', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+
+	vertexD.forwardClick()
+	vertexG.forwardClick() 
+	telescopicText.forward = false
+
+	equal(vertexE.isBackClickable(), true, "E should be back clickable")
+	# equal(vertexB.isBackClickable(), true, "B should be back clickable")
+
+test 'determine elibility for backClick; click A B', ->
+	telescopicText.reset()
+	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)
+
+	vertexA.forwardClick()
+	vertexB.forwardClick()
+	telescopicText.forward = false
+
+	equal(vertexC.isBackClickable(), false, "C should not be back clickable")
+	equal(vertexB.isBackClickable(), false, "B should not be back clickable")
+	equal(vertexK.isBackClickable(), true, "K should be back clickable")
+
+	ok(true, "click C C L O N | F")
+	vertexC.forwardClick()
+	vertexC.forwardClick()
+	vertexL.forwardClick()
+	vertexO.forwardClick()
+	vertexN.forwardClick()
+	vertexF.forwardClick()
+
+	equal(vertexM.isBackClickable(), true, "Vertex M should be back-clickable")
+
 # test 'backward: A B D V U E <- C H K T U E', ->
 # 	telescopicText.reset()
 # 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)

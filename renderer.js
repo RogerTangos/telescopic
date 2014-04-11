@@ -435,13 +435,18 @@ telescopicText.vertex = function(spec) {
     return false;
   };
   that.isBackClickable = function() {
-    /* need to check to make sure that parent is on the same click index as the child*/
-
-    if (spec._clickCount === 0 && that.isVisible() && that.incomingTree[0] && spec._clickCount === 0 && that.incomingTree[0].findIndexOfChildInChildren(that) === that.incomingTree[0].getClickCount() - 1) {
-      return true;
-    } else {
+    var sibling, siblings, _i, _len;
+    if (!this.isVisible()) {
       return false;
     }
+    siblings = this.getSiblings("tree", true);
+    for (_i = 0, _len = siblings.length; _i < _len; _i++) {
+      sibling = siblings[_i];
+      if ((sibling.getClickCount() > 0) && (sibling.findClicksRemaining() === 0)) {
+        return false;
+      }
+    }
+    return true;
   };
   /* linking utilities*/
 

@@ -272,7 +272,6 @@ telescopicText.vertex = (spec) ->
 				when "cross" then this.incomingCross = []
 				when "forward" then this.incomingForward = []
 				when "back" then this.incomingBack = []
-
 		
 
 
@@ -295,8 +294,6 @@ telescopicText.vertex = (spec) ->
 			"forward"
 		else if this.incomingBack.indexOf(node) + 1
 			"back"
-
-
 
 
 	that.isVisible = ->
@@ -343,15 +340,21 @@ telescopicText.vertex = (spec) ->
 				parentVertex = parentVertex.incomingTree[0]
 		false
 	that.isBackClickable = ->
-		### need to check to make sure that parent is on the same click index as the child ###
-		if spec._clickCount == 0 &&
-				that.isVisible() && 
-				that.incomingTree[0] && 
-				spec._clickCount == 0 &&
-				that.incomingTree[0].findIndexOfChildInChildren(that) == that.incomingTree[0].getClickCount()-1
-			return true
-		else
+		# easy case
+		if !@isVisible()
 			return false
+		
+		# backClickable = true
+		siblings = @getSiblings("tree", true)
+		for sibling in siblings
+
+			# this algorithm incorrectly returns false in some cases 
+			# when a node can be clicked > 2 times
+			if (sibling.getClickCount() > 0) && (sibling.findClicksRemaining() == 0)
+				return false 
+
+		true		
+
 
 	### linking utilities ###
 	that.setChildrenReferences = ->

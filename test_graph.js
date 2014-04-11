@@ -155,10 +155,6 @@ test('find index of child in children', function() {
   return equal(vertexA.findIndexOfChildInChildren(vertexC), 0);
 });
 
-test('determine elibility for backClick', function() {
-  return equal(1, 1);
-});
-
 /* helper function*/
 
 

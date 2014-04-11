@@ -168,10 +168,6 @@ test 'find index of child in children', ->
 	equal(vertexC.findIndexOfChildInChildren(vertexF), 0)
 	equal(vertexA.findIndexOfChildInChildren(vertexC), 0)
 
-test 'determine elibility for backClick', ->
-	equal(1,1)
-
-
 # test 'determine elibility for reverseClick', ->
 # 	telescopicText.reset()
 # 	graph1 = makeTestVerticies().setGraphChildReferences().makeLinkedList(vertexA)

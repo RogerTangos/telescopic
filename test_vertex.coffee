@@ -111,6 +111,8 @@ test 'getSiblings returns siblings from a tree or graph', ->
 	vertexF.incomingTree = [vertexC]
 	vertexF.incomingCross = [vertexE]
 
+	ok(vertexJ.getSiblings().length == 3, "default behavior is to find tree siblings")	
+
 	ok(vertexJ.getSiblings("tree").length == 3)
 	ok(vertexJ.getSiblings("tree")[1] == vertexJ.getSiblings()[1], "default behavior is to search for tree crossings")
 	ok(vertexJ.getSiblings("tree").indexOf(vertexF) < 0, 'F should not be a tree sibling')
